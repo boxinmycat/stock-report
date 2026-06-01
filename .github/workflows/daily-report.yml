@@ -50,6 +50,10 @@ jobs:
         run: |
           python automation/scripts/patch_notebook_config.py "$NOTEBOOK_FILE" "_runtime_report.ipynb"
 
+      - name: Hotfix v10.2 pandas Series fallback bug
+        run: |
+          python automation/scripts/hotfix_v102_series_or.py "_runtime_report.ipynb"
+
       - name: Run report notebook
         run: |
           jupyter nbconvert --to notebook --execute "_runtime_report.ipynb" --output executed_report.ipynb --ExecutePreprocessor.timeout=5400
@@ -58,6 +62,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs stock_report *.xlsx *.zip || true
+          git add docs stock_report *.xlsx *.zip executed_report.ipynb || true
           git commit -m "Update daily stock report" || echo "No changes to commit"
           git push || true
