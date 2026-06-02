@@ -1,0 +1,13 @@
+{
+  "report_date": "20260602",
+  "report_root": "stock_report",
+  "report_dir": "stock_report/reports/20260602",
+  "latest_dir": "stock_report/latest",
+  "xlsx": "20260602.xlsx",
+  "copied": [
+    "stock_report/reports/20260602/20260602.xlsx",
+    "stock_report/reports/20260602/html",
+    "stock_report/reports/20260602/html_report_package_20260602.zip"
+  ],
+  "created_at_kst": "2026-06-02T10:52:19.967802+09:00"
+}
