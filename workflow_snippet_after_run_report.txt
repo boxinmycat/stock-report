@@ -1,0 +1,3 @@
+      - name: Rebuild clean HTML briefing report
+        run: |
+          python automation/scripts/rebuild_clean_html_report.py
