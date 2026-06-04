@@ -1,1 +1,2 @@
 ﻿trade_date,trade_type,stock_name,stock_code,quantity,price,fee,tax,memo
+2026-06-04,매수,LG유플러스,032640,3,15400,0,0,"purchase_completed_screenshot; fees/tax not shown, set 0"
