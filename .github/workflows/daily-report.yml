@@ -2,11 +2,11 @@ name: daily-stock-report
 
 on:
   schedule:
-    # 08:00 KST, Monday-Friday
-    - cron: '0 8 * * 1-5'
+    # 08:35 KST, Monday-Friday: 장전 관심 후보 압축
+    - cron: '35 8 * * 1-5'
       timezone: 'Asia/Seoul'
-    # 16:00 KST, Monday-Friday
-    - cron: '0 16 * * 1-5'
+    # 16:05 KST, Monday-Friday: 장마감 다음날 후보 정리
+    - cron: '5 16 * * 1-5'
       timezone: 'Asia/Seoul'
   workflow_dispatch:
 
@@ -24,6 +24,9 @@ jobs:
       REQUIRE_TOSS_FILE: "false"
       TOSS_MANUAL_CSV_FILE: TOSS_수동후보.csv
 
+      HOLDINGS_CSV_FILE: 보유종목_수동입력.csv
+      TRADE_LOG_CSV_FILE: 매매기록_수동입력.csv
+
       USE_GOOGLE_DRIVE: "false"
       REPORT_ROOT_MODE: LOCAL
 
@@ -32,10 +35,9 @@ jobs:
       NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
       NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
 
-      # OpenAI is opt-in. Add OPENAI_API_KEY secret and set repository variable ENABLE_OPENAI_NEWS_ANALYSIS=true to enable.
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      ENABLE_OPENAI_NEWS_ANALYSIS: ${{ vars.ENABLE_OPENAI_NEWS_ANALYSIS }}
-      OPENAI_NEWS_MODEL: ${{ vars.OPENAI_NEWS_MODEL }}
+      # OpenAI/Gemini 해석은 아직 기본 OFF. 네이버뉴스 API만 먼저 안정화합니다.
+      ENABLE_OPENAI_NEWS_ANALYSIS: "false"
+      ENABLE_GEMINI_NEWS_ANALYSIS: "false"
 
     steps:
       - name: Checkout repository
@@ -93,9 +95,13 @@ jobs:
         run: |
           jupyter nbconvert --to notebook --execute "_runtime_report.ipynb" --output executed_report.ipynb --ExecutePreprocessor.timeout=5400
 
-      - name: Add Naver news summary and optional OpenAI interpretation
+      - name: Add Naver news summary
         run: |
           python automation/scripts/add_naver_news_summary.py
+
+      - name: Update holdings and trade log sheets
+        run: |
+          python automation/scripts/update_holdings_report.py
 
       - name: Rebuild clean HTML briefing report
         run: |
