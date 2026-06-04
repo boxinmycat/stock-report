@@ -19,42 +19,26 @@ jobs:
 
     env:
       NOTEBOOK_FILE: 실전매매_통합시스템_v10_2_연속추천관찰_자동조건검색_드라이브준비.ipynb
+      SITE_BASE_URL: https://boxinmycat.github.io/stock-report
 
       CANDIDATE_SOURCE_MODE: HYBRID
       REQUIRE_TOSS_FILE: "false"
       TOSS_MANUAL_CSV_FILE: TOSS_수동후보.csv
 
-      HOLDINGS_CSV_FILE: 보유종목_수동입력.csv
-      TRADE_LOG_CSV_FILE: 매매기록_수동입력.csv
-
       USE_GOOGLE_DRIVE: "false"
       REPORT_ROOT_MODE: LOCAL
+
+      HOLDINGS_MANUAL_CSV_FILE: holdings_manual_input.csv
+      TRADE_LOG_MANUAL_CSV_FILE: trade_log_manual_input.csv
 
       OPEN_DART_API_KEY: ${{ secrets.OPEN_DART_API_KEY }}
       DART_API_KEY: ${{ secrets.OPEN_DART_API_KEY }}
       NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
       NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
 
-      # OpenAI/Gemini 해석은 아직 기본 OFF. 네이버뉴스 API만 먼저 안정화합니다.
-      ENABLE_OPENAI_NEWS_ANALYSIS: "false"
-      ENABLE_GEMINI_NEWS_ANALYSIS: "false"
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Set report session by KST
-        run: |
-          python - <<'PY'
-          import os
-          from datetime import datetime
-          from zoneinfo import ZoneInfo
-          now = datetime.now(ZoneInfo("Asia/Seoul"))
-          mode = "AM_PREMARKET" if now.hour < 12 else "PM_CLOSE"
-          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as f:
-              f.write(f"REPORT_RUN_MODE={mode}\n")
-          print("KST:", now.isoformat(), "REPORT_RUN_MODE:", mode)
-          PY
 
       - name: Show repository files
         run: |
@@ -95,11 +79,11 @@ jobs:
         run: |
           jupyter nbconvert --to notebook --execute "_runtime_report.ipynb" --output executed_report.ipynb --ExecutePreprocessor.timeout=5400
 
-      - name: Add Naver news summary
+      - name: Add Naver news summary to briefing
         run: |
           python automation/scripts/add_naver_news_summary.py
 
-      - name: Update holdings and trade log sheets
+      - name: Update holdings report
         run: |
           python automation/scripts/update_holdings_report.py
 
@@ -107,9 +91,13 @@ jobs:
         run: |
           python automation/scripts/rebuild_clean_html_report.py
 
-      - name: Archive AM/PM session report
+      - name: Archive AM PM session report
         run: |
           python automation/scripts/archive_session_report.py
+
+      - name: Publish mobile latest pages and Google Sheets CSV
+        run: |
+          python automation/scripts/publish_mobile_and_sheets.py
 
       - name: Commit generated report
         run: |
