@@ -2,8 +2,12 @@ name: daily-stock-report
 
 on:
   schedule:
-    # 23:30 UTC = 08:30 KST, Monday-Saturday
-    - cron: '30 23 * * 0-5'
+    # 08:00 KST, Monday-Friday
+    - cron: '0 8 * * 1-5'
+      timezone: 'Asia/Seoul'
+    # 16:00 KST, Monday-Friday
+    - cron: '0 16 * * 1-5'
+      timezone: 'Asia/Seoul'
   workflow_dispatch:
 
 permissions:
@@ -28,9 +32,27 @@ jobs:
       NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
       NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
 
+      # OpenAI is opt-in. Add OPENAI_API_KEY secret and set repository variable ENABLE_OPENAI_NEWS_ANALYSIS=true to enable.
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      ENABLE_OPENAI_NEWS_ANALYSIS: ${{ vars.ENABLE_OPENAI_NEWS_ANALYSIS }}
+      OPENAI_NEWS_MODEL: ${{ vars.OPENAI_NEWS_MODEL }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set report session by KST
+        run: |
+          python - <<'PY'
+          import os
+          from datetime import datetime
+          from zoneinfo import ZoneInfo
+          now = datetime.now(ZoneInfo("Asia/Seoul"))
+          mode = "AM_PREMARKET" if now.hour < 12 else "PM_CLOSE"
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as f:
+              f.write(f"REPORT_RUN_MODE={mode}\n")
+          print("KST:", now.isoformat(), "REPORT_RUN_MODE:", mode)
+          PY
 
       - name: Show repository files
         run: |
@@ -70,6 +92,18 @@ jobs:
       - name: Run report notebook
         run: |
           jupyter nbconvert --to notebook --execute "_runtime_report.ipynb" --output executed_report.ipynb --ExecutePreprocessor.timeout=5400
+
+      - name: Add Naver news summary and optional OpenAI interpretation
+        run: |
+          python automation/scripts/add_naver_news_summary.py
+
+      - name: Rebuild clean HTML briefing report
+        run: |
+          python automation/scripts/rebuild_clean_html_report.py
+
+      - name: Archive AM/PM session report
+        run: |
+          python automation/scripts/archive_session_report.py
 
       - name: Commit generated report
         run: |
