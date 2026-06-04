@@ -291,6 +291,10 @@ def create_mobile_landing(latest_url: str, session: str, xlsx: Path | None) -> N
         ("보유종목 CSV", "현재 보유상태", "../data/latest_holdings.csv"),
         ("매매기록 CSV", "거래 히스토리", "../data/latest_trade_log.csv"),
         ("뉴스요약 CSV", "네이버뉴스 요약", "../data/latest_news_summary.csv"),
+        ("v11 대시보드", "성과검증 + 보유판단", "../v11_dashboard/"),
+        ("보유판단 CSV", "Google Sheets 연동용", "../data/latest_holding_judgment.csv"),
+        ("진입가이드 CSV", "익절/손절 가이드", "../data/latest_entry_exit_guide.csv"),
+        ("추천성과 CSV", "추천 후 성과 추적", "../data/latest_performance.csv"),
     ]
     card_html = "\n".join(
         f"<a class='card' href='{html.escape(url)}'><strong>{html.escape(title)}</strong><span>{html.escape(desc)}</span></a>"
@@ -347,6 +351,10 @@ def export_summary(latest_url: str, session: str, xlsx: Path | None) -> None:
         "holdings_csv": f"{SITE_BASE_URL}/data/latest_holdings.csv",
         "trade_log_csv": f"{SITE_BASE_URL}/data/latest_trade_log.csv",
         "news_csv": f"{SITE_BASE_URL}/data/latest_news_summary.csv",
+        "v11_dashboard_url": f"{SITE_BASE_URL}/v11_dashboard/",
+        "holding_judgment_csv": f"{SITE_BASE_URL}/data/latest_holding_judgment.csv",
+        "entry_exit_guide_csv": f"{SITE_BASE_URL}/data/latest_entry_exit_guide.csv",
+        "performance_csv": f"{SITE_BASE_URL}/data/latest_performance.csv",
     }]
     headers = list(rows[0].keys())
     write_csv(DATA / "latest_report_summary.csv", rows, headers)

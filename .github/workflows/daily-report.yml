@@ -91,6 +91,10 @@ jobs:
         run: |
           python automation/scripts/rebuild_clean_html_report.py
 
+      - name: Build v11 performance and holdings decision dashboard
+        run: |
+          python automation/scripts/build_v11_performance_holding_dashboard.py
+
       - name: Archive AM PM session report
         run: |
           python automation/scripts/archive_session_report.py
