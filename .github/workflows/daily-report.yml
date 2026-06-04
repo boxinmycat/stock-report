@@ -48,6 +48,8 @@ jobs:
           ls -la
           echo "Scripts:"
           ls -la automation/scripts || true
+          echo "Manual input files:"
+          ls -la holdings_manual_input.csv trade_log_manual_input.csv || true
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -91,10 +93,6 @@ jobs:
         run: |
           python automation/scripts/rebuild_clean_html_report.py
 
-      - name: Build v11 performance and holdings decision dashboard
-        run: |
-          python automation/scripts/build_v11_performance_holding_dashboard.py
-
       - name: Archive AM PM session report
         run: |
           python automation/scripts/archive_session_report.py
@@ -102,6 +100,10 @@ jobs:
       - name: Publish mobile latest pages and Google Sheets CSV
         run: |
           python automation/scripts/publish_mobile_and_sheets.py
+
+      - name: Build v11 performance and holdings decision dashboard
+        run: |
+          python automation/scripts/build_v11_performance_holding_dashboard.py
 
       - name: Commit generated report
         run: |
