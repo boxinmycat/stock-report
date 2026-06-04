@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Clean HTML report builder v10.6
+Clean HTML report builder v10.7
 - Rebuilds docs/index.html and latest docs/reports/YYYYMMDD/index.html from the xlsx workbook.
 - Prevents pandas Series artifacts such as "Name: 44, dtype: object" from leaking into HTML.
 """
@@ -144,9 +144,9 @@ def _key_value_cards(df: pd.DataFrame, kcol: str = "구분", vcol: str = "내용
 def _session_label() -> str:
     mode = os.getenv("REPORT_RUN_MODE", "").strip()
     if mode == "AM_PREMARKET":
-        return "장전 08:00 리포트"
+        return "장전 08:35 리포트"
     if mode == "PM_CLOSE":
-        return "장마감 16:00 리포트"
+        return "장마감 16:05 리포트"
     return "자동 리포트"
 
 
@@ -171,6 +171,8 @@ def build_clean_report(xlsx_path: Path | None = None) -> Path:
     acct = _read_sheet_header(target_xlsx, "계좌백테스트요약", ["누적수익률", "MDD"])
     news_sum = _read_sheet_header(target_xlsx, "네이버뉴스_요약", ["구분", "요약"])
     news_detail = _read_sheet_header(target_xlsx, "네이버뉴스_상세", ["query", "title"])
+    holdings = _read_sheet_header(target_xlsx, "보유종목_관리", ["종목명", "보유수량", "평균단가"])
+    trade_log = _read_sheet_header(target_xlsx, "매매기록_관리", ["거래일", "구분", "종목명"])
 
     if news_sum.empty:
         news_detail = _read_sheet_header(target_xlsx, "뉴스이슈", ["query", "title"])
@@ -212,12 +214,13 @@ h1{margin:0;font-size:30px}h2{font-size:22px;margin:0 0 16px}h3{margin:4px 0 8px
 
     body = f"""<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>실전매매 리포트 {pretty}</title><style>{css}</style></head><body>
-<header><div class="wrap"><h1>실전매매 리포트 · {pretty}</h1><div class="subtitle">{html.escape(_session_label())} · 클린 HTML v10.6</div></div></header>
+<header><div class="wrap"><h1>실전매매 리포트 · {pretty}</h1><div class="subtitle">{html.escape(_session_label())} · 클린 HTML v10.7</div></div></header>
 <main class="wrap">
 <section class="section"><h2>오늘 시장브리핑</h2>{_key_value_cards(market)}<p class="note">이 리포트는 자동 후보 선별과 참고용 해석 자료입니다. 실제 매수는 체결가·거래량·호가·손절 기준을 확인한 뒤 판단하는 쪽이 안전합니다.</p></section>
 <section class="section"><h2>TOP 후보 핵심 카드</h2><div class="stock-grid">{''.join(stock_cards) if stock_cards else '<p class="muted">TOP 후보 데이터가 없습니다.</p>'}</div></section>
 <section class="section"><h2>TOP 후보 요약표</h2>{_table_html(top, cols=['순위','종목명','시장','섹터/분야','후보출처','현재가','기본점수','실전점수','과열판정','진입판정'], limit=15)}</section>
 <section class="section"><h2>네이버 주요 뉴스 요약</h2>{news_block}</section>
+<section class="section"><h2>내 보유종목 관리</h2>{_table_html(holdings, cols=['상태','종목명','종목코드','보유수량','평균단가','현재가','평가손익','수익률(%)','목표가','손절가','리포트상태','관리메모'], limit=20)}<p class="muted">보유종목은 보유종목_수동입력.csv를 기준으로 표시됩니다. 공개 저장소라면 수량·평균단가가 노출될 수 있으니 주의하세요.</p></section>
 <section class="section"><h2>연속추천 관찰</h2>{_table_html(cont, limit=15)}</section>
 <section class="section"><h2>진입 시나리오</h2>{_table_html(scen, cols=['순위','종목명','섹터/분야','현재가','진입판정','공격진입가','기준진입가','보수진입가','손절기준가'], limit=15)}</section>
 <section class="section"><h2>계좌 백테스트 요약</h2>{_table_html(acct, limit=5)}</section>
