@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>v11.2 보유종목 심화분석</title>
+<style>
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:#f5f7fb; color:#152033; }
+  header { padding:22px 18px; background:linear-gradient(135deg,#13294b,#1f6f8b); color:white; }
+  header h1 { margin:0 0 8px; font-size:23px; }
+  header p { margin:0; opacity:.88; font-size:14px; }
+  main { padding:16px; max-width:980px; margin:0 auto; }
+  .links { display:flex; gap:8px; flex-wrap:wrap; margin:14px 0 18px; }
+  .links a { text-decoration:none; background:white; color:#1f4e78; padding:9px 12px; border-radius:999px; border:1px solid #d8e3ef; font-weight:700; font-size:13px; }
+  .card { background:white; border:1px solid #e2e8f0; border-radius:18px; padding:16px; margin:14px 0; box-shadow:0 6px 18px rgba(15,23,42,.06); }
+  .card-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:12px; }
+  h2 { margin:0; font-size:20px; }
+  .sub { margin:4px 0 0; color:#64748b; font-size:13px; }
+  .badge { display:inline-block; padding:7px 10px; border-radius:999px; font-size:12px; font-weight:800; white-space:nowrap; }
+  .profit { background:#dbeafe; color:#1d4ed8; }
+  .risk { background:#fee2e2; color:#b91c1c; }
+  .watch { background:#fef3c7; color:#92400e; }
+  .hold { background:#dcfce7; color:#166534; }
+  .neutral { background:#e2e8f0; color:#334155; }
+  .kpi-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin:10px 0 14px; }
+  .kpi-grid div { background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:10px; }
+  .kpi-grid span { display:block; color:#64748b; font-size:12px; margin-bottom:4px; }
+  .kpi-grid b { font-size:15px; }
+  table.guide { width:100%; border-collapse:collapse; overflow:hidden; border-radius:12px; font-size:14px; }
+  .guide th { width:120px; text-align:left; background:#f1f5f9; color:#334155; padding:10px; border:1px solid #e2e8f0; }
+  .guide td { padding:10px; border:1px solid #e2e8f0; line-height:1.45; }
+  .note { background:#fff7ed; border:1px solid #fed7aa; border-radius:14px; padding:12px; color:#7c2d12; font-size:13px; line-height:1.5; }
+  @media (max-width:720px) { .kpi-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .card { padding:14px; } .guide th { width:92px; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>v11.2 보유종목 심화분석</h1>
+  <p>생성일: 2026-06-05 · 보유종목별 유지/익절/손절/추가매수 관찰 기준</p>
+</header>
+<main>
+  <div class="links">
+    <a href="../mobile/">모바일 홈</a>
+    <a href="../latest/">최신 리포트</a>
+    <a href="../v11_dashboard/">v11 대시보드</a>
+    <a href="../data/latest_holding_deep_analysis.csv">CSV 보기</a>
+  </div>
+  <div class="note">이 화면은 투자 판단 보조용입니다. 리포트의 판단은 매수/매도 지시가 아니라, 장중 거래량·가격 흐름·뉴스 지속성 확인을 돕기 위한 기준표입니다.</div>
+  
+<section class="card">
+  <div class="card-head">
+    <div><h2>금호타이어</h2><p class="sub">73240 · 보유수량 25주</p></div>
+    <div><span class="badge hold">HOLD</span></div>
+  </div>
+  <div class="kpi-grid">
+    <div><span>평균단가</span><b>4,865원</b></div>
+    <div><span>기준가</span><b>4,865원</b></div>
+    <div><span>손익률</span><b>+0.00%</b></div>
+    <div><span>리스크</span><b>NORMAL</b></div>
+  </div>
+  <table class="guide"><tbody>
+    <tr><th>오늘 판단</th><td>특별한 매도 신호는 약하지만 신규 모멘텀도 강하지 않습니다. 보유/관망 우선입니다.</td></tr>
+    <tr><th>진입/추가매수</th><td>신규 매수보다는 보유 대응 우선</td></tr>
+    <tr><th>익절 가이드</th><td>1차 익절: 5,254원 부근 / 강한 추세면 일부만 익절</td></tr>
+    <tr><th>손절 가이드</th><td>손절/경고: 4,622원 이탈 시 재검토</td></tr>
+    <tr><th>추천후보 매칭</th><td>N / 순위  / 점수 </td></tr>
+    <tr><th>뉴스 매칭</th><td>0건 · </td></tr>
+    <tr><th>메모</th><td>snapshot_20260604 current_price=4810 eval=120250 pnl=-1375</td></tr>
+  </tbody></table>
+</section>
+
+
+<section class="card">
+  <div class="card-head">
+    <div><h2>대창솔루션</h2><p class="sub">96350 · 보유수량 60주</p></div>
+    <div><span class="badge hold">HOLD</span></div>
+  </div>
+  <div class="kpi-grid">
+    <div><span>평균단가</span><b>2,800원</b></div>
+    <div><span>기준가</span><b>2,800원</b></div>
+    <div><span>손익률</span><b>+0.00%</b></div>
+    <div><span>리스크</span><b>NORMAL</b></div>
+  </div>
+  <table class="guide"><tbody>
+    <tr><th>오늘 판단</th><td>특별한 매도 신호는 약하지만 신규 모멘텀도 강하지 않습니다. 보유/관망 우선입니다.</td></tr>
+    <tr><th>진입/추가매수</th><td>신규 매수보다는 보유 대응 우선</td></tr>
+    <tr><th>익절 가이드</th><td>1차 익절: 3,024원 부근 / 강한 추세면 일부만 익절</td></tr>
+    <tr><th>손절 가이드</th><td>손절/경고: 2,660원 이탈 시 재검토</td></tr>
+    <tr><th>추천후보 매칭</th><td>N / 순위  / 점수 </td></tr>
+    <tr><th>뉴스 매칭</th><td>0건 · </td></tr>
+    <tr><th>메모</th><td>snapshot_20260604 current_price=2060 eval=123600 pnl=-44400</td></tr>
+  </tbody></table>
+</section>
+
+
+<section class="card">
+  <div class="card-head">
+    <div><h2>대한해운</h2><p class="sub">5880 · 보유수량 41주</p></div>
+    <div><span class="badge hold">HOLD</span></div>
+  </div>
+  <div class="kpi-grid">
+    <div><span>평균단가</span><b>2,519원</b></div>
+    <div><span>기준가</span><b>2,519원</b></div>
+    <div><span>손익률</span><b>+0.00%</b></div>
+    <div><span>리스크</span><b>NORMAL</b></div>
+  </div>
+  <table class="guide"><tbody>
+    <tr><th>오늘 판단</th><td>특별한 매도 신호는 약하지만 신규 모멘텀도 강하지 않습니다. 보유/관망 우선입니다.</td></tr>
+    <tr><th>진입/추가매수</th><td>신규 매수보다는 보유 대응 우선</td></tr>
+    <tr><th>익절 가이드</th><td>1차 익절: 2,721원 부근 / 강한 추세면 일부만 익절</td></tr>
+    <tr><th>손절 가이드</th><td>손절/경고: 2,393원 이탈 시 재검토</td></tr>
+    <tr><th>추천후보 매칭</th><td>N / 순위  / 점수 </td></tr>
+    <tr><th>뉴스 매칭</th><td>0건 · </td></tr>
+    <tr><th>메모</th><td>snapshot_20260604 current_price=2050 eval=84050 pnl=-19240</td></tr>
+  </tbody></table>
+</section>
+
+
+<section class="card">
+  <div class="card-head">
+    <div><h2>에코플라스틱</h2><p class="sub">38110 · 보유수량 51주</p></div>
+    <div><span class="badge hold">HOLD</span></div>
+  </div>
+  <div class="kpi-grid">
+    <div><span>평균단가</span><b>3,750원</b></div>
+    <div><span>기준가</span><b>3,750원</b></div>
+    <div><span>손익률</span><b>+0.00%</b></div>
+    <div><span>리스크</span><b>NORMAL</b></div>
+  </div>
+  <table class="guide"><tbody>
+    <tr><th>오늘 판단</th><td>특별한 매도 신호는 약하지만 신규 모멘텀도 강하지 않습니다. 보유/관망 우선입니다.</td></tr>
+    <tr><th>진입/추가매수</th><td>신규 매수보다는 보유 대응 우선</td></tr>
+    <tr><th>익절 가이드</th><td>1차 익절: 4,050원 부근 / 강한 추세면 일부만 익절</td></tr>
+    <tr><th>손절 가이드</th><td>손절/경고: 3,562원 이탈 시 재검토</td></tr>
+    <tr><th>추천후보 매칭</th><td>N / 순위  / 점수 </td></tr>
+    <tr><th>뉴스 매칭</th><td>0건 · </td></tr>
+    <tr><th>메모</th><td>snapshot_20260604 current_price=2470 eval=125970 pnl=-65330</td></tr>
+  </tbody></table>
+</section>
+
+
+<section class="card">
+  <div class="card-head">
+    <div><h2>태림포장</h2><p class="sub">11280 · 보유수량 40주</p></div>
+    <div><span class="badge hold">HOLD</span></div>
+  </div>
+  <div class="kpi-grid">
+    <div><span>평균단가</span><b>2,100원</b></div>
+    <div><span>기준가</span><b>2,100원</b></div>
+    <div><span>손익률</span><b>+0.00%</b></div>
+    <div><span>리스크</span><b>NORMAL</b></div>
+  </div>
+  <table class="guide"><tbody>
+    <tr><th>오늘 판단</th><td>특별한 매도 신호는 약하지만 신규 모멘텀도 강하지 않습니다. 보유/관망 우선입니다.</td></tr>
+    <tr><th>진입/추가매수</th><td>신규 매수보다는 보유 대응 우선</td></tr>
+    <tr><th>익절 가이드</th><td>1차 익절: 2,268원 부근 / 강한 추세면 일부만 익절</td></tr>
+    <tr><th>손절 가이드</th><td>손절/경고: 1,995원 이탈 시 재검토</td></tr>
+    <tr><th>추천후보 매칭</th><td>N / 순위  / 점수 </td></tr>
+    <tr><th>뉴스 매칭</th><td>0건 · </td></tr>
+    <tr><th>메모</th><td>snapshot_20260604 current_price=1812 eval=72480 pnl=-11520</td></tr>
+  </tbody></table>
+</section>
+
+
+<section class="card">
+  <div class="card-head">
+    <div><h2>태웅</h2><p class="sub">44490 · 보유수량 4주</p></div>
+    <div><span class="badge hold">HOLD</span></div>
+  </div>
+  <div class="kpi-grid">
+    <div><span>평균단가</span><b>40,500원</b></div>
+    <div><span>기준가</span><b>40,500원</b></div>
+    <div><span>손익률</span><b>+0.00%</b></div>
+    <div><span>리스크</span><b>NORMAL</b></div>
+  </div>
+  <table class="guide"><tbody>
+    <tr><th>오늘 판단</th><td>특별한 매도 신호는 약하지만 신규 모멘텀도 강하지 않습니다. 보유/관망 우선입니다.</td></tr>
+    <tr><th>진입/추가매수</th><td>신규 매수보다는 보유 대응 우선</td></tr>
+    <tr><th>익절 가이드</th><td>1차 익절: 43,740원 부근 / 강한 추세면 일부만 익절</td></tr>
+    <tr><th>손절 가이드</th><td>손절/경고: 38,475원 이탈 시 재검토</td></tr>
+    <tr><th>추천후보 매칭</th><td>N / 순위  / 점수 </td></tr>
+    <tr><th>뉴스 매칭</th><td>0건 · </td></tr>
+    <tr><th>메모</th><td>snapshot_20260604 current_price=34150 eval=136600 pnl=-25400</td></tr>
+  </tbody></table>
+</section>
+
+
+<section class="card">
+  <div class="card-head">
+    <div><h2>HANARO K휴머노이드테마TOP10</h2><p class="sub">0155N0 · 보유수량 4주</p></div>
+    <div><span class="badge hold">HOLD</span></div>
+  </div>
+  <div class="kpi-grid">
+    <div><span>평균단가</span><b>11,000원</b></div>
+    <div><span>기준가</span><b>11,000원</b></div>
+    <div><span>손익률</span><b>+0.00%</b></div>
+    <div><span>리스크</span><b>NORMAL</b></div>
+  </div>
+  <table class="guide"><tbody>
+    <tr><th>오늘 판단</th><td>특별한 매도 신호는 약하지만 신규 모멘텀도 강하지 않습니다. 보유/관망 우선입니다.</td></tr>
+    <tr><th>진입/추가매수</th><td>신규 매수보다는 보유 대응 우선</td></tr>
+    <tr><th>익절 가이드</th><td>1차 익절: 11,880원 부근 / 강한 추세면 일부만 익절</td></tr>
+    <tr><th>손절 가이드</th><td>손절/경고: 10,450원 이탈 시 재검토</td></tr>
+    <tr><th>추천후보 매칭</th><td>N / 순위  / 점수 </td></tr>
+    <tr><th>뉴스 매칭</th><td>0건 · </td></tr>
+    <tr><th>메모</th><td>snapshot_20260604 current_price=11430 eval=45720 pnl=1720</td></tr>
+  </tbody></table>
+</section>
+
+
+<section class="card">
+  <div class="card-head">
+    <div><h2>LG유플러스</h2><p class="sub">32640 · 보유수량 3주</p></div>
+    <div><span class="badge hold">HOLD</span></div>
+  </div>
+  <div class="kpi-grid">
+    <div><span>평균단가</span><b>15,400원</b></div>
+    <div><span>기준가</span><b>15,400원</b></div>
+    <div><span>손익률</span><b>+0.00%</b></div>
+    <div><span>리스크</span><b>NORMAL</b></div>
+  </div>
+  <table class="guide"><tbody>
+    <tr><th>오늘 판단</th><td>특별한 매도 신호는 약하지만 신규 모멘텀도 강하지 않습니다. 보유/관망 우선입니다.</td></tr>
+    <tr><th>진입/추가매수</th><td>신규 매수보다는 보유 대응 우선</td></tr>
+    <tr><th>익절 가이드</th><td>1차 익절: 16,632원 부근 / 강한 추세면 일부만 익절</td></tr>
+    <tr><th>손절 가이드</th><td>손절/경고: 14,630원 이탈 시 재검토</td></tr>
+    <tr><th>추천후보 매칭</th><td>N / 순위  / 점수 </td></tr>
+    <tr><th>뉴스 매칭</th><td>0건 · </td></tr>
+    <tr><th>메모</th><td>purchase_completed_screenshot current_price=15500 eval=46500 pnl=300</td></tr>
+  </tbody></table>
+</section>
+
+
+<section class="card">
+  <div class="card-head">
+    <div><h2>TIGER K방산&amp;우주</h2><p class="sub">463250 · 보유수량 4주</p></div>
+    <div><span class="badge hold">HOLD</span></div>
+  </div>
+  <div class="kpi-grid">
+    <div><span>평균단가</span><b>44,500원</b></div>
+    <div><span>기준가</span><b>44,500원</b></div>
+    <div><span>손익률</span><b>+0.00%</b></div>
+    <div><span>리스크</span><b>NORMAL</b></div>
+  </div>
+  <table class="guide"><tbody>
+    <tr><th>오늘 판단</th><td>특별한 매도 신호는 약하지만 신규 모멘텀도 강하지 않습니다. 보유/관망 우선입니다.</td></tr>
+    <tr><th>진입/추가매수</th><td>신규 매수보다는 보유 대응 우선</td></tr>
+    <tr><th>익절 가이드</th><td>1차 익절: 48,060원 부근 / 강한 추세면 일부만 익절</td></tr>
+    <tr><th>손절 가이드</th><td>손절/경고: 42,275원 이탈 시 재검토</td></tr>
+    <tr><th>추천후보 매칭</th><td>N / 순위  / 점수 </td></tr>
+    <tr><th>뉴스 매칭</th><td>0건 · </td></tr>
+    <tr><th>메모</th><td>snapshot_20260604 current_price=38940 eval=155760 pnl=-22240</td></tr>
+  </tbody></table>
+</section>
+
+
+<section class="card">
+  <div class="card-head">
+    <div><h2>컴퍼니케이</h2><p class="sub">307930 · 보유수량 3주</p></div>
+    <div><span class="badge hold">HOLD</span></div>
+  </div>
+  <div class="kpi-grid">
+    <div><span>평균단가</span><b>9,150원</b></div>
+    <div><span>기준가</span><b>9,150원</b></div>
+    <div><span>손익률</span><b>+0.00%</b></div>
+    <div><span>리스크</span><b>NORMAL</b></div>
+  </div>
+  <table class="guide"><tbody>
+    <tr><th>오늘 판단</th><td>특별한 매도 신호는 약하지만 신규 모멘텀도 강하지 않습니다. 보유/관망 우선입니다.</td></tr>
+    <tr><th>진입/추가매수</th><td>신규 매수보다는 보유 대응 우선</td></tr>
+    <tr><th>익절 가이드</th><td>1차 익절: 9,882원 부근 / 강한 추세면 일부만 익절</td></tr>
+    <tr><th>손절 가이드</th><td>손절/경고: 8,692원 이탈 시 재검토</td></tr>
+    <tr><th>추천후보 매칭</th><td>N / 순위  / 점수 </td></tr>
+    <tr><th>뉴스 매칭</th><td>0건 · </td></tr>
+    <tr><th>메모</th><td></td></tr>
+  </tbody></table>
+</section>
+
+</main>
+</body>
+</html>
