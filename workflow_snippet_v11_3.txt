@@ -1,0 +1,9 @@
+# 아래 단계를 daily-report.yml에서 Commit generated report 바로 전에 추가하세요.
+# 권장 위치:
+# Build v11.2 deep holdings analysis
+# → Build v11.3 detail HTML and workbook cleanup
+# → Commit generated report
+
+      - name: Build v11.3 detail HTML and workbook cleanup
+        run: |
+          python automation/scripts/build_v11_3_detail_html_and_cleanup.py
