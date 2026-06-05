@@ -7,16 +7,20 @@ from pathlib import Path
 from datetime import datetime, timezone, timedelta
 import html
 import os
+import re
 
 KST = timezone(timedelta(hours=9))
 
+
 def now_kst() -> str:
     return datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S KST")
+
 
 def detect_session() -> str:
     env = (os.environ.get("REPORT_SESSION") or os.environ.get("SESSION") or "").strip().upper()
     if env in {"AM", "PM", "MANUAL"}:
         return env
+
     hour = datetime.now(KST).hour
     if hour < 12:
         return "AM"
@@ -24,17 +28,33 @@ def detect_session() -> str:
         return "PM"
     return "MANUAL"
 
+
+def _report_sort_key(path: Path):
+    parent = path.parent.name
+    match = re.search(r"(20\d{6})(?:[_-]?(AM|PM))?", parent, re.IGNORECASE)
+    if match:
+        date_key = int(match.group(1))
+        session = (match.group(2) or "").upper()
+        session_rank = {"AM": 1, "PM": 2}.get(session, 0)
+        return (date_key, session_rank, path.stat().st_mtime)
+    return (0, 0, path.stat().st_mtime)
+
+
 def find_latest_report_index() -> Path | None:
-    candidates = []
     reports = Path("docs/reports")
+    report_candidates = []
     if reports.exists():
-        candidates.extend([p for p in reports.rglob("index.html") if p.is_file()])
+        report_candidates = [p for p in reports.rglob("index.html") if p.is_file()]
+
+    if report_candidates:
+        return max(report_candidates, key=_report_sort_key)
+
     root_index = Path("docs/index.html")
     if root_index.exists():
-        candidates.append(root_index)
-    if not candidates:
-        return None
-    return max(candidates, key=lambda p: p.stat().st_mtime)
+        return root_index
+
+    return None
+
 
 def relative_link_from_latest(target: Path) -> str:
     try:
@@ -43,10 +63,12 @@ def relative_link_from_latest(target: Path) -> str:
     except Exception:
         return "../index.html"
 
+
 def write_mobile_page(stamp: str, session: str) -> None:
     mobile = Path("docs/mobile")
     mobile.mkdir(parents=True, exist_ok=True)
     page = mobile / "index.html"
+
     links = [
         ("최신 리포트", "../latest/"),
         ("v11 보유종목 대시보드", "../v11_holdings/"),
@@ -55,10 +77,12 @@ def write_mobile_page(stamp: str, session: str) -> None:
         ("네이버뉴스 상세", "../details/naver_news.html"),
         ("구글시트 CSV 데이터", "../data/"),
     ]
+
     rows = "\n".join(
         f'<a class="card" href="{html.escape(url)}"><strong>{html.escape(label)}</strong><span>열기</span></a>'
         for label, url in links
     )
+
     text = f"""<!doctype html>
 <html lang="ko">
 <head>
@@ -95,17 +119,21 @@ def write_mobile_page(stamp: str, session: str) -> None:
     page.write_text(text, encoding="utf-8")
     print(f"✅ mobile page refreshed: {page}")
 
+
 def main() -> int:
     stamp = now_kst()
     session = detect_session()
+
     latest_dir = Path("docs/latest")
     latest_dir.mkdir(parents=True, exist_ok=True)
     latest_file = latest_dir / "index.html"
+
     source = find_latest_report_index()
 
     if source and source.resolve() != latest_file.resolve():
         text = source.read_text(encoding="utf-8", errors="ignore")
         source_link = relative_link_from_latest(source)
+
         banner = f"""
 <div style="margin:12px 0;padding:12px 14px;border-radius:12px;background:#eef2ff;color:#1e1b4b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;">
   <strong>Latest page refreshed:</strong> {html.escape(stamp)} / {html.escape(session)}
@@ -122,6 +150,7 @@ def main() -> int:
                 text = banner + text
         else:
             text = banner + text
+
         text += f"\n<!-- latest-refresh: {stamp} / {session} / source={source.as_posix()} -->\n"
         latest_file.write_text(text, encoding="utf-8")
         print(f"✅ latest refreshed from: {source}")
@@ -159,6 +188,7 @@ def main() -> int:
     )
     print("✅ latest publish status csv written")
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

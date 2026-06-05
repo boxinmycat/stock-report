@@ -66,7 +66,11 @@ jobs:
 
       - name: Hotfix source notebook before runtime copy
         run: |
-          python automation/scripts/hotfix_v102_series_or.py "$NOTEBOOK_FILE"
+          if [ -f automation/scripts/hotfix_v102_series_or.py ]; then
+            python automation/scripts/hotfix_v102_series_or.py "$NOTEBOOK_FILE"
+          else
+            echo "hotfix_v102_series_or.py not found; skip"
+          fi
 
       - name: Prepare runtime notebook
         run: |
@@ -74,7 +78,11 @@ jobs:
 
       - name: Hotfix runtime notebook before execute
         run: |
-          python automation/scripts/hotfix_v102_series_or.py "_runtime_report.ipynb"
+          if [ -f automation/scripts/hotfix_v102_series_or.py ]; then
+            python automation/scripts/hotfix_v102_series_or.py "_runtime_report.ipynb"
+          else
+            echo "hotfix_v102_series_or.py not found; skip"
+          fi
 
       - name: Run report notebook
         run: |
@@ -168,7 +176,25 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs stock_report *.xlsx *.zip executed_report.ipynb recommendation_tracking.csv || true
+
+          echo "Changed files before staging:"
           git status --short
-          git commit -m "Update daily stock report" || echo "No changes to commit"
-          git push || true
+
+          git add -A docs || true
+          git add -A stock_report || true
+
+          for f in *.xlsx *.zip executed_report.ipynb recommendation_tracking.csv; do
+            if [ -e "$f" ]; then
+              git add "$f"
+            fi
+          done
+
+          echo "Staged files:"
+          git diff --cached --name-status || true
+
+          if git diff --cached --quiet; then
+            echo "No staged changes to commit"
+          else
+            git commit -m "Update daily stock report"
+            git push
+          fi
