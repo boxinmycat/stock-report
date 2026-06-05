@@ -144,6 +144,10 @@ jobs:
             echo "build_v11_4_strategy_validation.py not found; skip"
           fi
 
+      - name: Ensure holdings code match and Naver detail exports
+        run: |
+          python automation/scripts/ensure_holdings_news_integrity.py
+
       - name: Ensure holding deep CSV exports
         run: |
           if [ -f automation/scripts/ensure_holding_deep_csv_exports.py ]; then
