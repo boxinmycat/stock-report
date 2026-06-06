@@ -1,0 +1,17 @@
+{
+  "report_date": "20260607",
+  "report_root": "stock_report",
+  "report_dir": "stock_report/reports/20260607",
+  "latest_dir": "stock_report/latest",
+  "xlsx": "20260607.xlsx",
+  "copied": [
+    "stock_report/reports/20260607/20260607.xlsx",
+    "stock_report/reports/20260607/html",
+    "stock_report/reports/20260607/html_report_package_20260602.zip",
+    "stock_report/reports/20260607/html_report_package_20260604.zip",
+    "stock_report/reports/20260607/html_report_package_20260605.zip",
+    "stock_report/reports/20260607/html_report_package_20260606.zip",
+    "stock_report/reports/20260607/html_report_package_20260607.zip"
+  ],
+  "created_at_kst": "2026-06-07T02:37:02.332257+09:00"
+}
