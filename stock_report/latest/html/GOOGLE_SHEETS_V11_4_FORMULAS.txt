@@ -1,0 +1,13 @@
+v11.4 Google Sheets IMPORTDATA formulas
+
+추천전략검증:
+=IMPORTDATA("https://boxinmycat.github.io/stock-report/data/latest_strategy_validation_summary.csv")
+
+추천모델검증:
+=IMPORTDATA("https://boxinmycat.github.io/stock-report/data/latest_recommendation_model_summary.csv")
+
+추천추적:
+=IMPORTDATA("https://boxinmycat.github.io/stock-report/data/latest_recommendation_tracking.csv")
+
+전략검증상세:
+=IMPORTDATA("https://boxinmycat.github.io/stock-report/data/latest_strategy_validation_detail.csv")

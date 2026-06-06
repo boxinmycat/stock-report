@@ -1,0 +1,13 @@
+Google Sheets IMPORTDATA formulas for v11.0
+
+1) v11 보유종목 판단
+=IMPORTDATA("https://boxinmycat.github.io/stock-report/data/latest_holding_judgment.csv")
+
+2) v11 진입/익절/손절 가이드
+=IMPORTDATA("https://boxinmycat.github.io/stock-report/data/latest_entry_exit_guide.csv")
+
+3) v11 추천성과 검증
+=IMPORTDATA("https://boxinmycat.github.io/stock-report/data/latest_performance.csv")
+
+4) 전체 추천 추적 원본
+=IMPORTDATA("https://boxinmycat.github.io/stock-report/data/recommendation_tracking.csv")
