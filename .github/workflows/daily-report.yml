@@ -19,21 +19,19 @@ jobs:
 
     env:
       NOTEBOOK_FILE: 실전매매_통합시스템_v10_2_연속추천관찰_자동조건검색_드라이브준비.ipynb
-
       CANDIDATE_SOURCE_MODE: HYBRID
       REQUIRE_TOSS_FILE: "false"
       TOSS_MANUAL_CSV_FILE: TOSS_수동후보.csv
-
       HOLDINGS_CSV_FILE: holdings_manual_input.csv
       TRADE_LOG_CSV_FILE: trade_log_manual_input.csv
-
       USE_GOOGLE_DRIVE: "false"
       REPORT_ROOT_MODE: LOCAL
-
       OPEN_DART_API_KEY: ${{ secrets.OPEN_DART_API_KEY }}
       DART_API_KEY: ${{ secrets.OPEN_DART_API_KEY }}
       NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
       NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
     steps:
       - name: Checkout repository
@@ -49,6 +47,11 @@ jobs:
           ls -la automation/scripts || true
           echo "Manual input files:"
           ls -la holdings_manual_input.csv trade_log_manual_input.csv || true
+          echo "Secret status:"
+          echo "NAVER_CLIENT_ID: ${NAVER_CLIENT_ID:+OK}"
+          echo "NAVER_CLIENT_SECRET: ${NAVER_CLIENT_SECRET:+OK}"
+          echo "TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:+OK}"
+          echo "TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:+OK}"
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -180,25 +183,25 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
           echo "Changed files before staging:"
           git status --short
-
           git add -A docs || true
           git add -A stock_report || true
-
           for f in *.xlsx *.zip executed_report.ipynb recommendation_tracking.csv; do
             if [ -e "$f" ]; then
               git add "$f"
             fi
           done
-
           echo "Staged files:"
           git diff --cached --name-status || true
-
           if git diff --cached --quiet; then
             echo "No staged changes to commit"
           else
             git commit -m "Update daily stock report"
             git push
           fi
+
+      - name: Send Telegram report alert
+        if: always()
+        run: |
+          python automation/scripts/send_telegram_report_alert.py

@@ -1,0 +1,18 @@
+OK: .github/workflows/daily-report.yml :: HOLDINGS_CSV_FILE: holdings_manual_input.csv
+OK: .github/workflows/daily-report.yml :: TRADE_LOG_CSV_FILE: trade_log_manual_input.csv
+OK: .github/workflows/daily-report.yml :: Ensure holdings code match and Naver detail exports
+OK: .github/workflows/daily-report.yml :: Force refresh latest and mobile pages
+OK: .github/workflows/daily-report.yml :: Send Telegram report alert
+OK: .github/workflows/daily-report.yml :: TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+OK: .github/workflows/daily-report.yml :: TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+OK: automation/scripts/force_refresh_latest.py :: latest_publish_status.csv
+OK: automation/scripts/force_refresh_latest.py :: docs/reports
+OK: automation/scripts/ensure_holdings_news_integrity.py :: latest_holding_deep_analysis.csv
+OK: automation/scripts/ensure_holdings_news_integrity.py :: latest_holding_action_guide.csv
+OK: automation/scripts/ensure_holdings_news_integrity.py :: latest_news_detail.csv
+OK: automation/scripts/ensure_holdings_news_integrity.py :: def code
+OK: automation/scripts/send_telegram_report_alert.py :: TELEGRAM_BOT_TOKEN
+OK: automation/scripts/send_telegram_report_alert.py :: TELEGRAM_CHAT_ID
+OK: automation/scripts/send_telegram_report_alert.py :: sendMessage
+
+ALL_OK=True
