@@ -1,0 +1,13 @@
+# v11.9 Telegram alert snippet
+
+# 1) Add these two env lines inside jobs.build-report.env:
+
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+# 2) Add this step at the very end of steps, after Commit generated report:
+
+      - name: Send Telegram report alert
+        if: always()
+        run: |
+          python automation/scripts/send_telegram_report_alert.py
