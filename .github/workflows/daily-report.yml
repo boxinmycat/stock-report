@@ -2,10 +2,8 @@ name: daily-stock-report
 
 on:
   schedule:
-    # 08:35 KST, Monday-Friday: 장전 관심 후보 압축
     - cron: '35 8 * * 1-5'
       timezone: 'Asia/Seoul'
-    # 16:05 KST, Monday-Friday: 장마감 다음날 후보 정리
     - cron: '5 16 * * 1-5'
       timezone: 'Asia/Seoul'
   workflow_dispatch:
@@ -16,7 +14,6 @@ permissions:
 jobs:
   build-report:
     runs-on: ubuntu-latest
-
     env:
       NOTEBOOK_FILE: 실전매매_통합시스템_v10_2_연속추천관찰_자동조건검색_드라이브준비.ipynb
       CANDIDATE_SOURCE_MODE: HYBRID
@@ -39,15 +36,10 @@ jobs:
 
       - name: Show repository files
         run: |
-          echo "Current directory:"
           pwd
-          echo "Root files:"
           ls -la
-          echo "Scripts:"
           ls -la automation/scripts || true
-          echo "Manual input files:"
           ls -la holdings_manual_input.csv trade_log_manual_input.csv || true
-          echo "Secret status:"
           echo "NAVER_CLIENT_ID: ${NAVER_CLIENT_ID:+OK}"
           echo "NAVER_CLIENT_SECRET: ${NAVER_CLIENT_SECRET:+OK}"
           echo "TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:+OK}"
@@ -147,9 +139,17 @@ jobs:
             echo "build_v11_4_strategy_validation.py not found; skip"
           fi
 
+      - name: Fetch REAL holding current prices and REAL Naver news detail
+        run: |
+          python automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py
+
       - name: Ensure holdings code match and Naver detail exports
         run: |
-          python automation/scripts/ensure_holdings_news_integrity.py
+          if [ -f automation/scripts/ensure_holdings_news_integrity.py ]; then
+            python automation/scripts/ensure_holdings_news_integrity.py
+          else
+            echo "ensure_holdings_news_integrity.py not found; skip"
+          fi
 
       - name: Ensure holding deep CSV exports
         run: |
