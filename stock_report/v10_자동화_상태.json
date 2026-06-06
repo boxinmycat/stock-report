@@ -1,16 +1,17 @@
 {
-  "report_date": "20260606",
+  "report_date": "20260607",
   "report_root": "stock_report",
-  "report_dir": "stock_report/reports/20260606",
+  "report_dir": "stock_report/reports/20260607",
   "latest_dir": "stock_report/latest",
-  "xlsx": "20260606.xlsx",
+  "xlsx": "20260607.xlsx",
   "copied": [
-    "stock_report/reports/20260606/20260606.xlsx",
-    "stock_report/reports/20260606/html",
-    "stock_report/reports/20260606/html_report_package_20260602.zip",
-    "stock_report/reports/20260606/html_report_package_20260604.zip",
-    "stock_report/reports/20260606/html_report_package_20260605.zip",
-    "stock_report/reports/20260606/html_report_package_20260606.zip"
+    "stock_report/reports/20260607/20260607.xlsx",
+    "stock_report/reports/20260607/html",
+    "stock_report/reports/20260607/html_report_package_20260602.zip",
+    "stock_report/reports/20260607/html_report_package_20260604.zip",
+    "stock_report/reports/20260607/html_report_package_20260605.zip",
+    "stock_report/reports/20260607/html_report_package_20260606.zip",
+    "stock_report/reports/20260607/html_report_package_20260607.zip"
   ],
-  "created_at_kst": "2026-06-06T02:24:01.477490+09:00"
+  "created_at_kst": "2026-06-07T00:51:54.694377+09:00"
 }
