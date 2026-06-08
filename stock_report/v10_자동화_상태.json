@@ -3,7 +3,7 @@
   "report_root": "stock_report",
   "report_dir": "stock_report/reports/20260609",
   "latest_dir": "stock_report/latest",
-  "xlsx": "20260608.xlsx",
+  "xlsx": "20260609.xlsx",
   "copied": [
     "stock_report/reports/20260609/20260609.xlsx",
     "stock_report/reports/20260609/html",
@@ -15,5 +15,5 @@
     "stock_report/reports/20260609/html_report_package_20260608.zip",
     "stock_report/reports/20260609/html_report_package_20260609.zip"
   ],
-  "created_at_kst": "2026-06-09T00:08:08.068290+09:00"
+  "created_at_kst": "2026-06-09T01:48:43.222457+09:00"
 }

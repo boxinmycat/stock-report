@@ -44,6 +44,51 @@
 20260609_AM_A_BALANCED_15_알트,20260609,AM,A_BALANCED,A_균형형,알트,,15,,62.0,,반도체/전자부품,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
 20260609_AM_A_BALANCED_15_알트,20260609,AM,A_BALANCED,A_균형형,알트,,15,,62.0,,반도체/전자부품,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
 20260609_AM_A_BALANCED_15_알트,20260609,AM,A_BALANCED,A_균형형,알트,,15,,62.0,,반도체/전자부품,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+,,AM,,,TIGER 미국배당다우존스,,1,,87.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,TIGER 미국배당다우존스,,1,,87.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,TIGER 미국배당다우존스,,1,,87.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,RISE 200위클리커버드콜,,2,,75.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,RISE 200위클리커버드콜,,2,,75.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,RISE 200위클리커버드콜,,2,,75.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,한켐,,3,,87.0,,화학,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,한켐,,3,,87.0,,화학,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,한켐,,3,,87.0,,화학,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,라이콤,,4,,72.0,,반도체/전자부품,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,라이콤,,4,,72.0,,반도체/전자부품,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,라이콤,,4,,72.0,,반도체/전자부품,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,TIGER 미국S&P500,,5,,63.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,TIGER 미국S&P500,,5,,63.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,TIGER 미국S&P500,,5,,63.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,KODEX 미국S&P500,,6,,62.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,KODEX 미국S&P500,,6,,62.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,KODEX 미국S&P500,,6,,62.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,KODEX 미국나스닥100,,7,,69.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,KODEX 미국나스닥100,,7,,69.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,KODEX 미국나스닥100,,7,,69.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,KODEX 200타겟위클리커버드콜,,8,,61.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,KODEX 200타겟위클리커버드콜,,8,,61.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,KODEX 200타겟위클리커버드콜,,8,,61.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,TIGER 배당커버드콜액티브,,9,,58.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,TIGER 배당커버드콜액티브,,9,,58.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,TIGER 배당커버드콜액티브,,9,,58.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,SK네트웍스,,10,,61.0,,도매,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,SK네트웍스,,10,,61.0,,도매,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,SK네트웍스,,10,,61.0,,도매,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,TIGER 미국나스닥100타겟데일리커버드콜,,11,,59.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,TIGER 미국나스닥100타겟데일리커버드콜,,11,,59.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,TIGER 미국나스닥100타겟데일리커버드콜,,11,,59.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,디아이씨,,12,,57.0,,자동차/부품,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,디아이씨,,12,,57.0,,자동차/부품,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,디아이씨,,12,,57.0,,자동차/부품,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,대원제약,,13,,49.0,,제약/바이오,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,대원제약,,13,,49.0,,제약/바이오,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,대원제약,,13,,49.0,,제약/바이오,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,LG유플러스,,14,,55.0,,통신,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,LG유플러스,,14,,55.0,,통신,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,LG유플러스,,14,,55.0,,통신,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,알트,,15,,62.0,,반도체/전자부품,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,알트,,15,,62.0,,반도체/전자부품,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,AM,,,알트,,15,,62.0,,반도체/전자부품,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
 ,,PM,,,제주은행,,1,,90.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
 ,,PM,,,제주은행,,1,,90.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
 ,,PM,,,제주은행,,1,,90.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
