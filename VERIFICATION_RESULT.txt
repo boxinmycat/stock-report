@@ -1,21 +1,25 @@
-OK: automation/scripts/build_gemini_holding_ai_briefing.py :: news_items = []
-OK: automation/scripts/build_gemini_holding_ai_briefing.py :: link_html =
-OK: automation/scripts/build_gemini_holding_ai_briefing.py :: news_li = ''.join(news_items)
-OK: automation/scripts/build_gemini_holding_ai_briefing.py :: gemini-3.5-flash
-OK: .github/workflows/daily-report.yml :: Restore legacy Excel report sections
-OK: .github/workflows/daily-report.yml :: Build Gemini 3.5 Flash holding AI briefing
-OK: .github/workflows/daily-report.yml :: if: github.event_name == 'workflow_dispatch' || github.event.schedule == '5 16 * * 1-5'
-OK: automation/scripts/publish_legacy_excel_sections.py :: TOP후보_요약
-OK: automation/scripts/publish_legacy_excel_sections.py :: 진입시나리오
-OK: automation/scripts/publish_legacy_excel_sections.py :: legacy_top15.html
+OK: automation/scripts/stock_news_disambiguation.py :: score_news_match
+OK: automation/scripts/stock_news_disambiguation.py :: filter_and_rank_news
+OK: automation/scripts/stock_news_disambiguation.py :: build_news_queries
+OK: automation/scripts/stock_news_disambiguation.py :: KNOWN_EXCLUDES
+OK: automation/scripts/stock_news_disambiguation.py :: AMBIGUOUS_SUFFIXES
+OK: automation/scripts/stock_news_disambiguation.py :: ETF ·
+OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py :: build_news_queries
+OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py :: 주요 뉴스 요약
+OK: automation/scripts/publish_legacy_excel_sections.py :: filter_and_rank_news
+OK: automation/scripts/publish_legacy_excel_sections.py :: _normalize_category
+OK: automation/scripts/publish_legacy_excel_sections.py :: _stock_basic_info
+OK: automation/scripts/build_gemini_holding_ai_briefing.py :: filter_and_rank_news
+OK: automation/scripts/build_gemini_holding_ai_briefing.py :: stock_news_disambiguation
 
-OK: automation/scripts/build_gemini_holding_ai_briefing.py
-OK: automation/scripts/build_recommendation_analysis.py
-OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py
-OK: automation/scripts/force_refresh_latest.py
-OK: automation/scripts/publish_excel_downloads.py
-OK: automation/scripts/publish_legacy_excel_sections.py
-OK: automation/scripts/send_telegram_report_alert.py
+OK: automation/scripts/build_gemini_holding_ai_briefing.py ast_parse
+OK: automation/scripts/build_recommendation_analysis.py ast_parse
+OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py ast_parse
+OK: automation/scripts/force_refresh_latest.py ast_parse
+OK: automation/scripts/publish_excel_downloads.py ast_parse
+OK: automation/scripts/publish_legacy_excel_sections.py ast_parse
+OK: automation/scripts/send_telegram_report_alert.py ast_parse
+OK: automation/scripts/stock_news_disambiguation.py ast_parse
 ALL_CHECKS_OK=True
-ALL_COMPILE_OK=True
+ALL_PARSE_OK=True
 ALL_OK=True
