@@ -172,7 +172,7 @@ def ai_section():
         )
     if not cards:
         cards = '<article class="card"><h3>Gemini AI 브리핑</h3><p>데이터 확인 필요</p></article>'
-    return f"<section><h2>Gemini AI 보유 브리핑</h2>{cards}</section>"
+    return f"<section><h2>Gemini AI 보유 브리핑</h2><p class='hint'>AI 브리핑은 장마감 리포트에서 주로 갱신됩니다. 장전 리포트에서는 비용 절감을 위해 직전 장마감 AI 브리핑을 참고용으로 유지할 수 있습니다.</p>{cards}</section>"
 
 def news_section():
     news = read_csv('docs/data/latest_news_detail.csv', 8)

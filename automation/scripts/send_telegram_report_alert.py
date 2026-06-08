@@ -28,6 +28,10 @@ def status():
     return d
 
 def brief():
+    st = status()
+    ss = (st.get('session') or 'MANUAL').upper()
+    if ss == 'AM':
+        return 'AI 보유 브리핑: 비용 절감을 위해 장전에는 새로 생성하지 않고, 장마감 리포트에서 갱신합니다.'
     rows=read('docs/data/latest_holding_ai_briefing.csv',5)
     if not rows:
         return 'AI 보유 브리핑: 데이터 확인 필요'

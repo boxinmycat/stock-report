@@ -102,6 +102,7 @@ jobs:
           python automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py
 
       - name: Build Gemini 3.5 Flash holding AI briefing
+        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '5 16 * * 1-5'
         run: |
           python automation/scripts/build_gemini_holding_ai_briefing.py
 
