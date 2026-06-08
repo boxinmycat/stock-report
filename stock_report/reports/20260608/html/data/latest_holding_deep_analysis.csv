@@ -1,11 +1,11 @@
-﻿source_file,stock_name,stock_code,quantity,avg_price,current_price,current_price_source,unrealized_pnl_pct,target_price,stop_loss,decision,memo,checked_at
-holdings_manual_input.csv,금호타이어,073240,25,4865.0,4400.0,matched_by_code,-9.56,,,STOP_WATCH,습관형 손절권. 물타기 금지.,2026-06-08 11:01:13 KST
-holdings_manual_input.csv,대창솔루션,096350,60,2800.0,1860.0,matched_by_code,-33.57,,,STOP_WATCH,습관형 손절권. 물타기 금지.,2026-06-08 11:01:13 KST
-holdings_manual_input.csv,대한해운,005880,41,2519.0,1920.0,matched_by_code,-23.78,,,STOP_WATCH,습관형 손절권. 물타기 금지.,2026-06-08 11:01:13 KST
-holdings_manual_input.csv,에코플라스틱,038110,51,3750.0,2245.0,matched_by_code,-40.13,,,STOP_WATCH,습관형 손절권. 물타기 금지.,2026-06-08 11:01:13 KST
-holdings_manual_input.csv,태림포장,011280,40,2100.0,1790.0,matched_by_code,-14.76,,,STOP_WATCH,습관형 손절권. 물타기 금지.,2026-06-08 11:01:13 KST
-holdings_manual_input.csv,태웅,044490,4,40500.0,29000.0,matched_by_code,-28.4,,,STOP_WATCH,습관형 손절권. 물타기 금지.,2026-06-08 11:01:13 KST
-holdings_manual_input.csv,HANARO K휴머노이드테마TOP10,0155N0,4,11000.0,9960.0,matched_by_code,-9.45,,,STOP_WATCH,습관형 손절권. 물타기 금지.,2026-06-08 11:01:13 KST
-holdings_manual_input.csv,LG유플러스,032640,3,15400.0,14880.0,matched_by_code,-3.38,,,HOLD,보유 유지. 뉴스/거래량/재추천 확인.,2026-06-08 11:01:13 KST
-holdings_manual_input.csv,TIGER K방산&우주,463250,4,44500.0,35595.0,matched_by_code,-20.01,,,STOP_WATCH,습관형 손절권. 물타기 금지.,2026-06-08 11:01:13 KST
-holdings_manual_input.csv,컴퍼니케이,307930,3,9150.0,7950.0,matched_by_code,-13.11,,,STOP_WATCH,습관형 손절권. 물타기 금지.,2026-06-08 11:01:13 KST
+﻿source_file,status,stock_name,stock_code,quantity,avg_price,current_price,current_price_source,unrealized_pnl_pct,target_price,stop_loss,decision,memo,checked_at
+holdings_manual_input.csv,보유중,금호타이어,073240,25.0,4865.0,4405.0,naver_finance,-9.46,,,STOP_WATCH,습관형 손절권. 물타기 금지.,2026-06-08 12:16:11 KST
+holdings_manual_input.csv,보유중,대창솔루션,096350,60.0,2800.0,1914.0,naver_finance,-31.64,,,STOP_WATCH,습관형 손절권. 물타기 금지.,2026-06-08 12:16:12 KST
+holdings_manual_input.csv,보유중,대한해운,005880,41.0,2519.0,1935.0,naver_finance,-23.18,,,STOP_WATCH,습관형 손절권. 물타기 금지.,2026-06-08 12:16:13 KST
+holdings_manual_input.csv,보유중,에코플라스틱,038110,51.0,3750.0,2240.0,naver_finance,-40.27,,,STOP_WATCH,습관형 손절권. 물타기 금지.,2026-06-08 12:16:15 KST
+holdings_manual_input.csv,보유중,태림포장,011280,40.0,2100.0,1888.0,naver_finance,-10.1,,,STOP_WATCH,습관형 손절권. 물타기 금지.,2026-06-08 12:16:16 KST
+holdings_manual_input.csv,보유중,태웅,044490,4.0,40500.0,29900.0,naver_finance,-26.17,,,STOP_WATCH,습관형 손절권. 물타기 금지.,2026-06-08 12:16:18 KST
+holdings_manual_input.csv,보유중,HANARO K휴머노이드테마TOP10,0155N0,4.0,11000.0,10270.0,naver_finance,-6.64,,,HOLD,보유 유지. 뉴스·거래량·추천 재등장 여부 확인.,2026-06-08 12:16:19 KST
+holdings_manual_input.csv,보유중,LG유플러스,032640,3.0,15400.0,15200.0,naver_finance,-1.3,,,HOLD,보유 유지. 뉴스·거래량·추천 재등장 여부 확인.,2026-06-08 12:16:20 KST
+holdings_manual_input.csv,보유중,TIGER K방산&우주,463250,4.0,44500.0,36305.0,naver_finance,-18.42,,,STOP_WATCH,습관형 손절권. 물타기 금지.,2026-06-08 12:16:21 KST
+holdings_manual_input.csv,보유중,컴퍼니케이,307930,3.0,9150.0,8350.0,naver_finance,-8.74,,,STOP_WATCH,습관형 손절권. 물타기 금지.,2026-06-08 12:16:23 KST
