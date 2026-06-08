@@ -123,6 +123,20 @@ def recommendation_section():
         """
     return f"<section class='box accent'><h2>추천 종목·관심 후보</h2>{body}</section>"
 
+
+def recommendation_analysis_section():
+    rows = read_csv('docs/data/latest_recommendation_analysis.csv', 8)
+    if not rows:
+        return """<section class='box accent'><h2>추천 종목 분석</h2><p class='hint'>추천 종목 분석 데이터 확인 필요. <a href='../details/recommendation_analysis.html'>추천 종목 분석 페이지 열기</a></p></section>"""
+    cards = ''
+    for r in rows[:5]:
+        cards += f"""<article class='card'><h3>{esc(r.get('rank'))}. {esc(r.get('stock_name'))} <span>{esc(r.get('score'))}</span></h3>
+        <p><b>추천 후보로 보는 이유:</b> {esc(r.get('score_context'))} {esc(r.get('sector_context'))}</p>
+        <p><b>뉴스 흐름:</b> {esc(r.get('news_issue'))}</p>
+        <p><b>진입 관점:</b> {esc(r.get('entry_guide'))}</p></article>"""
+    return f"<section class='box accent'><h2>추천 종목 분석</h2><p class='hint'>추천 후보를 관심 이유, 뉴스 흐름, 주의점, 진입 관점으로 다시 정리한 섹션입니다.</p>{cards}<p class='hint'><a href='../details/recommendation_analysis.html'>추천 종목 분석 전체 보기</a></p></section>"
+
+
 def strategy_section():
     source, rows = strategy_data()
     if not rows:
@@ -217,6 +231,7 @@ a{{color:#2563eb;text-decoration:none}}
 <p>갱신: {esc(stamp)} · 세션: {esc(ss)}<br>추천후보, 전략검증, 보유종목, Gemini AI 브리핑을 최신 CSV 데이터 기준으로 함께 보여줍니다.</p>
 </section>
 <section class='links'>
+<a class='link' href='../details/recommendation_analysis.html'>추천 종목 분석</a>
 <a class='link' href='../details/candidate_detail.html'>추천후보 상세</a>
 <a class='link' href='../details/continuous.html'>연속추천/관찰</a>
 <a class='link' href='../strategy/'>전략검증</a>
@@ -226,6 +241,7 @@ a{{color:#2563eb;text-decoration:none}}
 </section>
 {download_section()}
 {recommendation_section()}
+{recommendation_analysis_section()}
 {strategy_section()}
 {holdings_section()}
 {ai_section()}
@@ -240,6 +256,7 @@ def write_mobile(stamp, ss):
         ('최신 리포트', '../latest/'),
         ('엑셀/상세파일 다운로드', '../downloads/'),
         ('최신 엑셀 바로받기', '../downloads/latest_stock_report.xlsx'),
+        ('추천 종목 분석', '../details/recommendation_analysis.html'),
         ('추천후보 상세', '../details/candidate_detail.html'),
         ('연속추천/관찰', '../details/continuous.html'),
         ('전략검증', '../strategy/'),

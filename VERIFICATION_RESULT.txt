@@ -1,11 +1,17 @@
-OK: .github/workflows/daily-report.yml :: Build Gemini 3.5 Flash holding AI briefing
-OK: .github/workflows/daily-report.yml :: if: github.event_name == 'workflow_dispatch' || github.event.schedule == '5 16 * * 1-5'
-OK: .github/workflows/daily-report.yml :: GEMINI_MODEL: gemini-3.5-flash
+OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py :: link_html =
+OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py :: latest_holding_current_prices.csv
+OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py :: latest_news_detail.csv
+OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py :: REAL holding current prices fetched from Naver Finance
+OK: .github/workflows/daily-report.yml :: Build recommendation candidate analysis
 OK: .github/workflows/daily-report.yml :: Publish Excel download files
-OK: automation/scripts/force_refresh_latest.py :: AI 브리핑은 장마감 리포트에서 주로 갱신됩니다
-OK: automation/scripts/force_refresh_latest.py :: 엑셀/상세파일 다운로드
-OK: automation/scripts/force_refresh_latest.py :: 추천 종목·관심 후보
-OK: automation/scripts/send_telegram_report_alert.py :: 비용 절감을 위해 장전에는 새로 생성하지 않고
-OK: automation/scripts/send_telegram_report_alert.py :: candidate_detail.html
-OK: automation/scripts/send_telegram_report_alert.py :: strategy/
+OK: .github/workflows/daily-report.yml :: Build Gemini 3.5 Flash holding AI briefing
+
+OK: automation/scripts/build_gemini_holding_ai_briefing.py
+OK: automation/scripts/build_recommendation_analysis.py
+OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py
+OK: automation/scripts/force_refresh_latest.py
+OK: automation/scripts/publish_excel_downloads.py
+OK: automation/scripts/send_telegram_report_alert.py
+ALL_CHECKS_OK=True
+ALL_COMPILE_OK=True
 ALL_OK=True

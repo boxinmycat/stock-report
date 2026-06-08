@@ -58,6 +58,9 @@ https://boxinmycat.github.io/stock-report/mobile/
 최신 리포트:
 https://boxinmycat.github.io/stock-report/latest/
 
+추천 종목 분석:
+https://boxinmycat.github.io/stock-report/details/recommendation_analysis.html
+
 추천후보 상세:
 https://boxinmycat.github.io/stock-report/details/candidate_detail.html
 
