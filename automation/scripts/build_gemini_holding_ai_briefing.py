@@ -120,7 +120,23 @@ def build():
         for i,x in enumerate(links,1):
             row[f'news_title_{i}']=x['title']; row[f'news_link_{i}']=x['link']; row[f'news_desc_{i}']=x['description']
         rows.append(row); time.sleep(0.2)
-        news_li=''.join([f"<li><b>{html.escape(x['title'])}</b><br><span>{html.escape(x['description'][:220])}</span><br>{('<a href="'+html.escape(x['link'])+'" target="_blank" rel="noopener">기사 보기</a>') if x['link'] else ''}</li>" for x in links]) or '<li>연결된 상세 뉴스가 충분하지 않습니다.</li>'
+        news_items = []
+        for x in links:
+            title_html = html.escape(str(x.get('title', '')))
+            desc_html = html.escape(str(x.get('description', ''))[:220])
+            link = str(x.get('link', '') or '').strip()
+            if link:
+                link_html = f'<a href="{html.escape(link)}" target="_blank" rel="noopener">기사 보기</a>'
+            else:
+                link_html = ''
+            news_items.append(
+                '<li>'
+                f'<b>{title_html}</b><br>'
+                f'<span>{desc_html}</span><br>'
+                f'{link_html}'
+                '</li>'
+            )
+        news_li = ''.join(news_items) or '<li>연결된 상세 뉴스가 충분하지 않습니다.</li>'
         cards += f"""<article class='card'><div class='head'><h2>{html.escape(name)}</h2><span>{html.escape(out.get('ai_sentiment','중립'))} · {html.escape(out.get('ai_confidence',''))}</span></div><div class='meta'>판단 {html.escape(dec)} · 현재가 {html.escape(row['current_price'])} · 평균단가 {html.escape(row['avg_price'])} · 손익률 {html.escape(pnl)}% · AI상태 {html.escape(out.get('ai_status',''))}</div><section><h3>AI 이슈 브리핑</h3><p>{html.escape(out.get('ai_issue_summary',''))}</p></section><section><h3>긍정 포인트</h3><p>{html.escape(out.get('ai_positive_points',''))}</p></section><section><h3>리스크 포인트</h3><p>{html.escape(out.get('ai_risk_points',''))}</p></section><section><h3>가격·보유 관점</h3><p>{html.escape(out.get('ai_price_context',''))}</p></section><section><h3>대응 가이드</h3><p>{html.escape(out.get('ai_action_guide',''))}</p></section><section><h3>3줄 요약</h3><pre>{html.escape(out.get('ai_three_line_summary',''))}</pre></section><section><h3>관련 뉴스 링크</h3><ul>{news_li}</ul></section><p class='caution'>{html.escape(out.get('ai_caution','투자 판단 보조용입니다.'))}</p></article>"""
     df=pd.DataFrame(rows); write(df,'docs/data/latest_holding_ai_briefing.csv'); write(df,'docs/data/latest_holding_issue_analysis.csv')
     Path('docs/details').mkdir(parents=True,exist_ok=True)
