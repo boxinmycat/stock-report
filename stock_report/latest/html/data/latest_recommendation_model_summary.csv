@@ -1,4 +1,4 @@
 ﻿recommendation_model,recommendation_model_name,session,signals,avg_return_pct_habit,win_rate_pct_habit,tp1_hit_rate_pct_habit,sl_hit_rate_pct_habit,status,memo
 A_BALANCED,A_균형형,PM,15,,,0.0,0.0,샘플부족,현재 추천조건은 A_균형형 기준모델. 이후 보수형/모멘텀형과 비교 예정
 ,,AM,164,,,0.0,0.0,검증가능,현재 추천조건은 A_균형형 기준모델. 이후 보수형/모멘텀형과 비교 예정
-,,PM,60,,,0.0,0.0,검증가능,현재 추천조건은 A_균형형 기준모델. 이후 보수형/모멘텀형과 비교 예정
+,,PM,90,,,0.0,0.0,검증가능,현재 추천조건은 A_균형형 기준모델. 이후 보수형/모멘텀형과 비교 예정
