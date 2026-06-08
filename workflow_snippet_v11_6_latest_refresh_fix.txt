@@ -1,0 +1,10 @@
+# v11.6 latest refresh fix - workflow step snippet
+
+# Put this step immediately before "Commit generated report".
+
+      - name: Force refresh latest and mobile pages
+        run: |
+          python automation/scripts/force_refresh_latest.py
+
+# Also make sure Commit generated report includes docs in git add:
+# git add docs stock_report *.xlsx *.zip executed_report.ipynb recommendation_tracking.csv || true

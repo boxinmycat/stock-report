@@ -1,0 +1,32 @@
+# v11.7 commit step replacement
+
+# Replace only the final "Commit generated report" step with this safer version.
+
+      - name: Commit generated report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          echo "Changed files before staging:"
+          git status --short
+
+          # Stage generated folders first.
+          git add -A docs || true
+          git add -A stock_report || true
+
+          # Stage optional root outputs only when they exist.
+          for f in *.xlsx *.zip executed_report.ipynb recommendation_tracking.csv; do
+            if [ -e "$f" ]; then
+              git add "$f"
+            fi
+          done
+
+          echo "Staged files:"
+          git diff --cached --name-status || true
+
+          if git diff --cached --quiet; then
+            echo "No staged changes to commit"
+          else
+            git commit -m "Update daily stock report"
+            git push
+          fi

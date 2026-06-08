@@ -1,0 +1,2 @@
+﻿category,query,title,description,link,pubDate,api_state,checked_at
+diagnostic,,네이버뉴스 상세 데이터가 생성되지 않았습니다.,NAVER_CLIENT_ID / NAVER_CLIENT_SECRET 설정 또는 add_naver_news_summary.py 실행 로그를 확인하세요.,,,configured,2026-06-06 02:26:06 KST
