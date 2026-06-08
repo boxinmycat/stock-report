@@ -2,10 +2,8 @@ name: daily-stock-report
 
 on:
   schedule:
-    # 08:35 KST, Monday-Friday: 장전 관심 후보 압축
     - cron: '35 8 * * 1-5'
       timezone: 'Asia/Seoul'
-    # 16:05 KST, Monday-Friday: 장마감 다음날 후보 정리
     - cron: '5 16 * * 1-5'
       timezone: 'Asia/Seoul'
   workflow_dispatch:
@@ -13,66 +11,43 @@ on:
 permissions:
   contents: write
 
-concurrency:
-  group: daily-stock-report-${{ github.ref }}
-  cancel-in-progress: false
-
 jobs:
   build-report:
     runs-on: ubuntu-latest
-
     env:
       NOTEBOOK_FILE: 실전매매_통합시스템_v10_2_연속추천관찰_자동조건검색_드라이브준비.ipynb
-
       CANDIDATE_SOURCE_MODE: HYBRID
       REQUIRE_TOSS_FILE: "false"
       TOSS_MANUAL_CSV_FILE: TOSS_수동후보.csv
-
-      # v10.8 이후 기준: 영어 파일명만 공식 입력으로 사용
       HOLDINGS_CSV_FILE: holdings_manual_input.csv
       TRADE_LOG_CSV_FILE: trade_log_manual_input.csv
-
       USE_GOOGLE_DRIVE: "false"
       REPORT_ROOT_MODE: LOCAL
-
       OPEN_DART_API_KEY: ${{ secrets.OPEN_DART_API_KEY }}
       DART_API_KEY: ${{ secrets.OPEN_DART_API_KEY }}
       NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
       NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
-
-      ENABLE_OPENAI_NEWS_ANALYSIS: "false"
-      ENABLE_GEMINI_NEWS_ANALYSIS: "false"
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GEMINI_MODEL: gemini-3.5-flash
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set report session by KST
+      - name: Show repository files
         run: |
-          python - <<'PY'
-          import os
-          from datetime import datetime
-          from zoneinfo import ZoneInfo
-          now = datetime.now(ZoneInfo("Asia/Seoul"))
-          mode = "AM_PREMARKET" if now.hour < 12 else "PM_CLOSE"
-          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as f:
-              f.write(f"REPORT_RUN_MODE={mode}\n")
-              f.write(f"REPORT_CREATED_AT_KST={now.isoformat()}\n")
-          print("KST:", now.isoformat(), "REPORT_RUN_MODE:", mode)
-          PY
-
-      - name: Show repository files and manual input status
-        run: |
-          echo "Current directory:"
           pwd
-          echo "Root files:"
           ls -la
-          echo "Scripts:"
           ls -la automation/scripts || true
-          echo "Manual input files:"
           ls -la holdings_manual_input.csv trade_log_manual_input.csv || true
-          echo "Legacy Korean input files, ignored if English files exist:"
-          ls -la 보유종목_수동입력.csv 매매기록_수동입력.csv || true
+          echo "NAVER_CLIENT_ID: ${NAVER_CLIENT_ID:+OK}"
+          echo "NAVER_CLIENT_SECRET: ${NAVER_CLIENT_SECRET:+OK}"
+          echo "GEMINI_API_KEY: ${GEMINI_API_KEY:+OK}"
+          echo "GEMINI_MODEL: ${GEMINI_MODEL}"
+          echo "TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:+OK}"
+          echo "TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:+OK}"
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -90,7 +65,7 @@ jobs:
 
       - name: Hotfix source notebook before runtime copy
         run: |
-          python automation/scripts/hotfix_v102_series_or.py "$NOTEBOOK_FILE"
+          if [ -f automation/scripts/hotfix_v102_series_or.py ]; then python automation/scripts/hotfix_v102_series_or.py "$NOTEBOOK_FILE"; else echo "hotfix_v102_series_or.py not found; skip"; fi
 
       - name: Prepare runtime notebook
         run: |
@@ -98,76 +73,68 @@ jobs:
 
       - name: Hotfix runtime notebook before execute
         run: |
-          python automation/scripts/hotfix_v102_series_or.py "_runtime_report.ipynb"
+          if [ -f automation/scripts/hotfix_v102_series_or.py ]; then python automation/scripts/hotfix_v102_series_or.py "_runtime_report.ipynb"; else echo "hotfix_v102_series_or.py not found; skip"; fi
 
       - name: Run report notebook
         run: |
           jupyter nbconvert --to notebook --execute "_runtime_report.ipynb" --output executed_report.ipynb --ExecutePreprocessor.timeout=5400
 
-      - name: Add Naver news summary
+      - name: Add Naver news summary to briefing
         run: |
-          python automation/scripts/add_naver_news_summary.py
+          if [ -f automation/scripts/add_naver_news_summary.py ]; then python automation/scripts/add_naver_news_summary.py; else echo "add_naver_news_summary.py not found; skip"; fi
 
-      - name: Update holdings and trade log sheets
+      - name: Update holdings report
         run: |
-          python automation/scripts/update_holdings_report.py
+          if [ -f automation/scripts/update_holdings_report.py ]; then python automation/scripts/update_holdings_report.py; else echo "update_holdings_report.py not found; skip"; fi
 
       - name: Rebuild clean HTML briefing report
         run: |
-          python automation/scripts/rebuild_clean_html_report.py
+          if [ -f automation/scripts/rebuild_clean_html_report.py ]; then python automation/scripts/rebuild_clean_html_report.py; else echo "rebuild_clean_html_report.py not found; skip"; fi
 
       - name: Build v11 performance and holdings decision dashboard
         run: |
-          if [ -f automation/scripts/build_v11_performance_holding_dashboard.py ]; then
-            python automation/scripts/build_v11_performance_holding_dashboard.py
-          else
-            echo "skip: build_v11_performance_holding_dashboard.py not found"
-          fi
+          if [ -f automation/scripts/build_v11_performance_holding_dashboard.py ]; then python automation/scripts/build_v11_performance_holding_dashboard.py; else echo "build_v11_performance_holding_dashboard.py not found; skip"; fi
 
       - name: Build v11.2 deep holdings analysis
         run: |
-          if [ -f automation/scripts/build_v11_2_deep_holding_analysis.py ]; then
-            python automation/scripts/build_v11_2_deep_holding_analysis.py
-          else
-            echo "skip: build_v11_2_deep_holding_analysis.py not found"
-          fi
+          if [ -f automation/scripts/build_v11_2_deep_holding_analysis.py ]; then python automation/scripts/build_v11_2_deep_holding_analysis.py; else echo "build_v11_2_deep_holding_analysis.py not found; skip"; fi
 
       - name: Build v11.3 detail HTML and workbook cleanup
         run: |
-          if [ -f automation/scripts/build_v11_3_detail_html_and_cleanup.py ]; then
-            python automation/scripts/build_v11_3_detail_html_and_cleanup.py
-          else
-            echo "skip: build_v11_3_detail_html_and_cleanup.py not found"
-          fi
+          if [ -f automation/scripts/build_v11_3_detail_html_and_cleanup.py ]; then python automation/scripts/build_v11_3_detail_html_and_cleanup.py; else echo "build_v11_3_detail_html_and_cleanup.py not found; skip"; fi
 
       - name: Build v11.4 recommendation strategy validation
         run: |
-          if [ -f automation/scripts/build_v11_4_strategy_validation.py ]; then
-            python automation/scripts/build_v11_4_strategy_validation.py
-          else
-            echo "skip: build_v11_4_strategy_validation.py not found"
-          fi
+          if [ -f automation/scripts/build_v11_4_strategy_validation.py ]; then python automation/scripts/build_v11_4_strategy_validation.py; else echo "build_v11_4_strategy_validation.py not found; skip"; fi
 
-      - name: Ensure holding deep CSV exports
+      - name: Fetch REAL holding current prices and REAL Naver news detail
         run: |
-          python automation/scripts/ensure_holding_deep_exports.py
+          python automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py
 
-      - name: Archive AM/PM session report
+      - name: Build Gemini 3.5 Flash holding AI briefing
         run: |
-          python automation/scripts/archive_session_report.py
+          python automation/scripts/build_gemini_holding_ai_briefing.py
 
-      - name: Publish mobile latest pages and Google Sheets CSV
+      - name: Rebuild clean latest dashboard from current data
         run: |
-          if [ -f automation/scripts/publish_mobile_and_sheets.py ]; then
-            python automation/scripts/publish_mobile_and_sheets.py
-          else
-            echo "skip: publish_mobile_and_sheets.py not found"
-          fi
+          python automation/scripts/force_refresh_latest.py
 
       - name: Commit generated report
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs stock_report *.xlsx *.zip executed_report.ipynb recommendation_tracking.csv || true
-          git commit -m "Update daily stock report" || echo "No changes to commit"
-          git push || true
+          echo "Changed files before staging:"
+          git status --short
+          git add -A docs || true
+          git add -A stock_report || true
+          for f in *.xlsx *.zip executed_report.ipynb recommendation_tracking.csv; do
+            if [ -e "$f" ]; then git add "$f"; fi
+          done
+          echo "Staged files:"
+          git diff --cached --name-status || true
+          if git diff --cached --quiet; then echo "No staged changes to commit"; else git commit -m "Update daily stock report"; git push; fi
+
+      - name: Send Telegram report alert
+        if: always()
+        run: |
+          python automation/scripts/send_telegram_report_alert.py

@@ -1,0 +1,12 @@
+OK: .github/workflows/daily-report.yml :: GEMINI_MODEL: gemini-3.5-flash
+OK: .github/workflows/daily-report.yml :: Rebuild clean latest dashboard from current data
+OK: .github/workflows/daily-report.yml :: Build Gemini 3.5 Flash holding AI briefing
+OK: .github/workflows/daily-report.yml :: HOLDINGS_CSV_FILE: holdings_manual_input.csv
+OK: automation/scripts/force_refresh_latest.py :: clean latest dashboard rebuilt from current CSV data
+OK: automation/scripts/force_refresh_latest.py :: latest_holding_deep_analysis.csv
+OK: automation/scripts/force_refresh_latest.py :: latest_holding_ai_briefing.csv
+OK: automation/scripts/build_gemini_holding_ai_briefing.py :: gemini-3.5-flash
+OK: automation/scripts/build_gemini_holding_ai_briefing.py :: gemini-2.5-flash
+OK: automation/scripts/build_gemini_holding_ai_briefing.py :: gemini-2.5-flash-lite
+OK: automation/scripts/build_gemini_holding_ai_briefing.py :: latest_holding_ai_briefing.csv
+ALL_OK=True
