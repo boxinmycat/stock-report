@@ -1,17 +1,26 @@
-OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py :: link_html =
-OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py :: latest_holding_current_prices.csv
-OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py :: latest_news_detail.csv
-OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py :: REAL holding current prices fetched from Naver Finance
-OK: .github/workflows/daily-report.yml :: Build recommendation candidate analysis
-OK: .github/workflows/daily-report.yml :: Publish Excel download files
-OK: .github/workflows/daily-report.yml :: Build Gemini 3.5 Flash holding AI briefing
-
-OK: automation/scripts/build_gemini_holding_ai_briefing.py
-OK: automation/scripts/build_recommendation_analysis.py
-OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py
-OK: automation/scripts/force_refresh_latest.py
-OK: automation/scripts/publish_excel_downloads.py
-OK: automation/scripts/send_telegram_report_alert.py
+OK: .github/workflows/daily-report.yml :: Restore legacy Excel report sections
+OK: .github/workflows/daily-report.yml :: python automation/scripts/publish_legacy_excel_sections.py
+OK: automation/scripts/publish_legacy_excel_sections.py :: 모바일_대시보드
+OK: automation/scripts/publish_legacy_excel_sections.py :: TOP후보_요약
+OK: automation/scripts/publish_legacy_excel_sections.py :: 추천 리스트
+OK: automation/scripts/publish_legacy_excel_sections.py :: 진입시나리오
+OK: automation/scripts/publish_legacy_excel_sections.py :: 진입가이드_요약
+OK: automation/scripts/publish_legacy_excel_sections.py :: 연속추천_관찰
+OK: automation/scripts/publish_legacy_excel_sections.py :: legacy_top15.html
+OK: automation/scripts/publish_legacy_excel_sections.py :: latest_recommendation_top15_full.csv
+OK: automation/scripts/force_refresh_latest.py :: 기존 엑셀 데이터 복원 상태
+OK: automation/scripts/force_refresh_latest.py :: 추천 종목
+OK: automation/scripts/force_refresh_latest.py :: 추천 TOP15
+OK: automation/scripts/force_refresh_latest.py :: 전체 추천 명단
+OK: automation/scripts/force_refresh_latest.py :: 진입 시나리오
+OK: automation/scripts/force_refresh_latest.py :: 전략 추천/검증
+OK: automation/scripts/force_refresh_latest.py :: legacy_excel_restore_v12_2_8
+OK: automation/scripts/send_telegram_report_alert.py :: legacy_top15.html
+OK: automation/scripts/send_telegram_report_alert.py :: legacy_full_recommendations.html
+OK: automation/scripts/send_telegram_report_alert.py :: legacy_entry_scenario.html
+OK: automation/scripts/publish_legacy_excel_sections.py py_compile
+OK: automation/scripts/force_refresh_latest.py py_compile
+OK: automation/scripts/send_telegram_report_alert.py py_compile
 ALL_CHECKS_OK=True
 ALL_COMPILE_OK=True
 ALL_OK=True

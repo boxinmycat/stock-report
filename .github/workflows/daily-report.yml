@@ -105,6 +105,10 @@ jobs:
         run: |
           python automation/scripts/build_recommendation_analysis.py
 
+      - name: Restore legacy Excel report sections
+        run: |
+          python automation/scripts/publish_legacy_excel_sections.py
+
       - name: Build Gemini 3.5 Flash holding AI briefing
         if: github.event_name == 'workflow_dispatch' || github.event.schedule == '5 16 * * 1-5'
         run: |
