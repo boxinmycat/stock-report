@@ -1,5 +1,5 @@
 ﻿stock_name,stock_code,decision,take_profit_1,take_profit_2,stop_loss,sell_guide,price_match_status
-금호타이어,073240,STOP_WATCH,5254.2,5594.75,4524.45,"습관형 손절권. 물타기 금지, 손실 확대 방지 우선.",naver_finance
+금호타이어,073240,HOLD,5254.2,5594.75,4524.45,보유 유지. 뉴스·거래량·추천 재등장 여부 확인.,naver_finance
 대창솔루션,096350,STOP_WATCH,3024.0,3220.0,2604.0,"습관형 손절권. 물타기 금지, 손실 확대 방지 우선.",naver_finance
 대한해운,005880,STOP_WATCH,2720.52,2896.85,2342.67,"습관형 손절권. 물타기 금지, 손실 확대 방지 우선.",naver_finance
 에코플라스틱,038110,STOP_WATCH,4050.0,4312.5,3487.5,"습관형 손절권. 물타기 금지, 손실 확대 방지 우선.",naver_finance
