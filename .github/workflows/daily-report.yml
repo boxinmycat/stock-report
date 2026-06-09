@@ -2,10 +2,10 @@ name: daily-stock-report
 
 on:
   schedule:
-    - cron: '35 8 * * 1-5'
-      timezone: 'Asia/Seoul'
-    - cron: '5 16 * * 1-5'
-      timezone: 'Asia/Seoul'
+    # 08:30 KST, Monday-Friday = 23:30 UTC, Sunday-Thursday
+    - cron: '30 23 * * 0-4'
+    # 16:05 KST, Monday-Friday = 07:05 UTC, Monday-Friday
+    - cron: '5 7 * * 1-5'
   workflow_dispatch:
 
 permissions:
@@ -105,8 +105,12 @@ jobs:
         run: |
           python automation/scripts/build_recommendation_analysis.py
 
+      - name: Restore legacy Excel report sections
+        run: |
+          python automation/scripts/publish_legacy_excel_sections.py
+
       - name: Build Gemini 3.5 Flash holding AI briefing
-        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '5 16 * * 1-5'
+        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '5 7 * * 1-5'
         run: |
           python automation/scripts/build_gemini_holding_ai_briefing.py
 

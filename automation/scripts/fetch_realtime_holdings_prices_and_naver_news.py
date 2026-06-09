@@ -14,6 +14,13 @@ import urllib.request
 import urllib.error
 import pandas as pd
 
+try:
+    from stock_news_disambiguation import build_news_queries, strip_html
+except Exception:
+    build_news_queries = None
+    def strip_html(x):
+        return re.sub(r"<.*?>", "", html.unescape(str(x or "").strip()))
+
 KST = timezone(timedelta(hours=9))
 
 
@@ -405,7 +412,7 @@ th{{background:#f3f4f6}}
 
 
 def strip_html_tags(value) -> str:
-    return re.sub(r"<.*?>", "", html.unescape(norm_text(value)))
+    return strip_html(norm_text(value))
 
 
 def load_news_queries() -> list[str]:
@@ -413,13 +420,26 @@ def load_news_queries() -> list[str]:
 
     holdings, _ = load_holdings()
     if not holdings.empty:
-        queries.extend([norm_text(x) for x in holdings["stock_name"].head(8).tolist() if norm_text(x)])
+        for _, hrow in holdings.head(8).iterrows():
+            hname = norm_text(hrow.get("stock_name"))
+            hcode = normalize_code(hrow.get("stock_code"))
+            if build_news_queries:
+                queries.extend(build_news_queries(hname, hcode))
+            elif hname:
+                queries.append(hname)
 
     candidates = read_csv_safely(Path("docs/data/latest_candidates.csv"))
     if not candidates.empty:
         name_col = find_col(candidates, ["stock_name", "종목명", "name"])
         if name_col:
-            queries.extend([norm_text(x) for x in candidates[name_col].head(8).tolist() if norm_text(x)])
+            for _, crow in candidates.head(8).iterrows():
+                cname = norm_text(crow.get(name_col))
+                ccode_col = find_col(candidates, ["stock_code", "종목코드", "code", "ticker"])
+                ccode = normalize_code(crow.get(ccode_col)) if ccode_col else ""
+                if build_news_queries:
+                    queries.extend(build_news_queries(cname, ccode))
+                elif cname:
+                    queries.append(cname)
 
     seen = set()
     result = []
@@ -555,7 +575,7 @@ def build_news_outputs() -> None:
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>네이버뉴스 상세</title>
+<title>주요 뉴스 요약</title>
 <style>
 body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f6f7fb;margin:0;color:#111827}}
 .wrap{{max-width:900px;margin:auto;padding:20px}}
@@ -570,9 +590,9 @@ a{{color:#2563eb;font-weight:700;text-decoration:none}}
 <body>
 <main class="wrap">
 <section class="hero">
-<h1>네이버뉴스 상세</h1>
+<h1>주요 뉴스 요약</h1>
 <p>갱신: {html.escape(now_kst())}</p>
-<p>API 직접 호출 결과 기준</p>
+<p>API 직접 호출 결과 기준입니다. 상단 요약은 별도 legacy 복원 단계에서 최신 뉴스 제목을 기반으로 생성됩니다.</p>
 </section>
 {''.join(cards)}
 </main>

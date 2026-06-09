@@ -1,17 +1,27 @@
-OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py :: link_html =
-OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py :: latest_holding_current_prices.csv
-OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py :: latest_news_detail.csv
-OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py :: REAL holding current prices fetched from Naver Finance
-OK: .github/workflows/daily-report.yml :: Build recommendation candidate analysis
-OK: .github/workflows/daily-report.yml :: Publish Excel download files
-OK: .github/workflows/daily-report.yml :: Build Gemini 3.5 Flash holding AI briefing
-
-OK: automation/scripts/build_gemini_holding_ai_briefing.py
-OK: automation/scripts/build_recommendation_analysis.py
-OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py
-OK: automation/scripts/force_refresh_latest.py
-OK: automation/scripts/publish_excel_downloads.py
-OK: automation/scripts/send_telegram_report_alert.py
+OK: .github/workflows/daily-report.yml :: 30 23 * * 0-4
+OK: .github/workflows/daily-report.yml :: 5 7 * * 1-5
+OK: .github/workflows/daily-report.yml :: github.event.schedule == '5 7 * * 1-5'
+OK: automation/scripts/stock_news_disambiguation.py :: ETF_DETAIL_MAP
+OK: automation/scripts/stock_news_disambiguation.py :: etf_detail
+OK: automation/scripts/stock_news_disambiguation.py :: company_detail
+OK: automation/scripts/stock_news_disambiguation.py :: stock_basic_info
+OK: automation/scripts/publish_legacy_excel_sections.py :: format_tp_plan
+OK: automation/scripts/publish_legacy_excel_sections.py :: legacy_candidate_dashboard_validation.html
+OK: automation/scripts/publish_legacy_excel_sections.py :: 430px
+OK: automation/scripts/force_refresh_latest.py :: fmt_tp
+OK: automation/scripts/force_refresh_latest.py :: dashboard_validation_section
+OK: automation/scripts/force_refresh_latest.py :: url=../mobile/
+OK: automation/scripts/force_refresh_latest.py :: unified_home_v12_2_12
+OK: automation/scripts/publish_excel_downloads.py :: 최근 원본 백업
+OK: automation/scripts/publish_excel_downloads.py :: 최신 전체 엑셀 1개
+OK: automation/scripts/build_gemini_holding_ai_briefing.py ast_parse
+OK: automation/scripts/build_recommendation_analysis.py ast_parse
+OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py ast_parse
+OK: automation/scripts/force_refresh_latest.py ast_parse
+OK: automation/scripts/publish_excel_downloads.py ast_parse
+OK: automation/scripts/publish_legacy_excel_sections.py ast_parse
+OK: automation/scripts/send_telegram_report_alert.py ast_parse
+OK: automation/scripts/stock_news_disambiguation.py ast_parse
 ALL_CHECKS_OK=True
-ALL_COMPILE_OK=True
+ALL_PARSE_OK=True
 ALL_OK=True

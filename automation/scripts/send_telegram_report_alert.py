@@ -55,8 +55,17 @@ def msg():
 모바일 홈:
 https://boxinmycat.github.io/stock-report/mobile/
 
-최신 리포트:
-https://boxinmycat.github.io/stock-report/latest/
+통합 홈:
+https://boxinmycat.github.io/stock-report/mobile/
+
+추천 TOP15:
+https://boxinmycat.github.io/stock-report/details/legacy_top15.html
+
+전체 추천 명단:
+https://boxinmycat.github.io/stock-report/details/legacy_full_recommendations.html
+
+진입 시나리오:
+https://boxinmycat.github.io/stock-report/details/legacy_entry_scenario.html
 
 추천 종목 분석:
 https://boxinmycat.github.io/stock-report/details/recommendation_analysis.html
@@ -73,7 +82,7 @@ https://boxinmycat.github.io/stock-report/details/holding_ai_briefing.html
 보유종목:
 https://boxinmycat.github.io/stock-report/v11_holdings/
 
-뉴스상세:
+주요 뉴스 요약:
 https://boxinmycat.github.io/stock-report/details/naver_news.html
 """
 

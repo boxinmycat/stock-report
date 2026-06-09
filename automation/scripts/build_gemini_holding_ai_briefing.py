@@ -5,6 +5,11 @@ from pathlib import Path
 from datetime import datetime, timezone, timedelta
 import html, json, os, re, time, urllib.parse, urllib.request, urllib.error
 import pandas as pd
+
+try:
+    from stock_news_disambiguation import filter_and_rank_news
+except Exception:
+    filter_and_rank_news = None
 KST=timezone(timedelta(hours=9))
 def now(): return datetime.now(KST).strftime('%Y-%m-%d %H:%M:%S KST')
 def read(p):
@@ -27,13 +32,23 @@ def get(row,*names):
         if k and s(row.get(k)): return s(row.get(k))
     return ''
 def clean(x): return re.sub(r'<.*?>','',html.unescape(s(x)))
+NEWS_BLACKLIST={'태웅':['태웅식품','태웅로직스','태웅푸드']}
+def strict_stock_news_match(text,name):
+    if not name or name not in text: return False
+    if any(bad in text for bad in NEWS_BLACKLIST.get(name,[])): return False
+    for suffix in ['식품','푸드','로직스','바이오','제약']:
+        if len(name)<=3 and name+suffix in text: return False
+    return True
 def related(news,name,limit=5):
     if news.empty or not name: return []
     rows=[]; toks=[t for t in re.split(r'[\s/·,_-]+',name) if len(t)>=3]
     for _,r in news.iterrows():
         txt=' '.join([get(r,'query','검색어'),clean(get(r,'title','제목')),clean(get(r,'description','요약','본문'))]); score=0
-        if get(r,'query','검색어')==name: score+=10
-        if name in txt: score+=6
+        q=get(r,'query','검색어')
+        if any(bad in txt for bad in NEWS_BLACKLIST.get(name,[])): continue
+        if q!=name and not strict_stock_news_match(txt,name): continue
+        if q==name: score+=10
+        if strict_stock_news_match(txt,name): score+=6
         score += sum(1 for t in toks if t in txt)
         if score>0: rows.append((score,{'title':clean(get(r,'title','제목')) or '제목 없음','description':clean(get(r,'description','요약','본문')),'link':get(r,'link','링크'),'pubDate':get(r,'pubDate','날짜')}))
     rows.sort(key=lambda x:x[0],reverse=True)
@@ -119,8 +134,25 @@ def build():
         row={'stock_name':name,'stock_code':get(h,'stock_code','종목코드'),'decision':dec,'current_price':get(h,'current_price','현재가'),'avg_price':get(h,'avg_price','평균단가'),'pnl_pct':pnl,'price_source':get(h,'current_price_source','price_source'),'checked_at':now(),**out}
         for i,x in enumerate(links,1):
             row[f'news_title_{i}']=x['title']; row[f'news_link_{i}']=x['link']; row[f'news_desc_{i}']=x['description']
-        rows.append(row); time.sleep(0.2)
-        news_li=''.join([f"<li><b>{html.escape(x['title'])}</b><br><span>{html.escape(x['description'][:220])}</span><br>{('<a href="'+html.escape(x['link'])+'" target="_blank" rel="noopener">기사 보기</a>') if x['link'] else ''}</li>" for x in links]) or '<li>연결된 상세 뉴스가 충분하지 않습니다.</li>'
+        rows.append(row)
+        time.sleep(0.2)
+        news_items = []
+        for x in links:
+            title_html = html.escape(str(x.get('title', '')))
+            desc_html = html.escape(str(x.get('description', ''))[:220])
+            link = str(x.get('link', '') or '').strip()
+            if link:
+                link_html = f'<a href="{html.escape(link)}" target="_blank" rel="noopener">기사 보기</a>'
+            else:
+                link_html = ''
+            news_items.append(
+                '<li>'
+                f'<b>{title_html}</b><br>'
+                f'<span>{desc_html}</span><br>'
+                f'{link_html}'
+                '</li>'
+            )
+        news_li = ''.join(news_items) or '<li>연결된 상세 뉴스가 충분하지 않습니다.</li>'
         cards += f"""<article class='card'><div class='head'><h2>{html.escape(name)}</h2><span>{html.escape(out.get('ai_sentiment','중립'))} · {html.escape(out.get('ai_confidence',''))}</span></div><div class='meta'>판단 {html.escape(dec)} · 현재가 {html.escape(row['current_price'])} · 평균단가 {html.escape(row['avg_price'])} · 손익률 {html.escape(pnl)}% · AI상태 {html.escape(out.get('ai_status',''))}</div><section><h3>AI 이슈 브리핑</h3><p>{html.escape(out.get('ai_issue_summary',''))}</p></section><section><h3>긍정 포인트</h3><p>{html.escape(out.get('ai_positive_points',''))}</p></section><section><h3>리스크 포인트</h3><p>{html.escape(out.get('ai_risk_points',''))}</p></section><section><h3>가격·보유 관점</h3><p>{html.escape(out.get('ai_price_context',''))}</p></section><section><h3>대응 가이드</h3><p>{html.escape(out.get('ai_action_guide',''))}</p></section><section><h3>3줄 요약</h3><pre>{html.escape(out.get('ai_three_line_summary',''))}</pre></section><section><h3>관련 뉴스 링크</h3><ul>{news_li}</ul></section><p class='caution'>{html.escape(out.get('ai_caution','투자 판단 보조용입니다.'))}</p></article>"""
     df=pd.DataFrame(rows); write(df,'docs/data/latest_holding_ai_briefing.csv'); write(df,'docs/data/latest_holding_issue_analysis.csv')
     Path('docs/details').mkdir(parents=True,exist_ok=True)

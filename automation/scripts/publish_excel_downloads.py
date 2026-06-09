@@ -85,7 +85,7 @@ a{{color:#2563eb}}
 <main class="wrap">
 <section class="hero">
 <h1>엑셀/상세파일 다운로드</h1>
-<p>갱신: {html.escape(now())}<br>모바일에서는 바로 열리지 않을 수 있으니, 다운로드 후 Excel·Numbers·Google Sheets 앱으로 열면 됩니다.</p>
+<p>갱신: {html.escape(now())}<br>최신 전체 엑셀 1개를 기본으로 제공합니다. 아래 백업 파일은 원본 후보/이전 산출물 확인용이며, 보통은 최신 전체 엑셀만 받으면 됩니다.</p>
 </section>
 <section class="grid">
 {links}
@@ -119,12 +119,12 @@ def main():
             "published_at": now(),
         })
 
-        for i, src in enumerate(xlsx_files[:5], start=1):
+        for i, src in enumerate(xlsx_files[1:5], start=1):
             dst_name = f"stock_report_{i}_{safe_name(src.name)}.xlsx"
             dst = downloads / dst_name
             shutil.copy2(src, dst)
             rows.append({
-                "label": f"상세 엑셀 파일 {i}",
+                "label": f"최근 원본 백업 {i}",
                 "filename": dst.name,
                 "url": f"./{dst.name}",
                 "source": src.as_posix(),
