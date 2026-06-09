@@ -49,6 +49,10 @@ jobs:
           echo "GEMINI_API_KEY: ${GEMINI_API_KEY:+OK}"
           echo "GEMINI_MODEL: ${GEMINI_MODEL}"
 
+      - name: Write workflow run diagnostics
+        run: |
+          python automation/scripts/write_workflow_diagnostics.py
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -137,6 +141,11 @@ jobs:
       - name: Force refresh latest and mobile pages
         run: |
           python automation/scripts/force_refresh_latest.py
+
+      - name: Apply v12.2.13 UI and info refinements
+        run: |
+          python automation/scripts/apply_v12_2_13_ui_refinements.py
+
 
       - name: Commit generated report
         run: |

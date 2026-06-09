@@ -1,19 +1,15 @@
 OK: .github/workflows/daily-report.yml :: 30 23 * * 0-4
 OK: .github/workflows/daily-report.yml :: 5 7 * * 1-5
-OK: .github/workflows/daily-report.yml :: github.event.schedule == '5 7 * * 1-5'
-OK: automation/scripts/stock_news_disambiguation.py :: ETF_DETAIL_MAP
-OK: automation/scripts/stock_news_disambiguation.py :: etf_detail
-OK: automation/scripts/stock_news_disambiguation.py :: company_detail
-OK: automation/scripts/stock_news_disambiguation.py :: stock_basic_info
-OK: automation/scripts/publish_legacy_excel_sections.py :: format_tp_plan
-OK: automation/scripts/publish_legacy_excel_sections.py :: legacy_candidate_dashboard_validation.html
-OK: automation/scripts/publish_legacy_excel_sections.py :: 430px
-OK: automation/scripts/force_refresh_latest.py :: fmt_tp
-OK: automation/scripts/force_refresh_latest.py :: dashboard_validation_section
-OK: automation/scripts/force_refresh_latest.py :: url=../mobile/
-OK: automation/scripts/force_refresh_latest.py :: unified_home_v12_2_12
-OK: automation/scripts/publish_excel_downloads.py :: 최근 원본 백업
-OK: automation/scripts/publish_excel_downloads.py :: 최신 전체 엑셀 1개
+OK: .github/workflows/daily-report.yml :: Write workflow run diagnostics
+OK: .github/workflows/daily-report.yml :: Apply v12.2.13 UI and info refinements
+OK: automation/scripts/write_workflow_diagnostics.py :: latest_workflow_diagnostics.csv
+OK: automation/scripts/write_workflow_diagnostics.py :: expected_am_kst
+OK: automation/scripts/write_workflow_diagnostics.py :: gemini_api_key_env
+OK: automation/scripts/apply_v12_2_13_ui_refinements.py :: better_stock_description
+OK: automation/scripts/apply_v12_2_13_ui_refinements.py :: fmt_sl
+OK: automation/scripts/apply_v12_2_13_ui_refinements.py :: news_page
+OK: automation/scripts/apply_v12_2_13_ui_refinements.py :: TIGER 미국배당다우존스
+OK: automation/scripts/apply_v12_2_13_ui_refinements.py ast_parse
 OK: automation/scripts/build_gemini_holding_ai_briefing.py ast_parse
 OK: automation/scripts/build_recommendation_analysis.py ast_parse
 OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py ast_parse
@@ -22,6 +18,8 @@ OK: automation/scripts/publish_excel_downloads.py ast_parse
 OK: automation/scripts/publish_legacy_excel_sections.py ast_parse
 OK: automation/scripts/send_telegram_report_alert.py ast_parse
 OK: automation/scripts/stock_news_disambiguation.py ast_parse
+OK: automation/scripts/write_workflow_diagnostics.py ast_parse
 ALL_CHECKS_OK=True
 ALL_PARSE_OK=True
 ALL_OK=True
+V12_2_14_SINGLE_HOME_TELEGRAM=OK

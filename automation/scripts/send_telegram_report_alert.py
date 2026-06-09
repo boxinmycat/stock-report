@@ -52,9 +52,6 @@ def msg():
 
 {brief()}
 
-모바일 홈:
-https://boxinmycat.github.io/stock-report/mobile/
-
 통합 홈:
 https://boxinmycat.github.io/stock-report/mobile/
 
