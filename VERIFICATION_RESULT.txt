@@ -1,12 +1,15 @@
-OK: .github/workflows/daily-report.yml :: cancel-in-progress: true
-OK: .github/workflows/daily-report.yml :: Cleanup oversized generated archives and duplicate report packages
+OK: .github/workflows/daily-report.yml :: # v12.2.15 invalid workflow fix
+OK: .github/workflows/daily-report.yml :: - cron: '0 23 * * 0-4'
+OK: .github/workflows/daily-report.yml :: - name: Commit generated report
+OK: .github/workflows/daily-report.yml :: - name: Send Telegram report alert
 OK: .github/workflows/daily-report.yml :: git pull --rebase --autostash origin main
-OK: .github/workflows/daily-report.yml :: git reset -- 'stock_report/**'
-OK: .github/workflows/daily-report.yml :: git reset -- '*.xlsx'
 OK: .github/workflows/daily-report.yml :: Push with remote rebase retry
-OK: .gitignore :: v12.2.14 generated report/package cleanup
 OK: .gitignore :: stock_report/reports/
 OK: .gitignore :: html_report_package_*.zip
-OK: .gitignore :: executed_report.ipynb
-OK: force_refresh_latest.py ast_parse
+OK: malformed string removed :: Commit generated report      - name: Commit generated report
+OK: malformed string removed :: Send Telegram report alert      - name: Send Telegram report alert
+OK: found - name: Commit generated report
+OK: found - name: Send Telegram report alert
+ALL_CHECKS_OK=True
+ALL_PARSE_OK=True
 ALL_OK=True
