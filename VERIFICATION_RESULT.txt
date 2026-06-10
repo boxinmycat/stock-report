@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 OK: .github/workflows/daily-report.yml :: cancel-in-progress: true
 OK: .github/workflows/daily-report.yml :: Cleanup oversized generated archives and duplicate report packages
 OK: .github/workflows/daily-report.yml :: git pull --rebase --autostash origin main
@@ -9,4 +10,29 @@ OK: .gitignore :: stock_report/reports/
 OK: .gitignore :: html_report_package_*.zip
 OK: .gitignore :: executed_report.ipynb
 OK: force_refresh_latest.py ast_parse
+=======
+OK: .github/workflows/daily-report.yml :: cron: '30 23 * * 0-4'
+OK: .github/workflows/daily-report.yml :: cron: '5 7 * * 1-5'
+OK: .github/workflows/daily-report.yml :: Cleanup oversized generated archives
+OK: .github/workflows/daily-report.yml :: Check Gemini API health
+OK: .github/workflows/daily-report.yml :: git reset -- '*.zip' '**/*.zip' || true
+OK: .github/workflows/daily-report.yml :: for f in *.xlsx executed_report.ipynb recommendation_tracking.csv; do
+OK: .gitignore :: *.zip
+OK: .gitignore :: html_report_package_*.zip
+OK: automation/scripts/check_gemini_api.py :: latest_gemini_health.csv
+OK: automation/scripts/check_gemini_api.py :: GEMINI_API_KEY
+OK: automation/scripts/check_gemini_api.py :: gemini-3.5-flash
+OK: automation/scripts/publish_legacy_excel_sections.py :: legacy_candidate_dashboard_validation.html
+OK: automation/scripts/build_gemini_holding_ai_briefing.py ast_parse
+OK: automation/scripts/build_recommendation_analysis.py ast_parse
+OK: automation/scripts/check_gemini_api.py ast_parse
+OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py ast_parse
+OK: automation/scripts/force_refresh_latest.py ast_parse
+OK: automation/scripts/publish_excel_downloads.py ast_parse
+OK: automation/scripts/publish_legacy_excel_sections.py ast_parse
+OK: automation/scripts/send_telegram_report_alert.py ast_parse
+OK: automation/scripts/stock_news_disambiguation.py ast_parse
+ALL_CHECKS_OK=True
+ALL_PARSE_OK=True
+>>>>>>> Stashed changes
 ALL_OK=True

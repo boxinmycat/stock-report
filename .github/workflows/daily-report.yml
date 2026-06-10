@@ -13,7 +13,11 @@ permissions:
 
 concurrency:
   group: daily-stock-report-${{ github.ref }}
+<<<<<<< Updated upstream
   cancel-in-progress: true
+=======
+  cancel-in-progress: false
+>>>>>>> Stashed changes
 
 jobs:
   build-report:
@@ -147,7 +151,18 @@ jobs:
         run: |
           python automation/scripts/force_refresh_latest.py
 
+<<<<<<< Updated upstream
       - name: Cleanup oversized generated archives and duplicate report packages
+=======
+      - name: Cleanup oversized generated archives
+        run: |
+          echo "Remove generated zip archives that cannot be pushed to GitHub."
+          find . -type f \( -name '*.zip' -o -name '*_automation_package_*.zip' -o -name 'html_report_package_*.zip' \) -print || true
+          find . -type f \( -name '*.zip' -o -name '*_automation_package_*.zip' -o -name 'html_report_package_*.zip' \) -delete || true
+          git rm --cached -r --ignore-unmatch '*.zip' '*_automation_package_*.zip' 'html_report_package_*.zip' || true
+
+      - name: Commit generated report
+>>>>>>> Stashed changes
         run: |
           echo "Remove generated zip archives and duplicate notebook package outputs before staging."
           find . -type f \( -name '*.zip' -o -name '*_automation_package_*.zip' -o -name 'html_report_package_*.zip' \) -print || true
@@ -185,20 +200,29 @@ jobs:
 
           # Stage only files actually needed for the published GitHub Pages site and lightweight data.
           git add -A docs || true
+<<<<<<< Updated upstream
           git add -A .github workflows automation .gitignore README*.md VERIFICATION_RESULT.txt || true
 
           # Keep root input/source files that are intentionally small and user-maintained.
           for f in holdings_manual_input.csv trade_log_manual_input.csv TOSS_수동후보.csv TOSS_수동후보_예시.csv requirements.txt; do
+=======
+          git add -A stock_report -- ':!stock_report/**/*.zip' || true
+          for f in *.xlsx executed_report.ipynb recommendation_tracking.csv; do
+>>>>>>> Stashed changes
             if [ -e "$f" ]; then
               git add "$f"
             fi
           done
+<<<<<<< Updated upstream
 
           # Never commit generated archives, notebooks, duplicated stock_report outputs, or root generated xlsx.
           git reset -- '*.zip' '**/*.zip' '*.ipynb' '**/*.ipynb' || true
           git reset -- 'stock_report/**' || true
           git reset -- '*.xlsx' || true
 
+=======
+          git reset -- '*.zip' '**/*.zip' || true
+>>>>>>> Stashed changes
           echo "Staged files:"
           git diff --cached --name-status || true
 

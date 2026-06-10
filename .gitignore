@@ -6,6 +6,7 @@ html_report_package_*.zip
 # Python/cache noise
 __pycache__/
 *.pyc
+<<<<<<< Updated upstream
 
 # v12.2.14 generated report/package cleanup
 *.zip
@@ -27,3 +28,5 @@ stock_report/**/*.ipynb
 
 # Avoid accidentally committing generated root daily Excel outputs
 실전매매_통합시스템_v9_7_5_4_KST최종저장일수정_*.xlsx
+=======
+>>>>>>> Stashed changes
