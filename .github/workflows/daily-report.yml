@@ -2,8 +2,8 @@ name: daily-stock-report
 
 on:
   schedule:
-    # 08:30 KST, Monday-Friday = 23:30 UTC, Sunday-Thursday
-    - cron: '30 23 * * 0-4'
+    # 08:00 KST, Monday-Friday = 23:00 UTC, Sunday-Thursday
+    - cron: '0 23 * * 0-4'
     # 16:05 KST, Monday-Friday = 07:05 UTC, Monday-Friday
     - cron: '5 7 * * 1-5'
   workflow_dispatch:
