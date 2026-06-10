@@ -1,0 +1,29 @@
+# Generated heavy archives from report automation
+*.zip
+*_automation_package_*.zip
+v9_9_automation_package_*.zip
+html_report_package_*.zip
+# Python/cache noise
+__pycache__/
+*.pyc
+
+# v12.2.14 generated report/package cleanup
+*.zip
+*_automation_package_*.zip
+html_report_package_*.zip
+*.ipynb
+_runtime_report.ipynb
+executed_report.ipynb
+
+# Duplicated notebook output trees; live GitHub Pages output is docs/
+stock_report/reports/
+stock_report/latest/
+stock_report/docs/
+stock_report/html/
+stock_report/downloads/
+stock_report/**/*.zip
+stock_report/**/*.xlsx
+stock_report/**/*.ipynb
+
+# Avoid accidentally committing generated root daily Excel outputs
+실전매매_통합시스템_v9_7_5_4_KST최종저장일수정_*.xlsx
