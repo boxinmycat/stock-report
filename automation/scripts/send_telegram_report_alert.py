@@ -41,6 +41,14 @@ def brief():
         out.append(f"- {r.get('stock_name','')}: {r.get('ai_sentiment','')} / {first}")
     return '\n'.join(out)
 
+
+def gemini_health_line():
+    rows = read('docs/data/latest_gemini_health.csv', 3)
+    if not rows:
+        return 'Gemini: health check not run in this session'
+    r = rows[0]
+    return f"Gemini: {r.get('status','')} / {r.get('model','')}"
+
 def msg():
     st=status()
     ss=(st.get('session') or 'MANUAL').upper()
@@ -51,6 +59,10 @@ def msg():
 세션: {ss}
 
 {brief()}
+{gemini_health_line()}
+
+모바일 홈:
+https://boxinmycat.github.io/stock-report/mobile/
 
 통합 홈:
 https://boxinmycat.github.io/stock-report/mobile/

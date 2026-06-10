@@ -11,6 +11,14 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: daily-stock-report-${{ github.ref }}
+<<<<<<< Updated upstream
+  cancel-in-progress: true
+=======
+  cancel-in-progress: false
+>>>>>>> Stashed changes
+
 jobs:
   build-report:
     runs-on: ubuntu-latest
@@ -48,10 +56,6 @@ jobs:
           echo "TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:+OK}"
           echo "GEMINI_API_KEY: ${GEMINI_API_KEY:+OK}"
           echo "GEMINI_MODEL: ${GEMINI_MODEL}"
-
-      - name: Write workflow run diagnostics
-        run: |
-          python automation/scripts/write_workflow_diagnostics.py
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -113,6 +117,11 @@ jobs:
         run: |
           python automation/scripts/publish_legacy_excel_sections.py
 
+      - name: Check Gemini API health
+        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '5 7 * * 1-5'
+        run: |
+          python automation/scripts/check_gemini_api.py
+
       - name: Build Gemini 3.5 Flash holding AI briefing
         if: github.event_name == 'workflow_dispatch' || github.event.schedule == '5 7 * * 1-5'
         run: |
@@ -142,34 +151,108 @@ jobs:
         run: |
           python automation/scripts/force_refresh_latest.py
 
-      - name: Apply v12.2.13 UI and info refinements
+<<<<<<< Updated upstream
+      - name: Cleanup oversized generated archives and duplicate report packages
+=======
+      - name: Cleanup oversized generated archives
         run: |
-          python automation/scripts/apply_v12_2_13_ui_refinements.py
-
+          echo "Remove generated zip archives that cannot be pushed to GitHub."
+          find . -type f \( -name '*.zip' -o -name '*_automation_package_*.zip' -o -name 'html_report_package_*.zip' \) -print || true
+          find . -type f \( -name '*.zip' -o -name '*_automation_package_*.zip' -o -name 'html_report_package_*.zip' \) -delete || true
+          git rm --cached -r --ignore-unmatch '*.zip' '*_automation_package_*.zip' 'html_report_package_*.zip' || true
 
       - name: Commit generated report
+>>>>>>> Stashed changes
         run: |
+          echo "Remove generated zip archives and duplicate notebook package outputs before staging."
+          find . -type f \( -name '*.zip' -o -name '*_automation_package_*.zip' -o -name 'html_report_package_*.zip' \) -print || true
+          find . -type f \( -name '*.zip' -o -name '*_automation_package_*.zip' -o -name 'html_report_package_*.zip' \) -delete || true
+
+          # The notebook may create duplicated full report packages under stock_report/.
+          # The live site uses docs/, so do not commit generated stock_report output trees.
+          rm -rf stock_report/reports stock_report/latest stock_report/docs stock_report/html stock_report/downloads || true
+          find stock_report -type f \( -name '*.zip' -o -name '*.xlsx' -o -name '*.ipynb' \) -delete 2>/dev/null || true
+
+          # Remove any already tracked generated archive/package files from the index.
+          git rm --cached -r --ignore-unmatch '*.zip' '**/*.zip' || true
+          git rm --cached -r --ignore-unmatch stock_report/reports stock_report/latest stock_report/docs stock_report/html stock_report/downloads || true
+
+      - name: Commit generated report      - name: Commit generated report
+        run: |
+          set -e
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          echo "Sync with remote before staging to avoid non-fast-forward push failures."
+          git fetch origin main
+          git pull --rebase --autostash origin main || {
+            echo "Rebase failed. Abort and continue with current generated files."
+            git rebase --abort || true
+          }
+
+          echo "Cleanup before staging."
+          find . -type f \( -name '*.zip' -o -name '*_automation_package_*.zip' -o -name 'html_report_package_*.zip' \) -delete || true
+          rm -rf stock_report/reports stock_report/latest stock_report/docs stock_report/html stock_report/downloads || true
+          find stock_report -type f \( -name '*.zip' -o -name '*.xlsx' -o -name '*.ipynb' \) -delete 2>/dev/null || true
+
           echo "Changed files before staging:"
           git status --short
+
+          # Stage only files actually needed for the published GitHub Pages site and lightweight data.
           git add -A docs || true
-          git add -A stock_report || true
-          for f in *.xlsx *.zip executed_report.ipynb recommendation_tracking.csv; do
+<<<<<<< Updated upstream
+          git add -A .github workflows automation .gitignore README*.md VERIFICATION_RESULT.txt || true
+
+          # Keep root input/source files that are intentionally small and user-maintained.
+          for f in holdings_manual_input.csv trade_log_manual_input.csv TOSS_수동후보.csv TOSS_수동후보_예시.csv requirements.txt; do
+=======
+          git add -A stock_report -- ':!stock_report/**/*.zip' || true
+          for f in *.xlsx executed_report.ipynb recommendation_tracking.csv; do
+>>>>>>> Stashed changes
             if [ -e "$f" ]; then
               git add "$f"
             fi
           done
+<<<<<<< Updated upstream
+
+          # Never commit generated archives, notebooks, duplicated stock_report outputs, or root generated xlsx.
+          git reset -- '*.zip' '**/*.zip' '*.ipynb' '**/*.ipynb' || true
+          git reset -- 'stock_report/**' || true
+          git reset -- '*.xlsx' || true
+
+=======
+          git reset -- '*.zip' '**/*.zip' || true
+>>>>>>> Stashed changes
           echo "Staged files:"
           git diff --cached --name-status || true
+
           if git diff --cached --quiet; then
             echo "No staged changes to commit"
-          else
-            git commit -m "Update daily stock report"
-            git push
+            exit 0
           fi
 
-      - name: Send Telegram report alert
+          git commit -m "Update daily stock report"
+
+          echo "Push with remote rebase retry."
+          for attempt in 1 2 3; do
+            echo "Push attempt $attempt"
+            if git push; then
+              echo "Push succeeded"
+              exit 0
+            fi
+            echo "Push failed. Fetch/rebase and retry."
+            git fetch origin main
+            git pull --rebase --autostash origin main || {
+              git rebase --abort || true
+              sleep 5
+            }
+            sleep 5
+          done
+
+          echo "Push failed after retries"
+          exit 1
+
+      - name: Send Telegram report alert      - name: Send Telegram report alert
         if: always()
         run: |
           python automation/scripts/send_telegram_report_alert.py

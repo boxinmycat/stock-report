@@ -309,7 +309,7 @@ def build_outputs():
         details/'legacy_candidate_dashboard_validation.html',
         '추천후보 대시보드 + 검증',
         f'원천 파일: {xlsx.as_posix()} · 추천후보 대시보드와 전략검증을 한 페이지로 묶었습니다.',
-        "<section class='box'><h2>추천후보 대시보드</h2>" + table_html(mobile_rows, max_rows=20) + '</section>' + build_strategy_summary(strategy_rows, perf_rows, account_rows, validation_rows)
+        "<section class='box'><h2>추천후보 대시보드</h2>" + table_html(mobile_rows, max_rows=20) + "</section>" + build_strategy_summary(strategy_rows, perf_rows, account_rows, validation_rows)
     )
 
     write_df(pd.DataFrame(status_rows), data/'latest_legacy_sections_status.csv')
