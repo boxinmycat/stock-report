@@ -1,12 +1,12 @@
 name: daily-stock-report
-# v12.2.15 invalid workflow fix
+# v12.2.17 PM 16:45 test schedule
 
 on:
   schedule:
     # 08:00 KST, Monday-Friday = 23:00 UTC, Sunday-Thursday
     - cron: '0 23 * * 0-4'
-    # 16:05 KST, Monday-Friday = 07:05 UTC, Monday-Friday
-    - cron: '5 7 * * 1-5'
+    # 16:45 KST, Monday-Friday = 07:45 UTC, Monday-Friday
+    - cron: '45 7 * * 1-5'
   workflow_dispatch:
 
 permissions:
@@ -115,12 +115,12 @@ jobs:
           python automation/scripts/publish_legacy_excel_sections.py
 
       - name: Check Gemini API health
-        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '5 7 * * 1-5'
+        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '45 7 * * 1-5'
         run: |
           python automation/scripts/check_gemini_api.py
 
       - name: Build Gemini 3.5 Flash holding AI briefing
-        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '5 7 * * 1-5'
+        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '45 7 * * 1-5'
         run: |
           python automation/scripts/build_gemini_holding_ai_briefing.py
 

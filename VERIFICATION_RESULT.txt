@@ -1,15 +1,18 @@
-OK: .github/workflows/daily-report.yml :: # v12.2.15 invalid workflow fix
+OK: .github/workflows/daily-report.yml :: # v12.2.17 PM 16:45 test schedule
 OK: .github/workflows/daily-report.yml :: - cron: '0 23 * * 0-4'
+OK: .github/workflows/daily-report.yml :: - cron: '45 7 * * 1-5'
+OK: .github/workflows/daily-report.yml :: github.event.schedule == '45 7 * * 1-5'
 OK: .github/workflows/daily-report.yml :: - name: Commit generated report
 OK: .github/workflows/daily-report.yml :: - name: Send Telegram report alert
 OK: .github/workflows/daily-report.yml :: git pull --rebase --autostash origin main
-OK: .github/workflows/daily-report.yml :: Push with remote rebase retry
 OK: .gitignore :: stock_report/reports/
 OK: .gitignore :: html_report_package_*.zip
-OK: malformed string removed :: Commit generated report      - name: Commit generated report
-OK: malformed string removed :: Send Telegram report alert      - name: Send Telegram report alert
-OK: found - name: Commit generated report
-OK: found - name: Send Telegram report alert
+OK: .gitignore :: executed_report.ipynb
+OK: removed/absent :: Commit generated report      - name: Commit generated report
+OK: removed/absent :: Send Telegram report alert      - name: Send Telegram report alert
+OK: removed/absent :: github.event.schedule == '30 8 * * 1-5'
+OK: removed/absent :: - cron: '30 8 * * 1-5'
+OK: removed/absent :: - cron: '5 7 * * 1-5'
 ALL_CHECKS_OK=True
 ALL_PARSE_OK=True
 ALL_OK=True
