@@ -1,18 +1,27 @@
-OK: .github/workflows/daily-report.yml :: # v12.2.17 PM 16:45 test schedule
-OK: .github/workflows/daily-report.yml :: - cron: '0 23 * * 0-4'
-OK: .github/workflows/daily-report.yml :: - cron: '45 7 * * 1-5'
-OK: .github/workflows/daily-report.yml :: github.event.schedule == '45 7 * * 1-5'
-OK: .github/workflows/daily-report.yml :: - name: Commit generated report
-OK: .github/workflows/daily-report.yml :: - name: Send Telegram report alert
-OK: .github/workflows/daily-report.yml :: git pull --rebase --autostash origin main
-OK: .gitignore :: stock_report/reports/
-OK: .gitignore :: html_report_package_*.zip
-OK: .gitignore :: executed_report.ipynb
-OK: removed/absent :: Commit generated report      - name: Commit generated report
-OK: removed/absent :: Send Telegram report alert      - name: Send Telegram report alert
-OK: removed/absent :: github.event.schedule == '30 8 * * 1-5'
-OK: removed/absent :: - cron: '30 8 * * 1-5'
-OK: removed/absent :: - cron: '5 7 * * 1-5'
+OK: automation/scripts/build_gemini_recommendation_company_profiles.py :: analysis_concept
+OK: automation/scripts/build_gemini_recommendation_company_profiles.py :: one_line_summary
+OK: automation/scripts/build_gemini_recommendation_company_profiles.py :: bull_points
+OK: automation/scripts/build_gemini_recommendation_company_profiles.py :: bear_points
+OK: automation/scripts/build_gemini_recommendation_company_profiles.py :: etf_or_business_details
+OK: automation/scripts/build_gemini_recommendation_company_profiles.py :: profile_text_for_display
+OK: automation/scripts/build_gemini_recommendation_company_profiles.py :: 현재가, 실전점수, 진입판정
+OK: automation/scripts/publish_legacy_excel_sections.py :: recommendation_profile_map
+OK: automation/scripts/publish_legacy_excel_sections.py :: latest_recommendation_company_profiles.csv
+OK: automation/scripts/publish_legacy_excel_sections.py :: profile_by.get(name)
+OK: .github/workflows/daily-report.yml :: Build Gemini recommendation company profiles
+OK: .github/workflows/daily-report.yml :: python automation/scripts/build_gemini_recommendation_company_profiles.py
+OK: .github/workflows/daily-report.yml :: - cron: '5 7 * * 1-5'
+OK: automation/scripts/build_gemini_holding_ai_briefing.py ast_parse
+OK: automation/scripts/build_gemini_recommendation_company_profiles.py ast_parse
+OK: automation/scripts/build_recommendation_analysis.py ast_parse
+OK: automation/scripts/check_gemini_api.py ast_parse
+OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py ast_parse
+OK: automation/scripts/force_refresh_latest.py ast_parse
+OK: automation/scripts/publish_excel_downloads.py ast_parse
+OK: automation/scripts/publish_legacy_excel_sections.py ast_parse
+OK: automation/scripts/send_telegram_report_alert.py ast_parse
+OK: automation/scripts/stock_news_disambiguation.py ast_parse
+OK: profile_to_text smoke
 ALL_CHECKS_OK=True
 ALL_PARSE_OK=True
 ALL_OK=True

@@ -15,9 +15,12 @@ import urllib.error
 import pandas as pd
 
 try:
-    from stock_news_disambiguation import build_news_queries, strip_html
+    from stock_news_disambiguation import build_news_queries, strip_html, extract_publisher, format_pubdate, news_quality_score
 except Exception:
     build_news_queries = None
+    extract_publisher = lambda link='', originallink='', raw='': ''
+    format_pubdate = lambda value: str(value or '')
+    news_quality_score = lambda title, description='', pubDate='', publisher='', link='', originallink='': (0, 'fallback')
     def strip_html(x):
         return re.sub(r"<.*?>", "", html.unescape(str(x or "").strip()))
 
@@ -541,13 +544,43 @@ def fetch_naver_news_detail() -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+
+def enrich_news_metadata(df: pd.DataFrame) -> pd.DataFrame:
+    if df.empty:
+        return df
+    rows = []
+    for _, r in df.iterrows():
+        row = dict(r)
+        link = norm_text(row.get("link"))
+        originallink = norm_text(row.get("originallink") or row.get("origin_link"))
+        pub_date = norm_text(row.get("pubDate") or row.get("published_at"))
+        title = strip_html_tags(row.get("title"))
+        desc = strip_html_tags(row.get("description"))
+        publisher = norm_text(row.get("publisher")) or extract_publisher(link, originallink)
+        qscore, qreason = news_quality_score(title, desc, pub_date, publisher, link, originallink)
+        row["title"] = title
+        row["description"] = desc
+        row["publisher"] = publisher
+        row["published_at"] = norm_text(row.get("published_at")) or format_pubdate(pub_date)
+        row["news_quality_score"] = qscore
+        row["news_quality_reason"] = qreason
+        rows.append(row)
+    return pd.DataFrame(rows)
+
 def build_news_outputs() -> None:
     news = fetch_naver_news_detail()
+    news = enrich_news_metadata(news)
     write_csv_safely(news, Path("docs/data/latest_news_detail.csv"))
 
     cards = []
     for _, row in news.head(120).iterrows():
-        query = html.escape(norm_text(row.get("query")))
+        meta_bits = [
+            norm_text(row.get("query")),
+            norm_text(row.get("publisher")),
+            norm_text(row.get("published_at") or row.get("pubDate")),
+            ("품질 " + norm_text(row.get("news_quality_score"))) if norm_text(row.get("news_quality_score")) else "",
+        ]
+        query = html.escape(" · ".join([x for x in meta_bits if x]))
         api_state = html.escape(norm_text(row.get("api_state")))
         title = html.escape(norm_text(row.get("title")) or "제목 없음")
         description = html.escape(norm_text(row.get("description")))
@@ -592,7 +625,7 @@ a{{color:#2563eb;font-weight:700;text-decoration:none}}
 <section class="hero">
 <h1>주요 뉴스 요약</h1>
 <p>갱신: {html.escape(now_kst())}</p>
-<p>API 직접 호출 결과 기준입니다. 상단 요약은 별도 legacy 복원 단계에서 최신 뉴스 제목을 기반으로 생성됩니다.</p>
+<p>API 직접 호출 결과 기준입니다. 기사 날짜·언론사·품질점수를 함께 표시하며, 오래된 단순 주가마감 기사는 우선순위를 낮춥니다.</p>
 </section>
 {''.join(cards)}
 </main>

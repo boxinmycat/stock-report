@@ -1,12 +1,12 @@
 name: daily-stock-report
-# v12.2.17 PM 16:45 test schedule
+# v12.2.20 PM 16:05 schedule
 
 on:
   schedule:
     # 08:00 KST, Monday-Friday = 23:00 UTC, Sunday-Thursday
     - cron: '0 23 * * 0-4'
-    # 16:45 KST, Monday-Friday = 07:45 UTC, Monday-Friday
-    - cron: '45 7 * * 1-5'
+    # 16:05 KST, Monday-Friday = 07:05 UTC, Monday-Friday
+    - cron: '5 7 * * 1-5'
   workflow_dispatch:
 
 permissions:
@@ -53,6 +53,69 @@ jobs:
           echo "TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:+OK}"
           echo "GEMINI_API_KEY: ${GEMINI_API_KEY:+OK}"
           echo "GEMINI_MODEL: ${GEMINI_MODEL}"
+
+      - name: Diagnose schedule input values
+        shell: bash
+        run: |
+          EVENT_NAME="${{ github.event_name }}"
+          EVENT_SCHEDULE="${{ github.event.schedule }}"
+          UTC_NOW="$(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          KST_NOW="$(TZ=Asia/Seoul date '+%Y-%m-%d %H:%M:%S KST')"
+          KST_HM="$(TZ=Asia/Seoul date '+%H:%M')"
+
+          REPORT_SESSION="MANUAL"
+          EXPECTED_KST="manual"
+          EXPECTED_KIND="manual"
+
+          if [ "$EVENT_NAME" = "schedule" ] && [ "$EVENT_SCHEDULE" = "0 23 * * 0-4" ]; then
+            REPORT_SESSION="AM"
+            EXPECTED_KST="08:00 KST"
+            EXPECTED_KIND="morning"
+          elif [ "$EVENT_NAME" = "schedule" ] && [ "$EVENT_SCHEDULE" = "5 7 * * 1-5" ]; then
+            REPORT_SESSION="PM_TEST"
+            EXPECTED_KST="16:05 KST"
+            EXPECTED_KIND="pm_test"
+          elif [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            REPORT_SESSION="MANUAL"
+            EXPECTED_KST="manual run"
+            EXPECTED_KIND="manual"
+          else
+            REPORT_SESSION="UNKNOWN"
+            EXPECTED_KST="unknown"
+            EXPECTED_KIND="unknown"
+          fi
+
+          echo "event_name: $EVENT_NAME"
+          echo "event_schedule: $EVENT_SCHEDULE"
+          echo "utc_now: $UTC_NOW"
+          echo "kst_now: $KST_NOW"
+          echo "kst_hm: $KST_HM"
+          echo "report_session: $REPORT_SESSION"
+          echo "expected_kst: $EXPECTED_KST"
+          echo "expected_kind: $EXPECTED_KIND"
+
+          echo "REPORT_SESSION=$REPORT_SESSION" >> "$GITHUB_ENV"
+          echo "REPORT_EVENT_NAME=$EVENT_NAME" >> "$GITHUB_ENV"
+          echo "REPORT_EVENT_SCHEDULE=$EVENT_SCHEDULE" >> "$GITHUB_ENV"
+          echo "REPORT_UTC_STARTED_AT=$UTC_NOW" >> "$GITHUB_ENV"
+          echo "REPORT_KST_STARTED_AT=$KST_NOW" >> "$GITHUB_ENV"
+          echo "REPORT_EXPECTED_KST=$EXPECTED_KST" >> "$GITHUB_ENV"
+          echo "REPORT_EXPECTED_KIND=$EXPECTED_KIND" >> "$GITHUB_ENV"
+
+          mkdir -p docs/data
+          {
+            echo "key,value"
+            echo "event_name,$EVENT_NAME"
+            echo "event_schedule,$EVENT_SCHEDULE"
+            echo "utc_started_at,$UTC_NOW"
+            echo "kst_started_at,$KST_NOW"
+            echo "kst_hm,$KST_HM"
+            echo "report_session,$REPORT_SESSION"
+            echo "expected_kst,$EXPECTED_KST"
+            echo "expected_kind,$EXPECTED_KIND"
+          } > docs/data/latest_schedule_diagnostics.csv
+
+
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -114,13 +177,17 @@ jobs:
         run: |
           python automation/scripts/publish_legacy_excel_sections.py
 
+      - name: Build Gemini recommendation company profiles
+        run: |
+          python automation/scripts/build_gemini_recommendation_company_profiles.py
+
       - name: Check Gemini API health
-        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '45 7 * * 1-5'
+        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '5 7 * * 1-5'
         run: |
           python automation/scripts/check_gemini_api.py
 
       - name: Build Gemini 3.5 Flash holding AI briefing
-        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '45 7 * * 1-5'
+        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '5 7 * * 1-5'
         run: |
           python automation/scripts/build_gemini_holding_ai_briefing.py
 

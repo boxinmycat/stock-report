@@ -6,7 +6,7 @@ from datetime import datetime, timezone, timedelta
 import csv, html, re, shutil
 import pandas as pd
 
-from stock_news_disambiguation import filter_and_rank_news, normalize_category as _normalize_category, stock_basic_info as _stock_basic_info
+from stock_news_disambiguation import filter_and_rank_news, normalize_category as _normalize_category, stock_basic_info as _stock_basic_info, extract_publisher, format_pubdate, news_quality_score
 
 KST = timezone(timedelta(hours=9))
 SHEET_MAP = {
@@ -191,15 +191,24 @@ def reorder_headers(rows, fixed_priority=None):
 
 def col_width_class(header):
     h = str(header)
-    if any(k in h for k in ['상세','가이드','메모','설명','사유','뉴스','계획']): return 'wide'
-    if any(k in h for k in ['종목명','섹터','분야','후보출처']): return 'mid'
-    return 'narrow'
+    if any(k in h for k in ["상세전략가이드", "전략요약"]):
+        return "xwide"
+    if any(k in h for k in ["상세", "가이드", "메모", "설명", "사유", "뉴스", "계획"]):
+        return "wide"
+    if any(k in h for k in ["종목명", "섹터", "분야", "후보출처"]):
+        return "mid"
+    return "narrow"
+
+def col_width_px(header):
+    cls = col_width_class(header)
+    return "760px" if cls == "xwide" else "520px" if cls == "wide" else "160px" if cls == "mid" else "96px"
 
 def table_html(rows, headers=None, max_rows=60):
     rows = rows[:max_rows]
-    if not rows: return "<p class='hint'>표시할 데이터가 없습니다.</p>"
+    if not rows:
+        return "<p class='hint'>표시할 데이터가 없습니다.</p>"
     headers = headers or reorder_headers(rows)
-    colgroup = ''.join(f"<col style='min-width:{'430px' if col_width_class(h)=='wide' else '150px' if col_width_class(h)=='mid' else '92px'};width:{'430px' if col_width_class(h)=='wide' else '150px' if col_width_class(h)=='mid' else '92px'}'>" for h in headers)
+    colgroup = ''.join(f"<col style='min-width:{col_width_px(h)};width:{col_width_px(h)}'>" for h in headers)
     th = ''.join(f"<th>{esc(h)}</th>" for h in headers)
     body = ''.join('<tr>' + ''.join(f"<td>{esc(r.get(h,''))}</td>" for h in headers) + '</tr>' for r in rows)
     return f"<div class='tablewrap'><table><colgroup>{colgroup}</colgroup><thead><tr>{th}</tr></thead><tbody>{body}</tbody></table></div>"
@@ -235,6 +244,72 @@ def format_sl_plan(raw):
         return ' / '.join(f"<b>{esc(v)}</b>" for v in vals)
     return esc(text)
 
+
+def compact_strategy_text(tp, sl):
+    tp_html = format_tp_plan(tp)
+    sl_html = format_sl_plan(sl)
+    return f"<div class='strategy-compact'><div><b>익절:</b> {tp_html}</div><div><b>손절:</b> {sl_html}</div></div>"
+
+def safe_price_text(v):
+    t = clean_value(v)
+    if not t: return "-"
+    try:
+        n = float(re.sub(r"[^\d.\-]", "", t))
+        return f"{n:,.0f}원"
+    except Exception:
+        return t
+
+def build_continuous_note():
+    return """<section class='box'><h2>연속추천 기준</h2>
+<p class='hint'>연속추천/추천횟수는 단순 실행 횟수로 보면 왜곡될 수 있습니다. 하루에 수동으로 여러 번 실행하면 같은 후보가 반복될 수 있으므로, 실전 해석은 <b>거래일 + 정기 세션 AM/PM 기준</b>으로 보는 것이 맞습니다.</p>
+<ul>
+<li>추천일수: 같은 날 여러 번 등장해도 1거래일로 해석합니다.</li>
+<li>추천횟수: 하루 최대 장전/장마감 2회까지만 유의미하게 봅니다.</li>
+<li>수동 실행: 테스트 성격이 강하므로 신뢰도 판단에서는 제외하거나 참고용으로만 봅니다.</li>
+</ul></section>"""
+
+def build_account_trade_examples(perf_rows, max_rows=12):
+    if not perf_rows: return ""
+    items = []
+    for r in perf_rows[:max_rows]:
+        name = pick(r, ['stock_name','종목명'])
+        rec = pick(r, ['recommend_price','추천가','매수가'])
+        latest = pick(r, ['latest_price','현재가','매도가'])
+        ret = pick(r, ['latest_return_pct','수익률','return_pct'])
+        mx = pick(r, ['max_observed_return_pct','최고수익률'])
+        date = pick(r, ['recommend_date','추천일'])
+        session = pick(r, ['session','세션'])
+        if not name: continue
+        items.append(f"<li><b>{esc(name)}</b> · {esc(date)} {esc(session)} · 매수기준 {esc(rec)} → 현재/매도기준 {esc(latest)} · 현재수익률 {esc(ret)} · 관찰최고 {esc(mx)}</li>")
+    if not items: return ""
+    return "<section class='box'><h2>백테스트 거래 요약</h2><p class='hint'>백테스트 결과에 영향을 준 추천 기록을 매매 사례처럼 풀어본 목록입니다.</p><ul>" + ''.join(items) + "</ul></section>"
+
+def build_top_strategy_rankings(strategy_rows, max_strategies=2):
+    if not strategy_rows: return ""
+    def fnum(v):
+        try: return float(re.sub(r"[^0-9.\-]", "", clean_value(v)) or 0)
+        except Exception: return 0
+    rows = list(strategy_rows)
+    rows.sort(key=lambda r: (fnum(pick(r,['수익률','return_pct','총수익률'])), fnum(pick(r,['승률','win_rate','승률(%)']))), reverse=True)
+    cards = []
+    for idx, r in enumerate(rows[:max_strategies], start=1):
+        name = pick(r,['종목명','stock_name']) or f"전략 {idx}"
+        tp = pick(r,['TP전략','익절전략','take_profit'])
+        sl = pick(r,['SL전략','손절전략','stop_loss'])
+        ret = pick(r,['수익률','return_pct','총수익률'])
+        win = pick(r,['승률','win_rate','승률(%)'])
+        mdd = pick(r,['MDD','mdd'])
+        cnt = pick(r,['거래횟수','trade_count'])
+        cards.append(f"<article class='card'><h3>{idx}순위 · {esc(name)}</h3><p>{compact_strategy_text(tp, sl)}</p><p class='meta'>수익률 {esc(ret)} · 승률 {esc(win)} · MDD {esc(mdd)} · 거래횟수 {esc(cnt)}</p></article>")
+    return "<section class='box'><h2>효과 상위 전략</h2><p class='hint'>전략 백테스트는 모든 행을 보는 것보다 성과가 좋은 전략 1~2순위를 먼저 보고, 어떤 익절/손절 조합이 유효했는지 확인하는 용도입니다.</p><div class='grid'>" + ''.join(cards) + "</div></section>"
+
+def news_meta(row):
+    pub = pick(row, ['publisher','언론사']) or extract_publisher(pick(row,['link','링크']), pick(row,['originallink','origin_link']))
+    dt = pick(row, ['published_at','pubDate','날짜'])
+    if dt and ',' in dt: dt = format_pubdate(dt)
+    parts = [x for x in [pub, dt] if x]
+    return " · ".join(parts)
+
 def build_top_cards(top_rows, entry_rows, guide_rows, news_rows):
     entry_by, guide_by = by_name(entry_rows), by_name(guide_rows, ['stock_name','종목명'])
     cards = ''
@@ -243,19 +318,34 @@ def build_top_cards(top_rows, entry_rows, guide_rows, news_rows):
         rank = pick(r, ['순위','rank']); sector = pick(r, ['섹터/분야','분야','sector']); score = pick(r, ['실전점수','점수','score','기본점수']); price = pick(r, ['현재가','current_price']); entry_decision = pick(r, ['진입판정','entry_action','entry_guide'])
         news = related_news(news_rows, name, 3)
         basic = stock_basic_info(name, sector, pick(g, ['entry_guide']) or entry_decision, price, score, entry_decision, news)
-        cards += f"""<article class="card"><h3>#{esc(rank)} {esc(name)}</h3><div class="meta">{esc(normalize_category(name, sector))} · 현재가 {esc(price)} · 실전점수 {esc(score)}</div><p>{esc(basic)}</p><p><span class="pill">{esc(entry_decision or '진입판정 확인')}</span></p><p><b>공격/기준/보수:</b> {esc(pick(e, ['공격진입가']))} / {esc(pick(e, ['기준진입가']))} / {esc(pick(e, ['보수진입가']))}</p><p><b>돌파/손절:</b> {esc(pick(e, ['돌파진입가']))} / {esc(pick(e, ['손절기준가']))}</p><p><b>익절:</b> {format_tp_plan(pick(r, ['익절계획']) or pick(g, ['take_profit_guide']))}<br><b>손절:</b> {format_sl_plan(pick(r, ['손절계획']) or pick(g, ['stop_loss_guide']))}</p></article>"""
+        cards += f"""<article class="card"><h3>#{esc(rank)} {esc(name)}</h3><div class="meta">{esc(normalize_category(name, sector))} · 현재가 {esc(price)} · 실전점수 {esc(score)} · {esc(entry_decision or '진입판정 확인')}</div><p>{esc(basic)}</p><p><b>공격/기준/보수 진입가:</b> {esc(pick(e, ['공격진입가']))} / {esc(pick(e, ['기준진입가']))} / {esc(pick(e, ['보수진입가']))}</p><p><b>돌파 진입가:</b> {esc(pick(e, ['돌파진입가']))}<br><b>손절 기준가:</b> {esc(pick(e, ['손절기준가']))}</p><p><b>익절:</b> {format_tp_plan(pick(r, ['익절계획']) or pick(g, ['take_profit_guide']))}<br><b>손절:</b> {format_sl_plan(pick(r, ['손절계획']) or pick(g, ['stop_loss_guide']) or pick(e, ['손절기준가']))}</p></article>"""
     return f"<section class='grid'>{cards}</section>" if cards else "<p class='hint'>TOP 후보 데이터가 없습니다.</p>"
 
 def build_strategy_summary(strategy_rows, perf_rows, account_rows, guide_rows):
     parts=[]
-    if account_rows: parts.append("<section class='box'><h2>계좌 백테스트 요약</h2>" + table_html(account_rows, max_rows=5) + "</section>")
+    if account_rows:
+        parts.append("<section class='box'><h2>계좌 백테스트 요약</h2>" + table_html(account_rows, max_rows=5) + "</section>")
     if perf_rows:
+        parts.append(build_account_trade_examples(perf_rows, max_rows=15))
         headers=[h for h in ['recommend_date','session','rank','stock_name','sector','score','recommend_price','latest_price','latest_return_pct','max_observed_return_pct'] if h in perf_rows[0]]
-        parts.append("<section class='box'><h2>추천성과 검증</h2>" + table_html(perf_rows, headers=headers, max_rows=30) + "</section>")
+        parts.append("<section class='box'><h2>추천성과 검증 원본</h2>" + table_html(perf_rows, headers=headers, max_rows=30) + "</section>")
     if strategy_rows:
-        headers=[h for h in ['종목명','종목코드','TP전략','SL전략','수익률','MDD','승률','거래횟수','백테스트신뢰도'] if h in strategy_rows[0]]
-        parts.append("<section class='box'><h2>전략 백테스트 요약</h2>" + table_html(strategy_rows, headers=headers, max_rows=40) + "</section>")
+        parts.append(build_top_strategy_rankings(strategy_rows, max_strategies=2))
+        headers=[h for h in ['종목명','종목코드','TP전략','SL전략','수익률','MDD','승률','거래횟수','백테스트신뢰도','전략요약'] if h in strategy_rows[0]]
+        parts.append("<section class='box'><h2>전략 백테스트 원본</h2>" + table_html(strategy_rows, headers=headers, max_rows=40) + "</section>")
     return ''.join(parts) or "<p class='hint'>전략 검증 데이터가 없습니다.</p>"
+
+
+def recommendation_profile_map():
+    rows = read_csv_rows('docs/data/latest_recommendation_company_profiles.csv', 500)
+    out = {}
+    for r in rows:
+        name = pick(r, ['stock_name','종목명'])
+        desc = pick(r, ['profile_text_for_display','stock_description','profile_text'])
+        if name and desc:
+            out[name] = desc
+    return out
+
 
 def build_news_summary(news_rows):
     good=[r for r in news_rows if pick(r,['title']) and pick(r,['api_state']) in ['ok','']]
@@ -282,19 +372,19 @@ def build_outputs():
         if df.empty: status_rows.append({'key':f'sheet_{sheet}','value':'missing_or_empty'}); continue
         write_df(df, data/f'latest_{slug}.csv'); extracted[slug]=df.to_dict('records'); status_rows.append({'key':f'sheet_{sheet}','value':f'ok:{len(df)}'})
     top_rows=extracted.get('legacy_top_candidates',[]); full_rows=extracted.get('legacy_full_recommendations',[]); entry_rows=extracted.get('legacy_entry_scenario',[]); guide_rows=extracted.get('legacy_entry_guide',[]); continuous_rows=extracted.get('legacy_continuous',[]); perf_rows=extracted.get('legacy_recommendation_performance',[]); strategy_rows=extracted.get('legacy_strategy_backtest_summary',[]); account_rows=extracted.get('legacy_account_backtest_summary',[]); validation_rows=extracted.get('legacy_backtest_validation_guide',[]); mobile_rows=extracted.get('legacy_mobile_dashboard',[])
-    news_rows=read_csv_rows(data/'latest_news_detail.csv',500); guide_by=by_name(guide_rows,['stock_name','종목명']); entry_by=by_name(entry_rows)
+    news_rows=read_csv_rows(data/'latest_news_detail.csv',500); profile_by=recommendation_profile_map(); guide_by=by_name(guide_rows,['stock_name','종목명']); entry_by=by_name(entry_rows)
     if top_rows:
         alias=[]
         for r in top_rows:
             name=pick(r,['종목명','stock_name']); g=guide_by.get(name,{}); e=entry_by.get(name,{})
             sector=normalize_category(name,pick(r,['섹터/분야','분야']),pick(g,['entry_guide'])); news=related_news(news_rows,name,3)
-            alias.append({'rank':pick(r,['순위']),'stock_name':name,'stock_code':pick(r,['종목코드','stock_code']),'market':pick(r,['시장']),'sector':sector,'source':pick(r,['후보출처']),'current_price':pick(r,['현재가']),'base_score':pick(r,['기본점수']),'score':pick(r,['실전점수','점수']),'overheat':pick(r,['과열판정']),'entry_decision':pick(r,['진입판정']),'attack_entry':pick(e,['공격진입가']),'base_entry':pick(e,['기준진입가']),'conservative_entry':pick(e,['보수진입가']),'breakout_entry':pick(e,['돌파진입가']),'stop_price':pick(e,['손절기준가']),'take_profit_plan':pick(r,['익절계획']) or pick(g,['take_profit_guide']),'stop_loss_plan':pick(r,['손절계획']) or pick(g,['stop_loss_guide']),'entry_guide':pick(g,['entry_guide']),'do_not_chase':pick(g,['do_not_chase']),'check_points':pick(g,['check_points']),'stock_description':stock_basic_info(name,sector,pick(g,['entry_guide']),pick(r,['현재가']),pick(r,['실전점수','점수']),pick(r,['진입판정']),news)})
+            alias.append({'rank':pick(r,['순위']),'stock_name':name,'stock_code':pick(r,['종목코드','stock_code']),'market':pick(r,['시장']),'sector':sector,'source':pick(r,['후보출처']),'current_price':pick(r,['현재가']),'base_score':pick(r,['기본점수']),'score':pick(r,['실전점수','점수']),'overheat':pick(r,['과열판정']),'entry_decision':pick(r,['진입판정']),'attack_entry':pick(e,['공격진입가']),'base_entry':pick(e,['기준진입가']),'conservative_entry':pick(e,['보수진입가']),'breakout_entry':pick(e,['돌파진입가']),'stop_price':pick(e,['손절기준가']),'take_profit_plan':pick(r,['익절계획']) or pick(g,['take_profit_guide']),'stop_loss_plan':pick(r,['손절계획']) or pick(g,['stop_loss_guide']),'entry_guide':pick(g,['entry_guide']),'do_not_chase':pick(g,['do_not_chase']),'check_points':pick(g,['check_points']),'stock_description':profile_by.get(name) or stock_basic_info(name,sector,pick(g,['entry_guide']),pick(r,['현재가']),pick(r,['실전점수','점수']),pick(r,['진입판정']),news)})
         write_df(pd.DataFrame(alias), data/'latest_recommendation_top15_full.csv'); write_df(pd.DataFrame(alias), data/'latest_recommendation_analysis.csv')
     write_page(details/'legacy_top15.html','추천 TOP15 + 진입 시나리오',f'원천 파일: {xlsx.as_posix()} · TOP후보_요약/진입시나리오/진입가이드_요약 시트를 함께 보여줍니다.', build_top_cards(top_rows,entry_rows,guide_rows,news_rows)+"<section class='box'><h2>TOP 후보 원본 표</h2>"+table_html(top_rows,max_rows=20)+"</section>")
     full_priority=['순위','종목명','시장','섹터/분야','현재가','기본점수','실전점수','과열판정','진입판정','익절계획','손절계획','추세','백테스트신뢰도','상세전략가이드','entry_guide','take_profit_guide','stop_loss_guide','do_not_chase']
     write_page(details/'legacy_full_recommendations.html','전체 추천 명단 · 기존 엑셀 데이터',f'원천 파일: {xlsx.as_posix()} · 추천 리스트 시트 기반입니다. 비어 있는 TOSS 관련 열은 뒤쪽으로 밀고, 데이터가 많은 열을 앞쪽에 배치했습니다.', table_html(full_rows, headers=reorder_headers(full_rows,full_priority), max_rows=120))
     write_page(details/'legacy_entry_scenario.html','진입 시나리오 · 기존 엑셀 데이터',f'원천 파일: {xlsx.as_posix()} · 진입시나리오/진입가이드_요약 시트를 활용합니다.', build_top_cards(top_rows,entry_rows,guide_rows,news_rows)+"<section class='box'><h2>진입 시나리오 원본 표</h2>"+table_html(entry_rows,max_rows=20)+"</section><section class='box'><h2>진입가이드 요약표</h2>"+table_html(guide_rows,max_rows=20)+"</section>")
-    write_page(details/'legacy_continuous.html','연속추천 관찰 · 기존 엑셀 데이터',f'원천 파일: {xlsx.as_posix()} · 연속추천_관찰 시트 기반입니다.', table_html(continuous_rows,max_rows=60))
+    write_page(details/'legacy_continuous.html','연속추천 관찰 · 기존 엑셀 데이터',f'원천 파일: {xlsx.as_posix()} · 연속추천_관찰 시트 기반입니다.', build_continuous_note() + table_html(continuous_rows,max_rows=60))
     write_page(details/'legacy_strategy_validation.html','전략 추천/검증 · 참고용',f'원천 파일: {xlsx.as_posix()} · 필요할 때만 보는 검증 자료입니다.', build_strategy_summary(strategy_rows,perf_rows,account_rows,validation_rows))
     write_page(details/'legacy_mobile_dashboard.html','모바일 대시보드 원본 · 기존 엑셀 데이터',f'원천 파일: {xlsx.as_posix()} · 원본 확인용입니다.', table_html(mobile_rows,max_rows=20))
     shutil.copyfile(details/'legacy_top15.html', details/'recommendation_top15.html'); shutil.copyfile(details/'legacy_full_recommendations.html', details/'recommendation_full_list.html'); shutil.copyfile(details/'legacy_entry_scenario.html', details/'entry_scenario.html'); shutil.copyfile(details/'legacy_continuous.html', details/'continuous.html')

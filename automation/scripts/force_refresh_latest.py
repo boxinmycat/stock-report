@@ -7,7 +7,7 @@ KST=timezone(timedelta(hours=9))
 def now(): return datetime.now(KST).strftime('%Y-%m-%d %H:%M:%S KST')
 def session():
     env=(os.environ.get('REPORT_SESSION') or os.environ.get('SESSION') or '').strip().upper()
-    if env in ('AM','PM','MANUAL'): return env
+    if env in ('AM','PM','PM_TEST','MANUAL'): return env
     h=datetime.now(KST).hour
     return 'AM' if h<12 else 'PM' if h<18 else 'MANUAL'
 def read_csv(path,limit=999):
