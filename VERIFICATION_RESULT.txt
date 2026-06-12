@@ -1,16 +1,7 @@
-OK: automation/scripts/build_gemini_recommendation_company_profiles.py :: analysis_concept
-OK: automation/scripts/build_gemini_recommendation_company_profiles.py :: one_line_summary
-OK: automation/scripts/build_gemini_recommendation_company_profiles.py :: bull_points
-OK: automation/scripts/build_gemini_recommendation_company_profiles.py :: bear_points
-OK: automation/scripts/build_gemini_recommendation_company_profiles.py :: etf_or_business_details
-OK: automation/scripts/build_gemini_recommendation_company_profiles.py :: profile_text_for_display
-OK: automation/scripts/build_gemini_recommendation_company_profiles.py :: 현재가, 실전점수, 진입판정
-OK: automation/scripts/publish_legacy_excel_sections.py :: recommendation_profile_map
-OK: automation/scripts/publish_legacy_excel_sections.py :: latest_recommendation_company_profiles.csv
-OK: automation/scripts/publish_legacy_excel_sections.py :: profile_by.get(name)
-OK: .github/workflows/daily-report.yml :: Build Gemini recommendation company profiles
-OK: .github/workflows/daily-report.yml :: python automation/scripts/build_gemini_recommendation_company_profiles.py
-OK: .github/workflows/daily-report.yml :: - cron: '5 7 * * 1-5'
+OK: automation/scripts/build_gemini_holding_ai_briefing.py :: news_quality_score
+OK: automation/scripts/build_gemini_holding_ai_briefing.py :: _local_news_quality_score
+OK: automation/scripts/build_gemini_holding_ai_briefing.py :: v12.2.23 holding AI news quality hotfix
+OK: .github/workflows/daily-report.yml :: Build Gemini 3.5 Flash holding AI briefing
 OK: automation/scripts/build_gemini_holding_ai_briefing.py ast_parse
 OK: automation/scripts/build_gemini_recommendation_company_profiles.py ast_parse
 OK: automation/scripts/build_recommendation_analysis.py ast_parse
@@ -21,7 +12,6 @@ OK: automation/scripts/publish_excel_downloads.py ast_parse
 OK: automation/scripts/publish_legacy_excel_sections.py ast_parse
 OK: automation/scripts/send_telegram_report_alert.py ast_parse
 OK: automation/scripts/stock_news_disambiguation.py ast_parse
-OK: profile_to_text smoke
 ALL_CHECKS_OK=True
 ALL_PARSE_OK=True
 ALL_OK=True

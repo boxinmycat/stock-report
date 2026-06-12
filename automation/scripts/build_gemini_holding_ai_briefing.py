@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# v12.2.23 holding AI news quality hotfix
 from __future__ import annotations
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
@@ -7,9 +8,12 @@ import html, json, os, re, time, urllib.parse, urllib.request, urllib.error
 import pandas as pd
 
 try:
-    from stock_news_disambiguation import filter_and_rank_news
+    from stock_news_disambiguation import filter_and_rank_news, extract_publisher, format_pubdate, news_quality_score
 except Exception:
     filter_and_rank_news = None
+    extract_publisher = lambda link='', originallink='', raw='': ''
+    format_pubdate = lambda value: str(value or '')
+    news_quality_score = lambda title, description='', pubDate='', publisher='', link='', originallink='': (0, 'fallback')
 KST=timezone(timedelta(hours=9))
 def now(): return datetime.now(KST).strftime('%Y-%m-%d %H:%M:%S KST')
 def read(p):
@@ -33,6 +37,31 @@ def get(row,*names):
     return ''
 def clean(x): return re.sub(r'<.*?>','',html.unescape(s(x)))
 NEWS_BLACKLIST={'태웅':['태웅식품','태웅로직스','태웅푸드']}
+
+def _local_news_quality_score(title, description='', pubDate='', publisher='', link='', originallink=''):
+    text = f"{title or ''} {description or ''}"
+    score = 0
+    reason = []
+    important = ['실적','영업이익','매출','공시','수주','계약','유상증자','자사주','배당','대주주','목표가','투자의견','수출','해외']
+    low = ['주가','마감','장중','상승 마감','하락 마감','급등','급락','강세','약세']
+    imp = sum(1 for w in important if w in text)
+    lw = sum(1 for w in low if w in str(title or ''))
+    score += min(imp * 2, 10)
+    if imp:
+        reason.append(f'important:{imp}')
+    if lw and not imp:
+        score -= min(lw * 2, 6)
+        reason.append(f'price_only:{lw}')
+    if re.search(r"\d{1,2}월\s*\d{1,2}일", str(title or '')) and ('마감' in str(title or '') or '%' in str(title or '')) and not imp:
+        score -= 5
+        reason.append('dated_price_close_article')
+    return score, ','.join(reason) or 'local_fallback'
+
+try:
+    news_quality_score
+except NameError:
+    news_quality_score = _local_news_quality_score
+
 def strict_stock_news_match(text,name):
     if not name or name not in text: return False
     if any(bad in text for bad in NEWS_BLACKLIST.get(name,[])): return False
