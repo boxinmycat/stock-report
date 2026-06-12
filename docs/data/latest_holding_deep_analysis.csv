@@ -1,11 +1,11 @@
 ﻿source_file,status,stock_name,stock_code,quantity,avg_price,current_price,current_price_source,unrealized_pnl_pct,target_price,stop_loss,decision,memo,checked_at
-holdings_manual_input.csv,보유중,금호타이어,073240,25.0,4865.0,4585.0,naver_finance,-5.76,,,HOLD,보유 유지. 뉴스·거래량·추천 재등장 여부 확인.,2026-06-11 03:39:15 KST
-holdings_manual_input.csv,보유중,대창솔루션,096350,60.0,2800.0,1921.0,naver_finance,-31.39,,,STOP_WATCH,"습관형 손절권. 물타기 금지, 손실 확대 방지 우선.",2026-06-11 03:39:16 KST
-holdings_manual_input.csv,보유중,대한해운,005880,41.0,2519.0,1920.0,naver_finance,-23.78,,,STOP_WATCH,"습관형 손절권. 물타기 금지, 손실 확대 방지 우선.",2026-06-11 03:39:17 KST
-holdings_manual_input.csv,보유중,에코플라스틱,038110,51.0,3750.0,2210.0,naver_finance,-41.07,,,STOP_WATCH,"습관형 손절권. 물타기 금지, 손실 확대 방지 우선.",2026-06-11 03:39:19 KST
-holdings_manual_input.csv,보유중,태림포장,011280,40.0,2100.0,1790.0,naver_finance,-14.76,,,STOP_WATCH,"습관형 손절권. 물타기 금지, 손실 확대 방지 우선.",2026-06-11 03:39:20 KST
-holdings_manual_input.csv,보유중,태웅,044490,4.0,40500.0,31500.0,naver_finance,-22.22,,,STOP_WATCH,"습관형 손절권. 물타기 금지, 손실 확대 방지 우선.",2026-06-11 03:39:21 KST
-holdings_manual_input.csv,보유중,HANARO K휴머노이드테마TOP10,0155N0,4.0,11000.0,9450.0,naver_finance,-14.09,,,STOP_WATCH,"습관형 손절권. 물타기 금지, 손실 확대 방지 우선.",2026-06-11 03:39:22 KST
-holdings_manual_input.csv,보유중,LG유플러스,032640,3.0,15400.0,14730.0,naver_finance,-4.35,,,HOLD,보유 유지. 뉴스·거래량·추천 재등장 여부 확인.,2026-06-11 03:39:23 KST
-holdings_manual_input.csv,보유중,TIGER K방산&우주,463250,4.0,44500.0,38660.0,naver_finance,-13.12,,,STOP_WATCH,"습관형 손절권. 물타기 금지, 손실 확대 방지 우선.",2026-06-11 03:39:25 KST
-holdings_manual_input.csv,보유중,컴퍼니케이,307930,3.0,9150.0,7410.0,naver_finance,-19.02,,,STOP_WATCH,"습관형 손절권. 물타기 금지, 손실 확대 방지 우선.",2026-06-11 03:39:26 KST
+holdings_manual_input.csv,보유중,금호타이어,073240,25.0,4865.0,4520.0,naver_finance,-7.09,,,STOP_WATCH,"습관형 손절권. 물타기 금지, 손실 확대 방지 우선.",2026-06-12 04:14:01 KST
+holdings_manual_input.csv,보유중,대창솔루션,096350,60.0,2800.0,1861.0,naver_finance,-33.54,,,STOP_WATCH,"습관형 손절권. 물타기 금지, 손실 확대 방지 우선.",2026-06-12 04:14:03 KST
+holdings_manual_input.csv,보유중,대한해운,005880,41.0,2519.0,1946.0,naver_finance,-22.75,,,STOP_WATCH,"습관형 손절권. 물타기 금지, 손실 확대 방지 우선.",2026-06-12 04:14:04 KST
+holdings_manual_input.csv,보유중,에코플라스틱,038110,51.0,3750.0,2280.0,naver_finance,-39.2,,,STOP_WATCH,"습관형 손절권. 물타기 금지, 손실 확대 방지 우선.",2026-06-12 04:14:05 KST
+holdings_manual_input.csv,보유중,태림포장,011280,40.0,2100.0,1922.0,naver_finance,-8.48,,,STOP_WATCH,"습관형 손절권. 물타기 금지, 손실 확대 방지 우선.",2026-06-12 04:14:07 KST
+holdings_manual_input.csv,보유중,태웅,044490,4.0,40500.0,31450.0,naver_finance,-22.35,,,STOP_WATCH,"습관형 손절권. 물타기 금지, 손실 확대 방지 우선.",2026-06-12 04:14:08 KST
+holdings_manual_input.csv,보유중,HANARO K휴머노이드테마TOP10,0155N0,4.0,11000.0,9870.0,naver_finance,-10.27,,,STOP_WATCH,"습관형 손절권. 물타기 금지, 손실 확대 방지 우선.",2026-06-12 04:14:09 KST
+holdings_manual_input.csv,보유중,LG유플러스,032640,3.0,15400.0,15390.0,naver_finance,-0.06,,,HOLD,보유 유지. 뉴스·거래량·추천 재등장 여부 확인.,2026-06-12 04:14:10 KST
+holdings_manual_input.csv,보유중,TIGER K방산&우주,463250,4.0,44500.0,38315.0,naver_finance,-13.9,,,STOP_WATCH,"습관형 손절권. 물타기 금지, 손실 확대 방지 우선.",2026-06-12 04:14:11 KST
+holdings_manual_input.csv,보유중,컴퍼니케이,307930,3.0,9150.0,7130.0,naver_finance,-22.08,,,STOP_WATCH,"습관형 손절권. 물타기 금지, 손실 확대 방지 우선.",2026-06-12 04:14:13 KST
