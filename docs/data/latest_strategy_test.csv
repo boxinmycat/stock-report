@@ -1,13 +1,13 @@
 ﻿session,recommendation_model,recommendation_model_name,strategy_code,strategy_name,signals,valid_price_signals,closed_or_hit,win_rate_pct,avg_return_pct,median_return_pct,tp1_hit_rate_pct,sl_hit_rate_pct,avg_max_return_pct,avg_min_return_pct,status,memo
-AM,,,HABIT,습관형,314,0,0,,,,,,,,주의,현재 관측 기준 기대값 낮음
-AM,,,SAFE,안정형,314,0,0,,,,,,,,주의,현재 관측 기준 기대값 낮음
-AM,,,TREND,추세형,314,0,0,,,,,,,,주의,현재 관측 기준 기대값 낮음
+AM,A_BALANCED,A_균형형,HABIT,습관형,15,0,0,,,,,,,,샘플부족,최소 50개 이상부터 참고
+AM,A_BALANCED,A_균형형,SAFE,안정형,15,0,0,,,,,,,,샘플부족,최소 50개 이상부터 참고
+AM,A_BALANCED,A_균형형,TREND,추세형,15,0,0,,,,,,,,샘플부족,최소 50개 이상부터 참고
+AM,,,HABIT,습관형,328,0,0,,,,,,,,주의,현재 관측 기준 기대값 낮음
+AM,,,SAFE,안정형,328,0,0,,,,,,,,주의,현재 관측 기준 기대값 낮음
+AM,,,TREND,추세형,328,0,0,,,,,,,,주의,현재 관측 기준 기대값 낮음
 MANUAL,,,HABIT,습관형,15,0,0,,,,,,,,샘플부족,최소 50개 이상부터 참고
 MANUAL,,,SAFE,안정형,15,0,0,,,,,,,,샘플부족,최소 50개 이상부터 참고
 MANUAL,,,TREND,추세형,15,0,0,,,,,,,,샘플부족,최소 50개 이상부터 참고
-PM,A_BALANCED,A_균형형,HABIT,습관형,15,0,0,,,,,,,,샘플부족,최소 50개 이상부터 참고
-PM,A_BALANCED,A_균형형,SAFE,안정형,15,0,0,,,,,,,,샘플부족,최소 50개 이상부터 참고
-PM,A_BALANCED,A_균형형,TREND,추세형,15,0,0,,,,,,,,샘플부족,최소 50개 이상부터 참고
-PM,,,HABIT,습관형,165,0,0,,,,,,,,주의,현재 관측 기준 기대값 낮음
-PM,,,SAFE,안정형,165,0,0,,,,,,,,주의,현재 관측 기준 기대값 낮음
-PM,,,TREND,추세형,165,0,0,,,,,,,,주의,현재 관측 기준 기대값 낮음
+PM,,,HABIT,습관형,180,0,0,,,,,,,,주의,현재 관측 기준 기대값 낮음
+PM,,,SAFE,안정형,180,0,0,,,,,,,,주의,현재 관측 기준 기대값 낮음
+PM,,,TREND,추세형,180,0,0,,,,,,,,주의,현재 관측 기준 기대값 낮음

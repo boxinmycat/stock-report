@@ -1,15 +1,15 @@
 ﻿key,value
-checked_at,2026-06-12 16:35:00 KST
+checked_at,2026-06-12 22:09:00 KST
 xlsx,20260612.xlsx
 sheet_모바일_대시보드,ok:8
 sheet_TOP후보_요약,ok:15
-sheet_추천 리스트,ok:73
+sheet_추천 리스트,ok:74
 sheet_진입시나리오,ok:15
 sheet_진입가이드_요약,missing_or_empty
 sheet_연속추천_관찰,ok:15
 sheet_종목카드_TOP15,ok:58
 sheet_추천성과_검증,missing_or_empty
-sheet_전략백테스트요약,ok:1460
+sheet_전략백테스트요약,ok:1480
 sheet_계좌백테스트요약,ok:1
 sheet_백테스트검증가이드,ok:10
 sheet_보유종목_판단,missing_or_empty

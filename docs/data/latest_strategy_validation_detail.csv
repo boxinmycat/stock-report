@@ -1,49 +1,94 @@
 ﻿signal_id,snapshot_date,session,recommendation_model,recommendation_model_name,stock_name,stock_code,rank,entry_price,score,source,sector,strategy_code,strategy_name,tp1_pct,tp2_pct,sl_pct,max_hold_days,result,sim_return_pct,max_return_pct,min_return_pct,latest_return_pct,days_elapsed,hit_tp1,hit_tp2,hit_sl,memo
-20260612_PM_A_BALANCED_01_ACE_미국우주테크액티브,20260612,PM,A_BALANCED,A_균형형,ACE 미국우주테크액티브,,1,,100.0,,금융,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_01_ACE_미국우주테크액티브,20260612,PM,A_BALANCED,A_균형형,ACE 미국우주테크액티브,,1,,100.0,,금융,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_01_ACE_미국우주테크액티브,20260612,PM,A_BALANCED,A_균형형,ACE 미국우주테크액티브,,1,,100.0,,금융,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_02_후성,20260612,PM,A_BALANCED,A_균형형,후성,,2,,100.0,,화학,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_02_후성,20260612,PM,A_BALANCED,A_균형형,후성,,2,,100.0,,화학,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_02_후성,20260612,PM,A_BALANCED,A_균형형,후성,,2,,100.0,,화학,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_03_SOL_반도체전공정,20260612,PM,A_BALANCED,A_균형형,SOL 반도체전공정,,3,,95.0,,반도체,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_03_SOL_반도체전공정,20260612,PM,A_BALANCED,A_균형형,SOL 반도체전공정,,3,,95.0,,반도체,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_03_SOL_반도체전공정,20260612,PM,A_BALANCED,A_균형형,SOL 반도체전공정,,3,,95.0,,반도체,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_04_TIGER_미국S&P500(H),20260612,PM,A_BALANCED,A_균형형,TIGER 미국S&P500(H),,4,,85.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_04_TIGER_미국S&P500(H),20260612,PM,A_BALANCED,A_균형형,TIGER 미국S&P500(H),,4,,85.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_04_TIGER_미국S&P500(H),20260612,PM,A_BALANCED,A_균형형,TIGER 미국S&P500(H),,4,,85.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_05_대원강업,20260612,PM,A_BALANCED,A_균형형,대원강업,,5,,91.0,,자동차/부품,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_05_대원강업,20260612,PM,A_BALANCED,A_균형형,대원강업,,5,,91.0,,자동차/부품,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_05_대원강업,20260612,PM,A_BALANCED,A_균형형,대원강업,,5,,91.0,,자동차/부품,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_06_화신정공,20260612,PM,A_BALANCED,A_균형형,화신정공,,6,,80.0,,자동차/부품,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_06_화신정공,20260612,PM,A_BALANCED,A_균형형,화신정공,,6,,80.0,,자동차/부품,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_06_화신정공,20260612,PM,A_BALANCED,A_균형형,화신정공,,6,,80.0,,자동차/부품,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_07_에이팩트,20260612,PM,A_BALANCED,A_균형형,에이팩트,,7,,80.0,,반도체/전자부품,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_07_에이팩트,20260612,PM,A_BALANCED,A_균형형,에이팩트,,7,,80.0,,반도체/전자부품,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_07_에이팩트,20260612,PM,A_BALANCED,A_균형형,에이팩트,,7,,80.0,,반도체/전자부품,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_08_샘씨엔에스,20260612,PM,A_BALANCED,A_균형형,샘씨엔에스,,8,,73.0,,반도체/전자부품,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_08_샘씨엔에스,20260612,PM,A_BALANCED,A_균형형,샘씨엔에스,,8,,73.0,,반도체/전자부품,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_08_샘씨엔에스,20260612,PM,A_BALANCED,A_균형형,샘씨엔에스,,8,,73.0,,반도체/전자부품,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_09_제주은행,20260612,PM,A_BALANCED,A_균형형,제주은행,,9,,72.0,,금융,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_09_제주은행,20260612,PM,A_BALANCED,A_균형형,제주은행,,9,,72.0,,금융,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_09_제주은행,20260612,PM,A_BALANCED,A_균형형,제주은행,,9,,72.0,,금융,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_10_TIGER_미국S&P500,20260612,PM,A_BALANCED,A_균형형,TIGER 미국S&P500,,10,,64.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_10_TIGER_미국S&P500,20260612,PM,A_BALANCED,A_균형형,TIGER 미국S&P500,,10,,64.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_10_TIGER_미국S&P500,20260612,PM,A_BALANCED,A_균형형,TIGER 미국S&P500,,10,,64.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_11_라이콤,20260612,PM,A_BALANCED,A_균형형,라이콤,,11,,67.0,,반도체/전자부품,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_11_라이콤,20260612,PM,A_BALANCED,A_균형형,라이콤,,11,,67.0,,반도체/전자부품,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_11_라이콤,20260612,PM,A_BALANCED,A_균형형,라이콤,,11,,67.0,,반도체/전자부품,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_12_엠케이전자,20260612,PM,A_BALANCED,A_균형형,엠케이전자,,12,,65.0,,반도체/전자부품,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_12_엠케이전자,20260612,PM,A_BALANCED,A_균형형,엠케이전자,,12,,65.0,,반도체/전자부품,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_12_엠케이전자,20260612,PM,A_BALANCED,A_균형형,엠케이전자,,12,,65.0,,반도체/전자부품,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_13_KODEX_미국S&P500,20260612,PM,A_BALANCED,A_균형형,KODEX 미국S&P500,,13,,55.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_13_KODEX_미국S&P500,20260612,PM,A_BALANCED,A_균형형,KODEX 미국S&P500,,13,,55.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_13_KODEX_미국S&P500,20260612,PM,A_BALANCED,A_균형형,KODEX 미국S&P500,,13,,55.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_14_KODEX_200타겟위클리커버드콜,20260612,PM,A_BALANCED,A_균형형,KODEX 200타겟위클리커버드콜,,14,,52.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_14_KODEX_200타겟위클리커버드콜,20260612,PM,A_BALANCED,A_균형형,KODEX 200타겟위클리커버드콜,,14,,52.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_14_KODEX_200타겟위클리커버드콜,20260612,PM,A_BALANCED,A_균형형,KODEX 200타겟위클리커버드콜,,14,,52.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_15_한켐,20260612,PM,A_BALANCED,A_균형형,한켐,,15,,65.0,,화학,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_15_한켐,20260612,PM,A_BALANCED,A_균형형,한켐,,15,,65.0,,화학,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
-20260612_PM_A_BALANCED_15_한켐,20260612,PM,A_BALANCED,A_균형형,한켐,,15,,65.0,,화학,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_01_ACE_미국우주테크액티브,20260612,AM,A_BALANCED,A_균형형,ACE 미국우주테크액티브,,1,,100.0,,금융,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_01_ACE_미국우주테크액티브,20260612,AM,A_BALANCED,A_균형형,ACE 미국우주테크액티브,,1,,100.0,,금융,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_01_ACE_미국우주테크액티브,20260612,AM,A_BALANCED,A_균형형,ACE 미국우주테크액티브,,1,,100.0,,금융,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_02_샘씨엔에스,20260612,AM,A_BALANCED,A_균형형,샘씨엔에스,,2,,98.0,,반도체/전자부품,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_02_샘씨엔에스,20260612,AM,A_BALANCED,A_균형형,샘씨엔에스,,2,,98.0,,반도체/전자부품,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_02_샘씨엔에스,20260612,AM,A_BALANCED,A_균형형,샘씨엔에스,,2,,98.0,,반도체/전자부품,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_03_제일기획,20260612,AM,A_BALANCED,A_균형형,제일기획,,3,,84.0,,전문서비스,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_03_제일기획,20260612,AM,A_BALANCED,A_균형형,제일기획,,3,,84.0,,전문서비스,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_03_제일기획,20260612,AM,A_BALANCED,A_균형형,제일기획,,3,,84.0,,전문서비스,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_04_TIGER_AI반도체핵심공정,20260612,AM,A_BALANCED,A_균형형,TIGER AI반도체핵심공정,,4,,79.0,,반도체,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_04_TIGER_AI반도체핵심공정,20260612,AM,A_BALANCED,A_균형형,TIGER AI반도체핵심공정,,4,,79.0,,반도체,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_04_TIGER_AI반도체핵심공정,20260612,AM,A_BALANCED,A_균형형,TIGER AI반도체핵심공정,,4,,79.0,,반도체,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_05_화신정공,20260612,AM,A_BALANCED,A_균형형,화신정공,,5,,85.0,,자동차/부품,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_05_화신정공,20260612,AM,A_BALANCED,A_균형형,화신정공,,5,,85.0,,자동차/부품,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_05_화신정공,20260612,AM,A_BALANCED,A_균형형,화신정공,,5,,85.0,,자동차/부품,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_06_유니셈,20260612,AM,A_BALANCED,A_균형형,유니셈,,6,,85.0,,기계/장비,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_06_유니셈,20260612,AM,A_BALANCED,A_균형형,유니셈,,6,,85.0,,기계/장비,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_06_유니셈,20260612,AM,A_BALANCED,A_균형형,유니셈,,6,,85.0,,기계/장비,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_07_후성,20260612,AM,A_BALANCED,A_균형형,후성,,7,,84.0,,화학,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_07_후성,20260612,AM,A_BALANCED,A_균형형,후성,,7,,84.0,,화학,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_07_후성,20260612,AM,A_BALANCED,A_균형형,후성,,7,,84.0,,화학,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_08_에이팩트,20260612,AM,A_BALANCED,A_균형형,에이팩트,,8,,81.0,,반도체/전자부품,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_08_에이팩트,20260612,AM,A_BALANCED,A_균형형,에이팩트,,8,,81.0,,반도체/전자부품,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_08_에이팩트,20260612,AM,A_BALANCED,A_균형형,에이팩트,,8,,81.0,,반도체/전자부품,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_09_KODEX_200타겟위클리커버드콜,20260612,AM,A_BALANCED,A_균형형,KODEX 200타겟위클리커버드콜,,9,,67.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_09_KODEX_200타겟위클리커버드콜,20260612,AM,A_BALANCED,A_균형형,KODEX 200타겟위클리커버드콜,,9,,67.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_09_KODEX_200타겟위클리커버드콜,20260612,AM,A_BALANCED,A_균형형,KODEX 200타겟위클리커버드콜,,9,,67.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_10_TIGER_배당커버드콜액티브,20260612,AM,A_BALANCED,A_균형형,TIGER 배당커버드콜액티브,,10,,66.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_10_TIGER_배당커버드콜액티브,20260612,AM,A_BALANCED,A_균형형,TIGER 배당커버드콜액티브,,10,,66.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_10_TIGER_배당커버드콜액티브,20260612,AM,A_BALANCED,A_균형형,TIGER 배당커버드콜액티브,,10,,66.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_11_아이로보틱스,20260612,AM,A_BALANCED,A_균형형,아이로보틱스,,11,,80.0,,도매,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_11_아이로보틱스,20260612,AM,A_BALANCED,A_균형형,아이로보틱스,,11,,80.0,,도매,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_11_아이로보틱스,20260612,AM,A_BALANCED,A_균형형,아이로보틱스,,11,,80.0,,도매,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_12_대한항공,20260612,AM,A_BALANCED,A_균형형,대한항공,,12,,64.0,,항공운송,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_12_대한항공,20260612,AM,A_BALANCED,A_균형형,대한항공,,12,,64.0,,항공운송,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_12_대한항공,20260612,AM,A_BALANCED,A_균형형,대한항공,,12,,64.0,,항공운송,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_13_희림,20260612,AM,A_BALANCED,A_균형형,희림,,13,,70.0,,건축/엔지니어링,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_13_희림,20260612,AM,A_BALANCED,A_균형형,희림,,13,,70.0,,건축/엔지니어링,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_13_희림,20260612,AM,A_BALANCED,A_균형형,희림,,13,,70.0,,건축/엔지니어링,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_14_TIGER_미국S&P500,20260612,AM,A_BALANCED,A_균형형,TIGER 미국S&P500,,14,,62.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_14_TIGER_미국S&P500,20260612,AM,A_BALANCED,A_균형형,TIGER 미국S&P500,,14,,62.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_14_TIGER_미국S&P500,20260612,AM,A_BALANCED,A_균형형,TIGER 미국S&P500,,14,,62.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_15_KODEX_미국S&P500,20260612,AM,A_BALANCED,A_균형형,KODEX 미국S&P500,,15,,60.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_15_KODEX_미국S&P500,20260612,AM,A_BALANCED,A_균형형,KODEX 미국S&P500,,15,,60.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+20260612_AM_A_BALANCED_15_KODEX_미국S&P500,20260612,AM,A_BALANCED,A_균형형,KODEX 미국S&P500,,15,,60.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,0.0,False,False,False,추천가/기준가 없음
+,,PM,,,ACE 미국우주테크액티브,,1,,100.0,,금융,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,ACE 미국우주테크액티브,,1,,100.0,,금융,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,ACE 미국우주테크액티브,,1,,100.0,,금융,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,후성,,2,,100.0,,화학,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,후성,,2,,100.0,,화학,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,후성,,2,,100.0,,화학,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,SOL 반도체전공정,,3,,95.0,,반도체,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,SOL 반도체전공정,,3,,95.0,,반도체,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,SOL 반도체전공정,,3,,95.0,,반도체,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,TIGER 미국S&P500(H),,4,,85.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,TIGER 미국S&P500(H),,4,,85.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,TIGER 미국S&P500(H),,4,,85.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,대원강업,,5,,91.0,,자동차/부품,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,대원강업,,5,,91.0,,자동차/부품,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,대원강업,,5,,91.0,,자동차/부품,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,화신정공,,6,,80.0,,자동차/부품,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,화신정공,,6,,80.0,,자동차/부품,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,화신정공,,6,,80.0,,자동차/부품,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,에이팩트,,7,,80.0,,반도체/전자부품,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,에이팩트,,7,,80.0,,반도체/전자부품,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,에이팩트,,7,,80.0,,반도체/전자부품,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,샘씨엔에스,,8,,73.0,,반도체/전자부품,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,샘씨엔에스,,8,,73.0,,반도체/전자부품,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,샘씨엔에스,,8,,73.0,,반도체/전자부품,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,제주은행,,9,,72.0,,금융,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,제주은행,,9,,72.0,,금융,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,제주은행,,9,,72.0,,금융,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,TIGER 미국S&P500,,10,,64.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,TIGER 미국S&P500,,10,,64.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,TIGER 미국S&P500,,10,,64.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,라이콤,,11,,67.0,,반도체/전자부품,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,라이콤,,11,,67.0,,반도체/전자부품,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,라이콤,,11,,67.0,,반도체/전자부품,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,엠케이전자,,12,,65.0,,반도체/전자부품,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,엠케이전자,,12,,65.0,,반도체/전자부품,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,엠케이전자,,12,,65.0,,반도체/전자부품,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,KODEX 미국S&P500,,13,,55.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,KODEX 미국S&P500,,13,,55.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,KODEX 미국S&P500,,13,,55.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,KODEX 200타겟위클리커버드콜,,14,,52.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,KODEX 200타겟위클리커버드콜,,14,,52.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,KODEX 200타겟위클리커버드콜,,14,,52.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,한켐,,15,,65.0,,화학,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,한켐,,15,,65.0,,화학,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
+,,PM,,,한켐,,15,,65.0,,화학,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
 ,,AM,,,ACE 미국우주테크액티브,,1,,100.0,,금융,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
 ,,AM,,,ACE 미국우주테크액티브,,1,,100.0,,금융,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
 ,,AM,,,ACE 미국우주테크액티브,,1,,100.0,,금융,TREND,추세형,10,20,-10,20,NO_PRICE,,,,,,False,False,False,추천가/기준가 없음
@@ -1526,3 +1571,45 @@
 ,,MANUAL,,,KODEX 미국S&P500,,15,,60.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
 ,,MANUAL,,,KODEX 미국S&P500,,15,,60.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
 ,,MANUAL,,,KODEX 미국S&P500,,15,,60.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,샘씨엔에스,,2,,97.0,,반도체/전자부품,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,샘씨엔에스,,2,,97.0,,반도체/전자부품,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,샘씨엔에스,,2,,97.0,,반도체/전자부품,TREND,추세형,10,20,-10,20,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,제일기획,,3,,83.0,,전문서비스,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,제일기획,,3,,83.0,,전문서비스,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,제일기획,,3,,83.0,,전문서비스,TREND,추세형,10,20,-10,20,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,TIGER AI반도체핵심공정,,4,,78.0,,반도체,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,TIGER AI반도체핵심공정,,4,,78.0,,반도체,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,TIGER AI반도체핵심공정,,4,,78.0,,반도체,TREND,추세형,10,20,-10,20,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,화신정공,,5,,84.0,,자동차/부품,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,화신정공,,5,,84.0,,자동차/부품,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,화신정공,,5,,84.0,,자동차/부품,TREND,추세형,10,20,-10,20,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,유니셈,,6,,84.0,,기계/장비,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,유니셈,,6,,84.0,,기계/장비,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,유니셈,,6,,84.0,,기계/장비,TREND,추세형,10,20,-10,20,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,후성,,7,,83.0,,화학,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,후성,,7,,83.0,,화학,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,후성,,7,,83.0,,화학,TREND,추세형,10,20,-10,20,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,에이팩트,,8,,80.0,,반도체/전자부품,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,에이팩트,,8,,80.0,,반도체/전자부품,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,에이팩트,,8,,80.0,,반도체/전자부품,TREND,추세형,10,20,-10,20,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,KODEX 200타겟위클리커버드콜,,9,,66.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,KODEX 200타겟위클리커버드콜,,9,,66.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,KODEX 200타겟위클리커버드콜,,9,,66.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,TIGER 배당커버드콜액티브,,10,,65.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,TIGER 배당커버드콜액티브,,10,,65.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,TIGER 배당커버드콜액티브,,10,,65.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,아이로보틱스,,11,,79.0,,도매,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,아이로보틱스,,11,,79.0,,도매,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,아이로보틱스,,11,,79.0,,도매,TREND,추세형,10,20,-10,20,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,대한항공,,12,,63.0,,항공운송,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,대한항공,,12,,63.0,,항공운송,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,대한항공,,12,,63.0,,항공운송,TREND,추세형,10,20,-10,20,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,희림,,13,,69.0,,건축/엔지니어링,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,희림,,13,,69.0,,건축/엔지니어링,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,희림,,13,,69.0,,건축/엔지니어링,TREND,추세형,10,20,-10,20,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,TIGER 미국S&P500,,14,,61.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,TIGER 미국S&P500,,14,,61.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,TIGER 미국S&P500,,14,,61.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,KODEX 미국S&P500,,15,,59.0,,AI/소프트웨어,SAFE,안정형,6,10,-5,5,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,KODEX 미국S&P500,,15,,59.0,,AI/소프트웨어,HABIT,습관형,8,15,-7,10,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
+,,AM,,,KODEX 미국S&P500,,15,,59.0,,AI/소프트웨어,TREND,추세형,10,20,-10,20,NO_PRICE,,,,0.00%,,False,False,False,추천가/기준가 없음
