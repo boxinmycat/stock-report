@@ -1,0 +1,2 @@
+﻿status,checked_at,rows,profile_count,error
+fallback,2026-06-12 16:35:00 KST,15,15,"RuntimeError('all Gemini models failed: JSONDecodeError(""Expecting \',\' delimiter: line 182 column 6 (char 12091)"")')"
