@@ -1,9 +1,9 @@
 key,value
 event_name,schedule
-event_schedule,0 23 * * 0-4
-utc_started_at,2026-06-12 12:01:39 UTC
-kst_started_at,2026-06-12 21:01:39 KST
-kst_hm,21:01
-report_session,AM
-expected_kst,08:00 KST
-expected_kind,morning
+event_schedule,5 7 * * 1-5
+utc_started_at,2026-06-12 17:28:41 UTC
+kst_started_at,2026-06-13 02:28:41 KST
+kst_hm,02:28
+report_session,PM_TEST
+expected_kst,16:05 KST
+expected_kind,pm_test

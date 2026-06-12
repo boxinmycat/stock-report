@@ -1,2 +1,10 @@
 ﻿checked_at,model,status,message
-2026-06-12 16:35:05 KST,gemini-3.5-flash,ok,OK
+2026-06-13 03:04:26 KST,gemini-3.5-flash,fail,"HTTP 503: {
+  ""error"": {
+    ""code"": 503,
+    ""message"": ""This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later."",
+    ""status"": ""UNAVAILABLE""
+  }
+}
+"
+2026-06-13 03:04:38 KST,gemini-2.5-flash,ok,OK
