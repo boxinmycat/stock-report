@@ -1,10 +1,37 @@
-OK: automation/scripts/build_gemini_holding_ai_briefing.py :: news_quality_score
-OK: automation/scripts/build_gemini_holding_ai_briefing.py :: _local_news_quality_score
-OK: automation/scripts/build_gemini_holding_ai_briefing.py :: v12.2.23 holding AI news quality hotfix
-OK: .github/workflows/daily-report.yml :: Build Gemini 3.5 Flash holding AI briefing
+OK: .github/workflows/daily-report.yml :: - cron: '0 23 * * 0-4'
+OK: .github/workflows/daily-report.yml :: - cron: '45 7 * * 1-5'
+OK: .github/workflows/daily-report.yml :: EXPECTED_KST="16:45 KST"
+OK: .github/workflows/daily-report.yml :: blocked_stale_pm_outside_1630_1800_kst
+OK: .github/workflows/daily-report.yml :: --ExecutePreprocessor.timeout=1800
+OK: .github/workflows/daily-report.yml :: timeout-minutes: 45
+OK: .github/workflows/daily-report.yml :: Validate recommendation prices and render guarded TOP15
+OK: .github/workflows/daily-report.yml :: github.event.schedule == '45 7 * * 1-5'
+OK: automation/scripts/validate_recommendation_prices.py :: PRICE_MISMATCH
+OK: automation/scripts/validate_recommendation_prices.py :: PRICE_UNAVAILABLE
+OK: automation/scripts/validate_recommendation_prices.py :: 0180V0
+OK: automation/scripts/validate_recommendation_prices.py :: BLOCKED_BY_PRICE_MISMATCH
+OK: automation/scripts/validate_recommendation_prices.py :: BLOCKED_BY_PRICE_UNAVAILABLE
+OK: automation/scripts/validate_recommendation_prices.py :: latest_price_validation.csv
+OK: automation/scripts/validate_recommendation_prices.py :: legacy_top15.html
+OK: automation/scripts/send_telegram_report_alert.py :: price_validation_line
+OK: automation/scripts/send_telegram_report_alert.py :: 가격 검증
+OK: automation/scripts/send_telegram_report_alert.py :: 모바일 홈:
+OK: automation/scripts/force_refresh_latest.py :: PRICE_MISMATCH
+OK: automation/scripts/force_refresh_latest.py :: PRICE_UNAVAILABLE
+OK: automation/scripts/force_refresh_latest.py :: 전략 보류
+OK: automation/scripts/build_run_manifest.py :: latest_price_validation.csv
+OK: automation/scripts/build_run_manifest.py :: price_mismatch_count
+OK: absent :: timezone: Asia/Seoul
+OK: absent :: - cron: '0 8 * * 1-5'
+OK: absent :: - cron: '5 16 * * 1-5'
+OK: absent :: github.event.schedule == '5 16 * * 1-5'
+OK: absent :: PM_TEST
+OK: absent :: 통합 홈:
+OK: absent :: --ExecutePreprocessor.timeout=5400
 OK: automation/scripts/build_gemini_holding_ai_briefing.py ast_parse
 OK: automation/scripts/build_gemini_recommendation_company_profiles.py ast_parse
 OK: automation/scripts/build_recommendation_analysis.py ast_parse
+OK: automation/scripts/build_run_manifest.py ast_parse
 OK: automation/scripts/check_gemini_api.py ast_parse
 OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py ast_parse
 OK: automation/scripts/force_refresh_latest.py ast_parse
@@ -12,6 +39,8 @@ OK: automation/scripts/publish_excel_downloads.py ast_parse
 OK: automation/scripts/publish_legacy_excel_sections.py ast_parse
 OK: automation/scripts/send_telegram_report_alert.py ast_parse
 OK: automation/scripts/stock_news_disambiguation.py ast_parse
+OK: automation/scripts/validate_recommendation_prices.py ast_parse
+OK: price mismatch smoke 0180V0
 ALL_CHECKS_OK=True
 ALL_PARSE_OK=True
 ALL_OK=True

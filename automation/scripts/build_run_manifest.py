@@ -34,6 +34,8 @@ def main():
     prof = read_csv(data/"latest_recommendation_profile_status.csv")
     legacy = read_csv(data/"latest_legacy_sections_status.csv")
     hold = read_csv(data/"latest_holding_ai_briefing.csv")
+    price = read_csv(data/"latest_price_validation.csv")
+    price_bad = [r for r in price if (r.get('price_validation_status') or '').upper() == 'PRICE_MISMATCH']
     rows = [
         ("event_name", sched.get("event_name")),
         ("event_schedule", sched.get("event_schedule")),
@@ -45,6 +47,8 @@ def main():
         ("recommendation_profile_count", prof[0].get("profile_count") if prof else ""),
         ("holding_ai_rows", len(hold)),
         ("legacy_status_rows", len(legacy)),
+        ("price_validation_rows", len(price)),
+        ("price_mismatch_count", len(price_bad)),
         ("manifest_generated_at", now()),
     ]
     trs = "".join(f"<tr><th>{esc(k)}</th><td>{esc(v)}</td></tr>" for k,v in rows)

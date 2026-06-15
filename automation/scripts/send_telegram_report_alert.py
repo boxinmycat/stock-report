@@ -49,6 +49,21 @@ def gemini_health_line():
     r = rows[0]
     return f"Gemini: {r.get('status','')} / {r.get('model','')}"
 
+
+def price_validation_line():
+    rows = read('docs/data/latest_price_validation.csv', 30)
+    if not rows:
+        return ''
+    bad = [r for r in rows if (r.get('price_validation_status') or '').upper() == 'PRICE_MISMATCH']
+    unavailable = [r for r in rows if (r.get('price_validation_status') or '').upper() == 'PRICE_UNAVAILABLE']
+    if bad:
+        names = ', '.join([r.get('stock_name','') for r in bad[:5] if r.get('stock_name')])
+        return f"가격 검증 경고: {len(bad)}개 종목 전략 보류 ({names})"
+    if unavailable:
+        return f"가격 검증: {len(unavailable)}개 종목 실시간가 확인 실패"
+    return "가격 검증: TOP15 통과"
+
+
 def diagnostics():
     rows = read('docs/data/latest_schedule_diagnostics.csv', 20)
     d = {}
@@ -75,7 +90,7 @@ def msg():
     st=status()
     diag=diagnostics()
     ss=(st.get('session') or 'MANUAL').upper()
-    title='[장전 리포트 완료]' if ss=='AM' else '[장마감 테스트 리포트 완료]' if ss=='PM_TEST' else '[장마감 리포트 완료]' if ss=='PM' else '[주식 리포트 완료]'
+    title='[장전 리포트 완료]' if ss=='AM' else '[장마감 리포트 완료]' if ss=='PM' else '[주식 리포트 완료]'
     return f"""{title}
 
 생성시각: {st.get('published_at') or now()}
@@ -87,12 +102,11 @@ def msg():
 
 {brief()}
 {gemini_health_line()}
+{price_validation_line()}
 
 모바일 홈:
 https://boxinmycat.github.io/stock-report/mobile/
 
-통합 홈:
-https://boxinmycat.github.io/stock-report/mobile/
 
 추천 TOP15:
 https://boxinmycat.github.io/stock-report/details/legacy_top15.html

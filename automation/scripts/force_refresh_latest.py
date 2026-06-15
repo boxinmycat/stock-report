@@ -7,7 +7,7 @@ KST=timezone(timedelta(hours=9))
 def now(): return datetime.now(KST).strftime('%Y-%m-%d %H:%M:%S KST')
 def session():
     env=(os.environ.get('REPORT_SESSION') or os.environ.get('SESSION') or '').strip().upper()
-    if env in ('AM','PM','PM_TEST','MANUAL'): return env
+    if env in ('AM','PM','PM_TEST','MANUAL'): return 'PM' if env=='PM_TEST' else env
     h=datetime.now(KST).hour
     return 'AM' if h<12 else 'PM' if h<18 else 'MANUAL'
 def read_csv(path,limit=999):
@@ -42,11 +42,24 @@ def fmt_sl(text):
 
 def top15_entry_section():
     rows=read_csv('docs/data/latest_recommendation_top15_full.csv',15)
-    if not rows: return "<section class='box accent'><h2>추천 TOP15 + 진입 시나리오</h2><p class='hint'>데이터 확인 필요</p></section>"
+    if not rows:
+        return "<section class='box accent'><h2>추천 TOP15 + 진입 시나리오</h2><p class='hint'>데이터 확인 필요</p></section>"
     cards=''
     for r in rows[:6]:
-        cards += f"""<article class='card'><h3>{esc(r.get('rank'))}. {esc(r.get('stock_name'))} <span>{esc(r.get('score'))}</span></h3><p class='meta'>{esc(r.get('sector'))} · 현재가 {esc(r.get('current_price'))} · {esc(r.get('entry_decision'))}</p><p><b>기본 정보:</b> {esc(r.get('stock_description'))}</p><p><b>공격/기준/보수:</b> {esc(r.get('attack_entry'))} / {esc(r.get('base_entry'))} / {esc(r.get('conservative_entry'))}</p><p><b>익절:</b> {fmt_tp(r.get('take_profit_plan'))}<br><b>손절:</b> {fmt_sl(r.get('stop_loss_plan') or r.get('stop_price'))}</p></article>"""
-    return f"<section class='box accent'><h2>추천 TOP15 + 진입 시나리오</h2><p class='hint'>TOP후보_요약, 진입시나리오, 진입가이드_요약을 합쳐 보여줍니다.</p><div class='grid'>{cards}</div><div class='mini-links'><a href='../details/legacy_top15.html'>TOP15 전체 보기</a><a href='../details/legacy_full_recommendations.html'>전체 추천 명단</a><a href='../details/legacy_continuous.html'>연속추천 관찰</a><a href='../details/legacy_candidate_dashboard_validation.html'>대시보드/검증</a></div></section>"
+        status=(r.get('price_validation_status') or '').upper()
+        msg=r.get('price_validation_message') or ''
+        if status == 'PRICE_MISMATCH':
+            strategy = "<p class='danger'><b>전략 보류:</b> 실시간 가격과 기준 가격 차이가 커서 진입/익절/손절 전략을 숨겼습니다.</p>"
+        elif status == 'PRICE_UNAVAILABLE':
+            strategy = "<p class='warn'><b>가격 확인 실패:</b> 실시간가 확인 실패. 전략은 참고용으로만 확인하세요.</p>"
+        else:
+            strategy = f"<p><b>공격/기준/보수:</b> {esc(r.get('attack_entry'))} / {esc(r.get('base_entry'))} / {esc(r.get('conservative_entry'))}</p><p><b>익절:</b> {fmt_tp(r.get('take_profit_plan'))}<br><b>손절:</b> {fmt_sl(r.get('stop_loss_plan') or r.get('stop_price'))}</p>"
+        price_line = f"현재가 {esc(r.get('current_price'))}"
+        if r.get('realtime_price'):
+            price_line += f" · 실시간검증 {esc(r.get('realtime_price'))}"
+        cards += f"""<article class='card'><h3>{esc(r.get('rank'))}. {esc(r.get('stock_name'))} <span>{esc(r.get('score'))}</span></h3><p class='meta'>{esc(r.get('sector'))} · {price_line} · {esc(r.get('entry_decision'))}</p><p class='meta'><b>가격 검증:</b> {esc(status or 'N/A')} {esc(msg)}</p><p><b>기본 정보:</b> {esc(r.get('stock_description'))}</p>{strategy}</article>"""
+    return f"<section class='box accent'><h2>추천 TOP15 + 진입 시나리오</h2><p class='hint'>실시간 가격 검증 후 표시합니다. 가격 불일치 종목은 전략을 보류합니다.</p><div class='grid'>{cards}</div><div class='mini-links'><a href='../details/legacy_top15.html'>TOP15 전체 보기</a><a href='../details/legacy_full_recommendations.html'>전체 추천 명단</a><a href='../details/legacy_continuous.html'>연속추천 관찰</a><a href='../details/legacy_candidate_dashboard_validation.html'>대시보드/검증</a></div></section>"
+
 def holdings_section():
     rows=read_csv('docs/data/latest_holding_deep_analysis.csv',50); desc={r.get('stock_name'):r for r in read_csv('docs/data/latest_holding_stock_descriptions.csv',50)}
     if not rows: return "<section class='box'><h2>보유종목</h2><p class='hint'>보유종목 데이터 확인 필요</p></section>"
