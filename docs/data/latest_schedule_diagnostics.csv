@@ -1,9 +1,9 @@
 key,value
-event_name,schedule
-event_schedule,5 7 * * 1-5
-utc_started_at,2026-06-12 17:28:41 UTC
-kst_started_at,2026-06-13 02:28:41 KST
-kst_hm,02:28
-report_session,PM_TEST
-expected_kst,16:05 KST
-expected_kind,pm_test
+event_name,workflow_dispatch
+event_schedule,
+utc_started_at,2026-06-15 02:27:22 UTC
+kst_started_at,2026-06-15 11:27:22 KST
+kst_hm,11:27
+report_session,MANUAL
+expected_kst,manual run
+expected_kind,manual
