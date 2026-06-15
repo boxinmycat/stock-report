@@ -49,14 +49,41 @@ def gemini_health_line():
     r = rows[0]
     return f"Gemini: {r.get('status','')} / {r.get('model','')}"
 
+def diagnostics():
+    rows = read('docs/data/latest_schedule_diagnostics.csv', 20)
+    d = {}
+    for r in rows:
+        if r.get('key'):
+            d[r['key']] = r.get('value', '')
+    # Environment is preferred during the current workflow run; CSV is backup after publish.
+    event_name = os.environ.get('REPORT_EVENT_NAME') or d.get('event_name') or ''
+    event_schedule = os.environ.get('REPORT_EVENT_SCHEDULE') or d.get('event_schedule') or ''
+    kst_started = os.environ.get('REPORT_KST_STARTED_AT') or d.get('kst_started_at') or ''
+    utc_started = os.environ.get('REPORT_UTC_STARTED_AT') or d.get('utc_started_at') or ''
+    expected_kst = os.environ.get('REPORT_EXPECTED_KST') or d.get('expected_kst') or ''
+    expected_kind = os.environ.get('REPORT_EXPECTED_KIND') or d.get('expected_kind') or ''
+    return {
+        'event_name': event_name,
+        'event_schedule': event_schedule,
+        'kst_started': kst_started,
+        'utc_started': utc_started,
+        'expected_kst': expected_kst,
+        'expected_kind': expected_kind,
+    }
+
 def msg():
     st=status()
+    diag=diagnostics()
     ss=(st.get('session') or 'MANUAL').upper()
-    title='[장전 리포트 완료]' if ss=='AM' else '[장마감 리포트 완료]' if ss=='PM' else '[주식 리포트 완료]'
+    title='[장전 리포트 완료]' if ss=='AM' else '[장마감 테스트 리포트 완료]' if ss=='PM_TEST' else '[장마감 리포트 완료]' if ss=='PM' else '[주식 리포트 완료]'
     return f"""{title}
 
 생성시각: {st.get('published_at') or now()}
 세션: {ss}
+실행 이벤트: {diag.get('event_name')}
+실행 cron: {diag.get('event_schedule')}
+예상 KST: {diag.get('expected_kst')}
+실제 시작 KST: {diag.get('kst_started')}
 
 {brief()}
 {gemini_health_line()}
