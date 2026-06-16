@@ -1,9 +1,9 @@
 key,value
 event_name,workflow_dispatch
 event_schedule,
-utc_started_at,2026-06-16 02:28:23 UTC
-kst_started_at,2026-06-16 11:28:23 KST
-kst_hm,1128
+utc_started_at,2026-06-16 13:55:51 UTC
+kst_started_at,2026-06-16 22:55:51 KST
+kst_hm,2255
 kst_dow,2
 report_session,MANUAL
 expected_kst,manual run

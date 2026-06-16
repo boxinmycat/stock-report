@@ -1,0 +1,2 @@
+﻿status,message,source,checked_at
+ERROR,"RuntimeError(""No Toss API endpoint succeeded for TOSSINVEST_HOLDINGS_PATH. Tried: ['GET /api/v1/holdings', 'GET /api/v1/accounts']"")",,2026-06-16 13:56:25 UTC
