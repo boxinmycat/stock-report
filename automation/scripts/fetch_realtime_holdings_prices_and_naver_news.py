@@ -26,6 +26,17 @@ except Exception:
 
 KST = timezone(timedelta(hours=9))
 
+ETF_CODE_OVERRIDES = {
+    "ACE 미국우주테크액티브": "0180V0",
+}
+
+def normalize_holding_code(stock_name: str, stock_code) -> str:
+    name = norm_text(stock_name)
+    if name in ETF_CODE_OVERRIDES:
+        return ETF_CODE_OVERRIDES[name]
+    return normalize_code(stock_code)
+
+
 
 def now_kst() -> str:
     return datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S KST")
@@ -146,7 +157,7 @@ def normalize_holdings_df(df: pd.DataFrame) -> pd.DataFrame:
         source_col = find_col(df, aliases)
         out[target] = df[source_col].map(norm_text) if source_col else ""
 
-    out["stock_code"] = out["stock_code"].map(normalize_code)
+    out["stock_code"] = [normalize_holding_code(n, c) for n, c in zip(out.get("stock_name", []), out.get("stock_code", []))]
     out["stock_name"] = out["stock_name"].map(norm_text)
     out = out[(out["stock_name"] != "") | (out["stock_code"] != "")].copy()
 
@@ -187,7 +198,7 @@ def build_code_lookup() -> dict[str, str]:
 
         for _, row in df.iterrows():
             name = norm_text(row.get(name_col))
-            code = normalize_code(row.get(code_col))
+            code = normalize_holding_code(name, row.get(code_col))
 
             if name and code:
                 lookup[name] = code
@@ -273,6 +284,40 @@ def make_decision(pnl_pct, target_price, stop_loss, current_price):
     return "HOLD", "보유 유지. 뉴스·거래량·추천 재등장 여부 확인."
 
 
+
+def load_holding_ai_guidance_map() -> dict[str, dict]:
+    df = read_csv_safely(Path("docs/data/latest_holding_ai_briefing.csv"))
+    out: dict[str, dict] = {}
+    if df.empty:
+        return out
+    for _, r in df.iterrows():
+        name = norm_text(r.get("stock_name"))
+        if not name:
+            continue
+        headline = norm_text(r.get("ai_action_headline")) or norm_text(r.get("decision"))
+        summary = norm_text(r.get("ai_three_line_summary")) or norm_text(r.get("ai_price_action_guide")) or norm_text(r.get("ai_action_guide")) or norm_text(r.get("ai_issue_summary"))
+        out[name] = {"headline": headline, "summary": summary}
+    return out
+
+def summarize_news_three_lines(title: str, description: str, qscore="", qreason="") -> str:
+    title = strip_html_tags(title)
+    desc = strip_html_tags(description)
+    text = re.sub(r"\s+", " ", f"{title}. {desc}").strip()
+    if not text:
+        return "• 기사 요약 데이터가 부족합니다.\n• 원문 링크와 공시 여부를 함께 확인하세요.\n• 단순 시세 기사라면 매매 근거로 약하게 봅니다."
+    sents = [x.strip(" .") for x in re.split(r"(?<=[.!?。])\s+|[。]", text) if x.strip()]
+    if len(sents) < 3:
+        chunks = [text[i:i+80] for i in range(0, min(len(text), 240), 80)]
+        sents = chunks
+    bullets = []
+    labels = ["핵심", "영향", "체크"]
+    for idx in range(3):
+        val = sents[idx] if idx < len(sents) else ("품질점수와 기사 날짜를 함께 확인해야 합니다." if idx == 2 else "시장 반응과 거래량 확인이 필요합니다.")
+        bullets.append(f"• {labels[idx]}: {val[:120]}")
+    if qscore != "":
+        bullets[2] = bullets[2] + f" / 품질점수 {qscore}"
+    return "\n".join(bullets)
+
 def build_holding_outputs() -> None:
     holdings, source_file = load_holdings()
     data_dir = Path("docs/data")
@@ -299,17 +344,18 @@ def build_holding_outputs() -> None:
 
     code_lookup = build_code_lookup()
     holdings["stock_code"] = holdings.apply(
-        lambda row: normalize_code(row.get("stock_code")) or code_lookup.get(norm_text(row.get("stock_name")), ""),
+        lambda row: normalize_holding_code(row.get("stock_name"), row.get("stock_code")) or code_lookup.get(norm_text(row.get("stock_name")), ""),
         axis=1,
     )
 
     price_rows = []
     deep_rows = []
     guide_rows = []
+    ai_guidance_by_name = load_holding_ai_guidance_map()
 
     for _, row in holdings.iterrows():
         stock_name = norm_text(row.get("stock_name"))
-        stock_code = normalize_code(row.get("stock_code"))
+        stock_code = normalize_holding_code(stock_name, row.get("stock_code"))
 
         current_price, price_source = fetch_naver_finance_price(stock_code)
         time.sleep(0.15)
@@ -385,6 +431,9 @@ def build_holding_outputs() -> None:
         cls = pnl_class(row.get('unrealized_pnl_pct'))
         memo = html.escape(str(row.get('memo', '')))
         source = html.escape(str(row.get('current_price_source', '')))
+        ai = ai_guidance_by_name.get(str(row.get('stock_name', '')), {})
+        ai_headline = html.escape(str(ai.get('headline') or decision or 'AI 조언 대기'))
+        ai_summary = html.escape(str(ai.get('summary') or '장마감 AI 브리핑 생성 후 이 영역에 종목별 실전 조언이 표시됩니다.')).replace('\n', '<br>')
         cards.append(
             "<article class='holding-card'>"
             f"<div class='card-top'><div><h2>{name}</h2><p class='code'>{code}</p></div><span class='badge'>{decision}</span></div>"
@@ -396,6 +445,7 @@ def build_holding_outputs() -> None:
             "<div class='line'></div>"
             f"<p class='targets'><b>목표가</b> {target} <span></span><b>손절가</b> {stop}</p>"
             f"<p class='memo'>{memo}</p>"
+            f"<section class='ai-advice'><b>AI 매니저의 실전 조언 · {ai_headline}</b><p>{ai_summary}</p></section>"
             f"<p class='source'>현재가 출처: {source}</p>"
             "</article>"
         )
@@ -432,7 +482,7 @@ body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgro
 .targets{{display:flex;gap:8px;flex-wrap:wrap;font-size:14px;color:#374151;line-height:1.5}}
 .targets span{{width:8px}}
 .memo{{background:#fff7ed;color:#9a3412;border-radius:14px;padding:10px;font-size:13px;line-height:1.55}}
-.source{{color:#6b7280;font-size:12px;margin-bottom:0}}
+.source{{color:#6b7280;font-size:12px;margin-bottom:0}}.ai-advice{{background:#eef2ff;border:1px solid #c7d2fe;color:#1e1b4b;border-radius:16px;padding:12px;margin:12px 0}}.ai-advice b{{font-size:13px}}.ai-advice p{{margin:7px 0 0;font-size:13px;line-height:1.55;color:#312e81}}
 @media(max-width:480px){{.wrap{{padding:12px}}.hero{{border-radius:20px;padding:18px}}.card-grid{{display:block}}.holding-card{{margin-bottom:12px;border-radius:20px}}.metrics{{grid-template-columns:1fr}}}}
 </style>
 </head>
@@ -465,7 +515,7 @@ def load_news_queries() -> list[str]:
     if not holdings.empty:
         for _, hrow in holdings.head(8).iterrows():
             hname = norm_text(hrow.get("stock_name"))
-            hcode = normalize_code(hrow.get("stock_code"))
+            hcode = normalize_holding_code(hname, hrow.get("stock_code"))
             if build_news_queries:
                 queries.extend(build_news_queries(hname, hcode))
             elif hname:
@@ -478,7 +528,7 @@ def load_news_queries() -> list[str]:
             for _, crow in candidates.head(8).iterrows():
                 cname = norm_text(crow.get(name_col))
                 ccode_col = find_col(candidates, ["stock_code", "종목코드", "code", "ticker"])
-                ccode = normalize_code(crow.get(ccode_col)) if ccode_col else ""
+                ccode = normalize_holding_code(cname, crow.get(ccode_col)) if ccode_col else ""
                 if build_news_queries:
                     queries.extend(build_news_queries(cname, ccode))
                 elif cname:
@@ -604,6 +654,7 @@ def enrich_news_metadata(df: pd.DataFrame) -> pd.DataFrame:
         row["published_at"] = norm_text(row.get("published_at")) or format_pubdate(pub_date)
         row["news_quality_score"] = qscore
         row["news_quality_reason"] = qreason
+        row["news_three_line_summary"] = summarize_news_three_lines(title, desc, qscore, qreason)
         rows.append(row)
     return pd.DataFrame(rows)
 
@@ -624,6 +675,7 @@ def build_news_outputs() -> None:
         api_state = html.escape(norm_text(row.get("api_state")))
         title = html.escape(norm_text(row.get("title")) or "제목 없음")
         description = html.escape(norm_text(row.get("description")))
+        three = html.escape(norm_text(row.get("news_three_line_summary"))).replace('\n', '<br>')
         link = norm_text(row.get("link"))
 
         if link:
@@ -636,6 +688,7 @@ def build_news_outputs() -> None:
             f"<div class='meta'>{query} · {api_state}</div>"
             f"<h2>{title}</h2>"
             f"<p>{description}</p>"
+            f"<div class='summary3'><b>이 뉴스의 핵심 3줄 요약</b><p>{three}</p></div>"
             f"{link_html}"
             "</article>"
         )
@@ -657,7 +710,7 @@ body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgro
 .card h2{{font-size:17px;margin:6px 0 8px}}
 .card p{{font-size:14px;line-height:1.55;color:#374151}}
 .meta{{font-size:12px;color:#059669}}
-a{{color:#2563eb;font-weight:700;text-decoration:none}}
+a{{color:#2563eb;font-weight:700;text-decoration:none}}.summary3{{background:#f8fafc;border-left:4px solid #10b981;border-radius:12px;padding:10px;margin-top:10px}}.summary3 b{{font-size:13px;color:#065f46}}.summary3 p{{margin:6px 0 0;font-size:13px;line-height:1.55;color:#064e3b}}
 </style>
 </head>
 <body>

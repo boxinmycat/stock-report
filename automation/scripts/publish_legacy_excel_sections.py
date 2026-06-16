@@ -225,7 +225,7 @@ def table_html(rows, headers=None, max_rows=60):
         cards.append(f"<article class='row-card'><h3>{esc(title)}</h3><div class='kv'>{''.join(fields)}</div></article>")
     return "<div class='mobile-table-cards'>" + ''.join(cards) + "</div>"
 
-CSS = """*{box-sizing:border-box}body{margin:0;background:#f6f7fb;color:#111827;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{max-width:1040px;margin:auto;padding:18px}.hero{background:linear-gradient(135deg,#172554,#1e40af);color:white;border-radius:24px;padding:22px;margin-bottom:16px;box-shadow:0 8px 24px rgba(15,23,42,.16)}.hero h1{margin:0 0 8px;letter-spacing:-.03em}.hero p{color:#dbeafe;line-height:1.55;margin:0}.box,.card{background:white;border-radius:20px;padding:16px;margin-bottom:16px;box-shadow:0 6px 18px rgba(15,23,42,.07);border:1px solid #e5e7eb}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(286px,1fr));gap:14px}.card h3{margin:0 0 8px;font-size:19px}.pill{display:inline-flex;background:#dbeafe;color:#1e40af;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:800}.meta,.hint{font-size:13px;color:#6b7280;line-height:1.55}p,li{font-size:14px;line-height:1.68;color:#374151}.links{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}.links a{display:block;background:#fff;border-radius:16px;padding:14px;box-shadow:0 4px 16px rgba(0,0,0,.06)}a{color:#2563eb;font-weight:700;text-decoration:none}.mobile-table-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:12px}.row-card{background:white;border:1px solid #e5e7eb;border-radius:18px;padding:14px;box-shadow:0 4px 14px rgba(15,23,42,.05)}.row-card h3{font-size:17px;margin:0 0 10px}.kv{display:grid;grid-template-columns:104px minmax(0,1fr);gap:7px 10px;border-top:1px solid #f1f5f9;padding-top:10px}.kv b{font-size:12px;color:#64748b}.kv span{font-size:13px;color:#111827;word-break:break-word;line-height:1.45}.strategy-compact{display:grid;gap:4px}.price-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0}.price-grid div{background:#f8fafc;border-radius:14px;padding:10px}.price-grid small{display:block;color:#64748b;font-size:11px;margin-bottom:4px}.price-grid b{font-size:14px}.desc{white-space:pre-line;background:#f9fafb;border-radius:14px;padding:12px}.badge{display:inline-flex;align-items:center;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:800;background:#eef2ff;color:#3730a3}@media(max-width:480px){.wrap{padding:12px}.hero{border-radius:20px;padding:18px}.grid,.mobile-table-cards{display:block}.card,.row-card{margin-bottom:12px}.price-grid{grid-template-columns:1fr}.kv{grid-template-columns:92px minmax(0,1fr)}}"""
+CSS = """*{box-sizing:border-box}body{margin:0;background:#f6f7fb;color:#111827;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{max-width:1040px;margin:auto;padding:18px}.hero{background:linear-gradient(135deg,#172554,#1e40af);color:white;border-radius:24px;padding:22px;margin-bottom:16px;box-shadow:0 8px 24px rgba(15,23,42,.16)}.hero h1{margin:0 0 8px;letter-spacing:-.03em}.hero p{color:#dbeafe;line-height:1.55;margin:0}.box,.card{background:white;border-radius:20px;padding:16px;margin-bottom:16px;box-shadow:0 6px 18px rgba(15,23,42,.07);border:1px solid #e5e7eb}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(286px,1fr));gap:14px}.card h3{margin:0 0 8px;font-size:19px}.pill{display:inline-flex;background:#dbeafe;color:#1e40af;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:800}.meta,.hint{font-size:13px;color:#6b7280;line-height:1.55}p,li{font-size:14px;line-height:1.68;color:#374151}.links{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}.links a{display:block;background:#fff;border-radius:16px;padding:14px;box-shadow:0 4px 16px rgba(0,0,0,.06)}a{color:#2563eb;font-weight:700;text-decoration:none}.mobile-table-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:12px}.row-card{background:white;border:1px solid #e5e7eb;border-radius:18px;padding:14px;box-shadow:0 4px 14px rgba(15,23,42,.05)}.row-card h3{font-size:17px;margin:0 0 10px}.kv{display:grid;grid-template-columns:104px minmax(0,1fr);gap:7px 10px;border-top:1px solid #f1f5f9;padding-top:10px}.kv b{font-size:12px;color:#64748b}.kv span{font-size:13px;color:#111827;word-break:break-word;line-height:1.45}.strategy-compact{display:grid;gap:4px}.price-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0}.price-grid div{background:#f8fafc;border-radius:14px;padding:10px}.price-grid small{display:block;color:#64748b;font-size:11px;margin-bottom:4px}.price-grid b{font-size:14px}.desc{white-space:pre-line;background:#f9fafb;border-radius:14px;padding:12px}.badge{display:inline-flex;align-items:center;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:800;background:#eef2ff;color:#3730a3}.stamp{display:inline-flex;align-items:center;gap:6px;background:#111827;color:white;border-radius:999px;padding:7px 11px;font-size:12px;font-weight:800;margin-bottom:9px}.stamp strong{font-size:16px;color:#fde68a}.continuous-card{border:1px solid #c7d2fe;background:linear-gradient(180deg,#ffffff,#f8fbff)}@media(max-width:480px){.wrap{padding:12px}.hero{border-radius:20px;padding:18px}.grid,.mobile-table-cards{display:block}.card,.row-card{margin-bottom:12px}.price-grid{grid-template-columns:1fr}.kv{grid-template-columns:92px minmax(0,1fr)}}"""
 
 def write_page(path: Path, title: str, subtitle: str, content: str):
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -279,6 +279,38 @@ def build_continuous_note():
 <li>추천횟수: 하루 최대 장전/장마감 2회까지만 유의미하게 봅니다.</li>
 <li>수동 실행: 테스트 성격이 강하므로 신뢰도 판단에서는 제외하거나 참고용으로만 봅니다.</li>
 </ul></section>"""
+
+
+def build_continuous_cards(rows, max_rows=80):
+    rows = rows[:max_rows]
+    if not rows:
+        return "<p class='hint'>연속추천 데이터가 없습니다.</p>"
+    cards = []
+    for idx, r in enumerate(rows, start=1):
+        name = pick(r, ['종목명','stock_name','name']) or f"{idx}번 종목"
+        code = pick(r, ['종목코드','stock_code','code'])
+        cnt = pick(r, ['연속추천횟수','연속추천','추천횟수','continuous_count','count','등장횟수']) or pick(r, ['추천일수','추천일'])
+        days = pick(r, ['연속추천일수','추천일수','days'])
+        score = pick(r, ['실전점수','점수','score'])
+        price = pick(r, ['현재가','current_price'])
+        entry = pick(r, ['진입판정','entry_decision'])
+        sector = pick(r, ['섹터/분야','분야','sector'])
+        stamp = cnt or days or "-"
+        fields = []
+        priority = ['시장','섹터/분야','분야','현재가','실전점수','점수','진입판정','추천일수','추천횟수','연속추천일수','연속추천횟수','최근추천일','마지막추천일','메모']
+        headers = reorder_headers([r], priority)
+        for h in headers:
+            v = clean_value(r.get(h, ''))
+            if not v:
+                continue
+            fields.append(f"<b>{esc(h)}</b><span>{esc(v)}</span>")
+        cards.append(f"""<article class='row-card continuous-card'>
+<div class='stamp'>출석도장 <strong>{esc(stamp)}</strong></div>
+<h3>{esc(name)} {f'<small>({esc(code)})</small>' if code else ''}</h3>
+<p class='meta'>{esc(sector)} · 현재가 {esc(safe_price_text(price))} · 점수 {esc(score or '-')} · {esc(entry or '판정 확인')}</p>
+<div class='kv'>{''.join(fields)}</div>
+</article>""")
+    return "<div class='mobile-table-cards continuous-grid'>" + ''.join(cards) + "</div>"
 
 def build_account_trade_examples(perf_rows, max_rows=12):
     if not perf_rows: return ""
@@ -416,7 +448,7 @@ def build_outputs():
     full_priority=['순위','종목명','시장','섹터/분야','현재가','기본점수','실전점수','과열판정','진입판정','익절계획','손절계획','추세','백테스트신뢰도','상세전략가이드','entry_guide','take_profit_guide','stop_loss_guide','do_not_chase']
     write_page(details/'legacy_full_recommendations.html','전체 추천 명단 · 기존 엑셀 데이터',f'원천 파일: {xlsx.as_posix()} · 추천 리스트 시트 기반입니다. 비어 있는 TOSS 관련 열은 뒤쪽으로 밀고, 데이터가 많은 열을 앞쪽에 배치했습니다.', table_html(full_rows, headers=reorder_headers(full_rows,full_priority), max_rows=120))
     write_page(details/'legacy_entry_scenario.html','진입 시나리오 · 기존 엑셀 데이터',f'원천 파일: {xlsx.as_posix()} · 진입시나리오/진입가이드_요약 시트를 활용합니다.', build_top_cards(top_rows,entry_rows,guide_rows,news_rows)+"<section class='box'><h2>진입 시나리오 원본 표</h2>"+table_html(entry_rows,max_rows=20)+"</section><section class='box'><h2>진입가이드 요약표</h2>"+table_html(guide_rows,max_rows=20)+"</section>")
-    write_page(details/'legacy_continuous.html','연속추천 관찰 · 기존 엑셀 데이터',f'원천 파일: {xlsx.as_posix()} · 연속추천_관찰 시트 기반입니다.', build_continuous_note() + table_html(continuous_rows,max_rows=60))
+    write_page(details/'legacy_continuous.html','연속추천 관찰 · 모바일 카드',f'원천 파일: {xlsx.as_posix()} · 연속추천_관찰 시트 기반입니다. 출석도장 형태로 반복 등장 강도를 먼저 보여줍니다.', build_continuous_note() + build_continuous_cards(continuous_rows,max_rows=80))
     write_page(details/'legacy_strategy_validation.html','전략 추천/검증 · 참고용',f'원천 파일: {xlsx.as_posix()} · 필요할 때만 보는 검증 자료입니다.', build_strategy_summary(strategy_rows,perf_rows,account_rows,validation_rows))
     write_page(details/'legacy_mobile_dashboard.html','모바일 대시보드 원본 · 기존 엑셀 데이터',f'원천 파일: {xlsx.as_posix()} · 원본 확인용입니다.', table_html(mobile_rows,max_rows=20))
     shutil.copyfile(details/'legacy_top15.html', details/'recommendation_top15.html'); shutil.copyfile(details/'legacy_full_recommendations.html', details/'recommendation_full_list.html'); shutil.copyfile(details/'legacy_entry_scenario.html', details/'entry_scenario.html'); shutil.copyfile(details/'legacy_continuous.html', details/'continuous.html')
@@ -426,13 +458,7 @@ def build_outputs():
         holding_info.append({'stock_name':name,'stock_code':pick(r,['stock_code','종목코드']),'decision':decision,'current_price':price,'pnl_pct':pnl,'stock_description':stock_basic_info(name,'',decision,price,'',decision,news),'news_match_note':'strict_name_filter_applied','checked_at':now()})
     if holding_info: write_df(pd.DataFrame(holding_info), data/'latest_holding_stock_descriptions.csv')
     write_df(pd.DataFrame([{'summary':build_news_summary(news_rows),'checked_at':now()}]), data/'latest_major_news_summary.csv')
-
-    write_page(
-        details/'legacy_candidate_dashboard_validation.html',
-        '추천후보 대시보드 + 검증',
-        f'원천 파일: {xlsx.as_posix()} · 추천후보 대시보드와 전략검증을 한 페이지로 묶었습니다.',
-        "<section class='box'><h2>추천후보 대시보드</h2>" + table_html(mobile_rows, max_rows=20) + "</section>" + build_strategy_summary(strategy_rows, perf_rows, account_rows, validation_rows)
-    )
+    # v12.2.26: REMOVED_legacy_candidate_dashboard_validation.html generation removed by request.
 
     write_df(pd.DataFrame(status_rows), data/'latest_legacy_sections_status.csv')
     print('✅ legacy Excel sections restored and refined'); print(f'xlsx: {xlsx}'); print(f'sheets: {len(extracted)}')

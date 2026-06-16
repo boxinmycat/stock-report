@@ -111,8 +111,6 @@ https://boxinmycat.github.io/stock-report/details/legacy_top15.html
 전체 추천 명단:
 https://boxinmycat.github.io/stock-report/details/legacy_full_recommendations.html
 
-추천후보 상세:
-https://boxinmycat.github.io/stock-report/details/candidate_detail.html
 
 Gemini AI 보유 브리핑:
 https://boxinmycat.github.io/stock-report/details/holding_ai_briefing.html

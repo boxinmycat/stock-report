@@ -1,5 +1,5 @@
 name: daily-stock-report
-# v12.2.25 critical UI/time fix
+# v12.2.26 full pipeline refactor mobile cards
 
 on:
   schedule:
@@ -86,9 +86,9 @@ jobs:
                 REPORT_GUARD_REASON="blocked_stale_am_outside_0730_1000_kst"
               fi
             elif [ "$REPORT_SESSION" = "PM" ]; then
-              if [ "$KST_HM" -lt 1545 ] || [ "$KST_HM" -gt 1800 ]; then
+              if [ "$KST_HM" -lt 1545 ] || [ "$KST_HM" -gt 1830 ]; then
                 SKIP_HEAVY_JOB="true"
-                REPORT_GUARD_REASON="blocked_stale_pm_outside_1545_1800_kst"
+                REPORT_GUARD_REASON="blocked_stale_pm_outside_1545_1830_kst"
               fi
             else
               SKIP_HEAVY_JOB="true"
@@ -147,7 +147,6 @@ jobs:
           echo "GEMINI_MODEL: ${GEMINI_MODEL}"
 
       - name: Set up Python
-        if: ${{ env.SKIP_HEAVY_JOB != 'true' }}
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -232,6 +231,7 @@ jobs:
       - name: Final UI rebuild after all AI outputs
         if: ${{ env.SKIP_HEAVY_JOB != 'true' }}
         run: |
+          python automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py
           python automation/scripts/publish_legacy_excel_sections.py
           python automation/scripts/force_refresh_latest.py
           python automation/scripts/build_run_manifest.py

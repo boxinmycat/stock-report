@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# v12.2.23 holding AI news quality hotfix
+# v12.2.26 holding AI five-section briefing
 from __future__ import annotations
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
@@ -69,7 +69,7 @@ def strict_stock_news_match(text,name):
     for suffix in ['식품','푸드','로직스','바이오','제약']:
         if len(name)<=3 and name+suffix in text: return False
     return True
-def related(news,name,limit=5):
+def related(news,name,limit=3):
     if news.empty or not name: return []
     rows = [dict(r) for _, r in news.iterrows()]
     if filter_and_rank_news:
@@ -84,6 +84,8 @@ def related(news,name,limit=5):
         pub=get(r,'published_at') or format_pubdate(get(r,'pubDate','날짜'))
         press=get(r,'publisher') or extract_publisher(link, get(r,'originallink','origin_link'))
         qscore,qreason = news_quality_score(title, desc, get(r,'pubDate','날짜'), press, link, get(r,'originallink','origin_link'))
+        if qscore < 0 and 'fundamental_bonus' not in str(qreason):
+            continue
         out.append({'title':title,'description':desc,'link':link,'pubDate':get(r,'pubDate','날짜'),'published_at':pub,'publisher':press,'news_quality_score':qscore,'news_quality_reason':qreason})
     return out
 
@@ -110,7 +112,7 @@ def practical_action(h):
 def fallback(name,decision,pnl,links):
     issue = f"{name} 관련 뉴스 {len(links)}건을 기준으로 점검했습니다. Gemini API가 없거나 호출에 실패해 규칙 기반 요약으로 표시합니다."
     if links: issue += ' 주요 기사: ' + ' / '.join(x['title'] for x in links[:2])
-    return {'ai_status':'fallback_rule','ai_sentiment':'중립','ai_confidence':'낮음','ai_action_headline': '추가 매수 보류' if decision in ('PRICE_NOT_MATCHED','STOP_WATCH') else '보유 유지','ai_issue_summary':issue,'ai_positive_points':'AI 해석 실패로 긍정 포인트는 기사 제목과 기존 리포트를 함께 확인해야 합니다.','ai_risk_points':'AI 해석 실패 상태이므로 손절가와 현재가 매칭 상태를 우선 확인하세요.','ai_price_context':f'현재 손익률은 {pnl or "계산 대기"}이고 현재 판단은 {decision or "대기"}입니다.','ai_action_guide':'자동 해석이 불완전하므로 신규 매수/추가매수보다 보유 기준, 목표가, 손절가를 먼저 확인하세요.','ai_three_line_summary':'1. AI 브리핑은 fallback 상태입니다.\n2. 뉴스 링크와 현재가를 직접 확인하세요.\n3. 손절가 아래 물타기는 피하는 기준이 좋습니다.','ai_caution':'투자 판단 보조용이며 매수·매도 확정 지시가 아닙니다.'}
+    return {'ai_status':'fallback_rule','ai_sentiment':'중립','ai_confidence':'낮음','ai_action_headline': '추가 매수 보류' if decision in ('PRICE_NOT_MATCHED','STOP_WATCH') else '보유 유지','ai_stock_explanation':issue,'ai_positive_risk_points':'긍정: 관련 뉴스와 기존 리포트에서 확인 가능한 이슈만 참고합니다. 리스크: AI 호출 실패 상태이므로 가격·손절가·현재가 매칭을 우선 확인해야 합니다.','ai_price_action_guide':f'현재 손익률은 {pnl or "계산 대기"}이고 현재 판단은 {decision or "대기"}입니다. 신규 매수/추가매수보다 보유 기준, 목표가, 손절가를 먼저 확인하세요.','ai_three_line_summary':'1. AI 브리핑은 fallback 상태입니다.\n2. 뉴스 링크와 현재가를 직접 확인하세요.\n3. 손절가 아래 물타기는 피하는 기준이 좋습니다.','ai_related_news_comment':'관련 뉴스는 최대 2~3개만 참고하고 단순 시세 기사는 영향도를 낮게 봅니다.','ai_caution':'투자 판단 보조용이며 매수·매도 확정 지시가 아닙니다.'}
 def extract_json(text):
     text=text.strip(); text=re.sub(r'^```(?:json)?\s*','',text); text=re.sub(r'\s*```$','',text)
     m=re.search(r'\{.*\}',text,re.S)
@@ -129,7 +131,7 @@ def call_gemini(prompt):
     for model in models:
         try:
             url=f'https://generativelanguage.googleapis.com/v1beta/models/{urllib.parse.quote(model)}:generateContent'
-            payload={'system_instruction':{'parts':[{'text':"당신은 한국 주식 보유자를 위한 직설적 리서치 보조자입니다. '신중하게 접근', '관찰이 요망', '주의가 필요' 같은 뻔한 문장으로 끝내지 마세요. 반드시 보유 유지/부분 정리/손절 검토/추가 매수 보류/원금 회복 확인/반등 시 축소 중 하나를 ai_action_headline에 넣고, 현재가·평균단가·손익률·손절가·목표가 기준으로 3줄 요약하세요. 반드시 JSON만 출력하세요."}]},'contents':[{'parts':[{'text':prompt}]}],'generationConfig':{'temperature':0.25,'maxOutputTokens':1200,'responseMimeType':'application/json'}}
+            payload={'system_instruction':{'parts':[{'text':"당신은 한국 주식 보유자를 위한 실전형 포트폴리오 매니저입니다. 신중하게 접근, 관찰이 요망, 추이를 지켜보자 같은 면피성 표현을 금지합니다. 반드시 보유 유지/부분 정리/손절 검토/추가 매수 보류/원금 회복 확인/반등 시 축소 중 하나를 ai_action_headline에 넣습니다. 출력은 정확히 5개 섹션: 1 이 주식의 설명, 2 긍정 포인트/리스크 포인트, 3 가격&보유 관점과 향후 대응 가이드, 4 3줄 요약, 5 관련 뉴스 형식으로만 구성합니다. 반드시 JSON만 출력하세요."}]},'contents':[{'parts':[{'text':prompt}]}],'generationConfig':{'temperature':0.25,'maxOutputTokens':1200,'responseMimeType':'application/json'}}
             req=urllib.request.Request(url,data=json.dumps(payload,ensure_ascii=False).encode('utf-8'),headers={'Content-Type':'application/json','x-goog-api-key':key})
             with urllib.request.urlopen(req,timeout=35) as res:
                 data=json.loads(res.read().decode('utf-8'))
@@ -188,13 +190,11 @@ def prompt_for(h,links):
   "ai_action_headline": "보유 유지|부분 정리|손절 검토|추가 매수 보류|원금 회복 확인|반등 시 축소",
   "ai_sentiment": "긍정|중립|주의|위험",
   "ai_confidence": "높음|보통|낮음",
-  "ai_issue_summary": "현재 이슈 흐름을 4~7문장으로 설명. 단순 뉴스 나열 금지",
-  "ai_positive_points": "긍정 포인트를 종목 특성에 맞춰 3~5문장으로 설명",
-  "ai_risk_points": "리스크 포인트를 가격·재무·수급·뉴스 품질과 연결해 3~5문장으로 설명",
-  "ai_price_context": "현재가, 평균단가, 손익률, 손절가/목표가를 연결한 해석. 숫자 중심으로 3~5문장",
-  "ai_action_guide": "현재 대응을 4~6문장으로 명확히 제시. 보유/부분정리/손절검토/추가매수보류/회복확인 등의 표현을 사용",
-  "ai_retrospective": "이 종목은 어느 구간에서 팔았어야 했는지, 또는 아직 기다릴 근거가 있는지 사후 복기 2~4문장",
-  "ai_three_line_summary": "1. 이슈와 가능성 판단\n2. 평균단가 대비 손익률과 가격 기준\n3. 지금 대응 방향",
+  "ai_stock_explanation": "1. 이 주식의 설명: 핵심 BM과 주가 주도 테마를 2줄로 요약",
+  "ai_positive_risk_points": "2. 현재 이 주식/회사의 긍정 포인트 1개와 리스크 포인트 1개를 팩트 기반으로 정리",
+  "ai_price_action_guide": "3. 가격&보유 관점과 향후 대응 가이드: 평균단가·현재가·손익률·목표가·손절가 기반 액션 플랜",
+  "ai_three_line_summary": "4. 3줄 요약: 장중에 바로 읽을 수 있게 3줄만 작성",
+  "ai_related_news_comment": "5. 관련 뉴스: 엄선 뉴스 2~3개의 의미를 요약. 단순 시세 기사는 배제 또는 영향 낮음 표시",
   "ai_caution": "투자 판단 보조용 주의문"
 }}
 """.strip()
@@ -205,7 +205,7 @@ def build():
     if holdings.empty:
         write(pd.DataFrame([{'ai_status':'NO_HOLDINGS','message':'보유종목 데이터 없음','checked_at':now()}]),'docs/data/latest_holding_ai_briefing.csv'); return
     for _,h in holdings.iterrows():
-        name=get(h,'stock_name','종목명'); dec=get(h,'decision','판단'); pnl=get(h,'unrealized_pnl_pct','손익률'); links=related(news,name,5)
+        name=get(h,'stock_name','종목명'); dec=get(h,'decision','판단'); pnl=get(h,'unrealized_pnl_pct','손익률'); links=related(news,name,3)
         try:
             out=call_gemini(prompt_for(h,links)); out['ai_status']='gemini_ok'
         except Exception as e:
@@ -213,6 +213,10 @@ def build():
         out['ai_action_headline']=out.get('ai_action_headline') or practical_action(h)
         if out.get('ai_action_headline') not in ACTIONS:
             out['ai_action_headline']=practical_action(h)
+        out['ai_stock_explanation'] = out.get('ai_stock_explanation') or out.get('ai_issue_summary') or ''
+        out['ai_positive_risk_points'] = out.get('ai_positive_risk_points') or ('긍정: ' + str(out.get('ai_positive_points','')) + '\n리스크: ' + str(out.get('ai_risk_points','')))
+        out['ai_price_action_guide'] = out.get('ai_price_action_guide') or (str(out.get('ai_price_context','')) + '\n' + str(out.get('ai_action_guide','')))
+        out['ai_related_news_comment'] = out.get('ai_related_news_comment') or '관련 뉴스는 하단 2~3개만 엄선해 표시합니다.'
         row={'stock_name':name,'stock_code':get(h,'stock_code','종목코드'),'decision':dec,'current_price':get(h,'current_price','현재가'),'avg_price':get(h,'avg_price','평균단가'),'pnl_pct':pnl,'price_source':get(h,'current_price_source','price_source'),'checked_at':now(),**out}
         for i,x in enumerate(links,1):
             row[f'news_title_{i}']=x['title']; row[f'news_link_{i}']=x['link']; row[f'news_desc_{i}']=x['description']; row[f'news_publisher_{i}']=x.get('publisher',''); row[f'news_published_at_{i}']=x.get('published_at',''); row[f'news_quality_score_{i}']=x.get('news_quality_score','')
@@ -237,7 +241,16 @@ def build():
                 '</li>'
             )
         news_li = ''.join(news_items) or '<li>연결된 상세 뉴스가 충분하지 않습니다.</li>'
-        cards += f"""<article class='card'><div class='head'><h2>{html.escape(name)}</h2><span>{html.escape(out.get('ai_action_headline','보유 유지'))} · {html.escape(out.get('ai_sentiment','중립'))} · {html.escape(out.get('ai_confidence',''))}</span></div><div class='meta'>판단 {html.escape(dec)} · 현재가 {html.escape(row['current_price'])} · 평균단가 {html.escape(row['avg_price'])} · 손익률 {html.escape(pnl)}% · AI상태 {html.escape(out.get('ai_status',''))}</div><section><h3>AI 이슈 브리핑</h3><p>{html.escape(out.get('ai_issue_summary',''))}</p></section><section><h3>긍정 포인트</h3><p>{html.escape(out.get('ai_positive_points',''))}</p></section><section><h3>리스크 포인트</h3><p>{html.escape(out.get('ai_risk_points',''))}</p></section><section><h3>가격·보유 관점</h3><p>{html.escape(out.get('ai_price_context',''))}</p></section><section><h3>대응 가이드</h3><p>{html.escape(out.get('ai_action_guide',''))}</p></section><section><h3>직전 판단/매도 복기</h3><p>{html.escape(out.get('ai_retrospective',''))}</p></section><section><h3>3줄 요약</h3><pre>{html.escape(out.get('ai_three_line_summary',''))}</pre></section><section><h3>관련 뉴스 링크</h3><ul>{news_li}</ul></section><p class='caution'>{html.escape(out.get('ai_caution','투자 판단 보조용입니다.'))}</p></article>"""
+        cards += f"""<article class='card'>
+<div class='head'><h2>{html.escape(name)}</h2><span>{html.escape(out.get('ai_action_headline','보유 유지'))} · {html.escape(out.get('ai_sentiment','중립'))} · {html.escape(out.get('ai_confidence',''))}</span></div>
+<div class='meta'>판단 {html.escape(dec)} · 현재가 {html.escape(row['current_price'])} · 평균단가 {html.escape(row['avg_price'])} · 손익률 {html.escape(pnl)}% · AI상태 {html.escape(out.get('ai_status',''))}</div>
+<section><h3>1. 이 주식의 설명</h3><p>{html.escape(out.get('ai_stock_explanation',''))}</p></section>
+<section><h3>2. 긍정 포인트 / 리스크 포인트</h3><p>{html.escape(out.get('ai_positive_risk_points','')).replace(chr(10), '<br>')}</p></section>
+<section><h3>3. 가격&보유 관점과 향후 대응 가이드</h3><p>{html.escape(out.get('ai_price_action_guide','')).replace(chr(10), '<br>')}</p></section>
+<section><h3>4. 3줄 요약</h3><pre>{html.escape(out.get('ai_three_line_summary',''))}</pre></section>
+<section><h3>5. 관련 뉴스</h3><p>{html.escape(out.get('ai_related_news_comment',''))}</p><ul>{news_li}</ul></section>
+<p class='caution'>{html.escape(out.get('ai_caution','투자 판단 보조용입니다.'))}</p>
+</article>"""
     df=pd.DataFrame(rows); write(df,'docs/data/latest_holding_ai_briefing.csv'); write(df,'docs/data/latest_holding_issue_analysis.csv')
     Path('docs/details').mkdir(parents=True,exist_ok=True)
     page=f"""<!doctype html><html lang='ko'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Gemini AI 보유종목 브리핑</title><style>body{{margin:0;background:#f6f7fb;color:#111827;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}}.wrap{{max-width:980px;margin:auto;padding:20px}}.hero{{background:#1f2937;color:white;border-radius:22px;padding:22px;margin-bottom:16px}}.hero p{{color:#d1d5db;line-height:1.55}}.card{{background:white;border-radius:20px;padding:18px;margin-bottom:16px;box-shadow:0 4px 16px #0001}}.head{{display:flex;justify-content:space-between;gap:12px;align-items:center;border-bottom:1px solid #e5e7eb;padding-bottom:10px;margin-bottom:12px}}.head h2{{margin:0;font-size:21px}}.head span{{background:#eef2ff;color:#3730a3;border-radius:999px;padding:6px 10px;font-weight:700;font-size:12px}}.meta{{font-size:13px;color:#6b7280;margin-bottom:14px;line-height:1.5}}section{{margin:14px 0}}h3{{font-size:15px;margin:0 0 6px}}p,li{{font-size:14px;line-height:1.72;color:#374151}}pre{{white-space:pre-wrap;background:#f9fafb;border-radius:12px;padding:12px;font-size:14px;line-height:1.6}}a{{color:#2563eb;font-weight:700;text-decoration:none}}.caution{{font-size:12px;color:#6b7280;border-top:1px solid #e5e7eb;padding-top:10px}}.newsmeta{{font-size:12px;color:#6b7280}}</style></head><body><main class='wrap'><section class='hero'><h1>Gemini AI 보유종목 브리핑</h1><p>갱신: {html.escape(now())}<br>보유종목 현재가와 네이버뉴스를 Gemini가 해석한 브리핑입니다. 매수·매도 확정 지시가 아니라 판단 보조 자료입니다.</p></section>{cards}</main></body></html>"""
