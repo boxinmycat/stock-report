@@ -5,7 +5,10 @@ from datetime import datetime, timezone, timedelta
 import csv, html, os, re
 
 KST = timezone(timedelta(hours=9))
-def now(): return datetime.now(KST).strftime('%Y-%m-%d %H:%M:%S KST')
+
+def now(): 
+    return datetime.now(KST).strftime('%Y-%m-%d %H:%M:%S KST')
+
 def session():
     env = (os.environ.get('REPORT_SESSION') or os.environ.get('SESSION') or '').strip().upper()
     if env in ('AM','PM','PM_TEST','MANUAL'): return env
@@ -24,7 +27,6 @@ def read_csv(path, limit=999):
 def esc(x): return html.escape(str(x or ''))
 
 def _pct_values(text):
-    # [손절 버그 소거] 정규식 매칭을 최대 3개로 잘라 분할 비중(80%) 수치가 달라붙는 버그를 종결
     vals = [v.replace(' ', '') for v in re.findall(r"[\+\-]?\d+(?:\.\d+)?\s*%", str(text or ''))]
     return vals[:3]
 
@@ -42,7 +44,7 @@ def fmt_sl(text):
 
 def top15_entry_section():
     rows = read_csv('docs/data/latest_recommendation_top15_full.csv', 15)
-    if not rows: return "<section class='box accent'><h2>추천 TOP15 + 진입 시나리오</h2><p class='hint'>데이터 수집 확인 필요</p></section>"
+    if not rows: return "<section class='box accent'><h2>추천 TOP15 + 진입 시나리오</h2><p class='hint'>데이터 확인 필요</p></section>"
     cards = ''
     for r in rows[:6]:
         cards += f"""
@@ -98,6 +100,8 @@ def news_section():
             </article>"""
     return f"<section class='box'><h2>📰 당일 주요 뉴스</h2><div class='vertical-grid'>{items}</div></section>"
 
+def download_section(): return "<section class='box'><h2>엑셀 다운로드</h2><p class='hint'>최신 분석 엑셀 리포트 다운로드 보관소</p><a class='biglink' href='../downloads/' style='display:block; background:white; border-radius:16px; padding:14px; text-decoration:none; color:#111827; box-shadow:0 4px 16px rgba(0,0,0,0.05); font-weight:700;'>다운로드 센터 열기</a></section>"
+
 def unified_html(stamp, ss):
     return f"""<!doctype html>
 <html lang='ko'>
@@ -109,51 +113,4 @@ def unified_html(stamp, ss):
 body{{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;background:#f3f4f6;margin:0;padding:12px;color:#111827}}
 .wrap{{max-width:480px;margin:0 auto;}}
 .hero{{background:linear-gradient(135deg,#111827,#1f2937);color:white;border-radius:16px;padding:16px;margin-bottom:12px}}
-.hero h1{{margin:0;font-size:18px;font-weight:800}}
-.hero p{{margin:4px 0 0;font-size:11px;opacity:0.8}}
-.nav-grid{{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}}
-.nav-grid a{{display:block;background:white;border-radius:10px;padding:10px;text-align:center;font-size:12px;font-weight:700;color:#1e3a8a;text-decoration:none;box-shadow:0 2px 4px rgba(0,0,0,0.02);border:1px solid #e5e7eb}}
-.box{{margin-bottom:14px}}
-.box h2{{font-size:14px;margin:0 0 8px 0;border-left:4px solid #1e3a8a;padding-left:6px;font-weight:800}}
-.vertical-grid{{display:flex;flex-direction:column;gap:8px}}
-.card{{background:white;border-radius:12px;padding:12px;box-shadow:0 2px 4px rgba(0,0,0,0.02);border:1px solid #e5e7eb}}
-.card h3{{margin:0 0 4px 0;font-size:14px;font-weight:700;display:flex;justify-content:space-between;align-items:center}}
-.pill{{font-size:10px;background:#eef2ff;color:#3730a3;padding:2px 6px;border-radius:4px}}
-.meta{{font-size:11px;color:#6b7280;margin:2px 0}}
-.desc{{background:#f9fafb;padding:8px;border-radius:6px;font-size:12px;color:#374151;margin:4px 0;line-height:1.4}}
-.profit{{color:#dc2626}}.loss{{color:#2563eb}}.neutral{{color:#4b5563}}
-</style>
-</head>
-<body>
-<main class='wrap'>
-    <section class='hero'>
-        <h1>📱 모바일 관제 대시보드</h1>
-        <p>갱신: {esc(stamp)} \| 세션: {esc(ss)}</p>
-    </section>
-    <section class='nav-grid'>
-        <a href='../details/legacy_top15.html'>TOP15 리서치</a>
-        <a href='../details/legacy_continuous.html'>🔄 연속추천 관찰</a>
-        <a href='../v11_holdings/'>보유종목 상세</a>
-        <a href='../details/holding_ai_briefing.html'>🧠 AI 자산 브리핑</a>
-        <a href='../details/naver_news.html'>📰 뉴스 3줄요약</a>
-        <a href='../downloads/' style='grid-column: span 2; background:#1e3a8a; color:white;'>📥 전체 엑셀 센터 열기</a>
-    </section>
-    {top15_entry_section()}
-    {holdings_section()}
-    {ai_section()}
-    {news_section()}
-</main>
-</body>
-</html>"""
-
-def main():
-    stamp, ss = now(), session()
-    Path('docs/latest').mkdir(parents=True, exist_ok=True)
-    Path('docs/mobile').mkdir(parents=True, exist_ok=True)
-    
-    html_text = unified_html(stamp, ss)
-    Path('docs/mobile/index.html').write_text(html_text, encoding='utf-8')
-    Path('docs/latest/index.html').write_text("<!doctype html><html lang='ko'><head><meta charset='utf-8'><meta http-equiv='refresh' content='0; url=../mobile/'><meta name='viewport' content='width=device-width,initial-scale=1'></head><body></body></html>", encoding='utf-8')
-    print('✅ 모바일 전용 480px 강력 압축 홈 대시보드 및 포맷 버그 제어 빌드 완료.')
-
-if __name__ == '__main__': main()
+.hero h1{{margin:0;font-size:18px;font-
