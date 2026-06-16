@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# v12.2.26 holding AI five-section briefing
+# v12.2.27 Toss API-aware holding AI briefing
 from __future__ import annotations
 from pathlib import Path
 from datetime import datetime, timezone, timedelta

@@ -1,34 +1,50 @@
-# v12.2.26 Full Pipeline Refactor + Mobile Cards
+# v12.2.28 Toss Account Auto Discovery Hotfix
 
-## 핵심 반영
+## 왜 필요한가
 
-1. `legacy_candidate_dashboard_validation.html` 생성 제거
-2. GitHub Actions schedule을 UTC cron으로 고정
-   - AM: `0 23 * * 0-4` = KST 08:00
-   - PM: `45 7 * * 1-5` = KST 16:45
-3. KST Time Guard 강화
-   - AM 허용: 07:30~10:00
-   - PM 허용: 15:45~18:30
-   - 주말 schedule 차단
-   - workflow_dispatch 수동 실행 허용
-4. Heavy job skip 시에도 Telegram 차단 알림 발송
-5. `docs/v11_holdings/index.html` 모바일 카드 UI에 AI 매니저 실전 조언 블록 연동
-6. `legacy_top15.html`, `legacy_full_recommendations.html`, `legacy_continuous.html` 가로 스크롤 없는 카드 UI 유지/강화
-7. `legacy_continuous.html` 출석도장 카드 UI 추가
-8. `naver_news.html` 뉴스별 핵심 3줄 요약 블록 추가
-9. 보유종목 AI 브리핑 5단계 구조 고정
-10. ETF 코드 보정 및 `ACE 미국우주테크액티브 -> 0180V0` 오버라이드 추가
+토스증권에서 발급되는 앱 키는 보통 아래 2개입니다.
+
+```text
+TOSSINVEST_CLIENT_ID
+TOSSINVEST_CLIENT_SECRET
+```
+
+`TOSSINVEST_ACCOUNT`는 API 키가 아니라, 계좌/자산/주문 조회 API 호출 시 필요한 `X-Tossinvest-Account` 헤더값입니다.
+
+## 수정 내용
+
+v12.2.27에서는 `TOSSINVEST_ACCOUNT`를 Secret으로 넣는 것을 권장했지만, 이 값이 따로 발급 키처럼 보일 수 있어 혼동이 있었습니다.
+
+v12.2.28에서는 다음처럼 바꿨습니다.
+
+```text
+1. CLIENT_ID / CLIENT_SECRET만 있어도 실행
+2. TOSSINVEST_ACCOUNT가 없으면 accounts API를 먼저 조회
+3. 조회된 첫 계좌 식별값을 X-Tossinvest-Account로 자동 사용
+4. 자동 조회 실패 시 기존처럼 안전하게 status CSV에 ERROR를 남기고 fallback
+```
+
+## GitHub Secrets에 필요한 값
+
+필수:
+
+```text
+TOSSINVEST_CLIENT_ID
+TOSSINVEST_CLIENT_SECRET
+```
+
+선택:
+
+```text
+TOSSINVEST_ACCOUNT
+```
+
+`TOSSINVEST_ACCOUNT`는 자동 탐색이 안 될 때만 나중에 추가하면 됩니다.
 
 ## 적용 방법
 
 1. zip 압축 해제
 2. `01_REPO_FILES_TO_EDIT_AND_RETURN` 안의 `.github`, `automation`, `.gitignore`를 stock-report 루트에 덮어쓰기
-3. GitHub Desktop에서 변경사항 확인
-4. zip / .env / secrets / stock_report/reports / 대량 xlsx / ipynb는 커밋 금지
-5. Commit summary: `apply v12.2.26 full pipeline refactor mobile cards`
-6. Push origin
-
-## 주의
-
-- HTML 결과물을 직접 수정하지 않고 생성 스크립트를 수정했습니다.
-- 실제 Naver/Gemini API 동작은 GitHub Actions에서 한 번 실행해 최종 확인해야 합니다.
+3. GitHub Secrets에는 우선 CLIENT_ID / CLIENT_SECRET 2개만 등록
+4. Commit summary: `apply v12.2.28 toss account auto discovery`
+5. Push origin

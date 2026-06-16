@@ -34,6 +34,9 @@ def main():
     prof = read_csv(data/"latest_recommendation_profile_status.csv")
     legacy = read_csv(data/"latest_legacy_sections_status.csv")
     hold = read_csv(data/"latest_holding_ai_briefing.csv")
+    toss_status = read_csv(data/"toss_api_status.csv")
+    toss_price_status = read_csv(data/"toss_price_status.csv")
+    toss_trade_status = read_csv(data/"toss_trade_status.csv")
     rows = [
         ("event_name", sched.get("event_name")),
         ("event_schedule", sched.get("event_schedule")),
@@ -44,6 +47,9 @@ def main():
         ("recommendation_profile_status", prof[0].get("status") if prof else ""),
         ("recommendation_profile_count", prof[0].get("profile_count") if prof else ""),
         ("holding_ai_rows", len(hold)),
+        ("toss_holdings_status", toss_status[0].get("status") if toss_status else ""),
+        ("toss_price_status", toss_price_status[0].get("status") if toss_price_status else ""),
+        ("toss_trade_status", toss_trade_status[0].get("status") if toss_trade_status else ""),
         ("legacy_status_rows", len(legacy)),
         ("manifest_generated_at", now()),
     ]

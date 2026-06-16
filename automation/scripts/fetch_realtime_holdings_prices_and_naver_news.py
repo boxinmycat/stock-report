@@ -318,10 +318,95 @@ def summarize_news_three_lines(title: str, description: str, qscore="", qreason=
         bullets[2] = bullets[2] + f" / 품질점수 {qscore}"
     return "\n".join(bullets)
 
+
+
+def load_toss_holdings_snapshot() -> pd.DataFrame:
+    df = read_csv_safely(Path("docs/data/toss_holdings_snapshot.csv"))
+    if df.empty:
+        return pd.DataFrame()
+    if "stock_code" in df.columns:
+        df["stock_code"] = [normalize_holding_code(n, c) for n, c in zip(df.get("stock_name", []), df.get("stock_code", []))]
+    return df.fillna("")
+
+
+def load_toss_price_snapshot() -> pd.DataFrame:
+    df = read_csv_safely(Path("docs/data/toss_price_snapshot.csv"))
+    if df.empty:
+        return pd.DataFrame()
+    if "stock_code" in df.columns:
+        df["stock_code"] = [normalize_holding_code(n, c) for n, c in zip(df.get("stock_name", []), df.get("stock_code", []))]
+    return df.fillna("")
+
+
+def merge_toss_holdings_with_manual(manual: pd.DataFrame, toss_df: pd.DataFrame) -> pd.DataFrame:
+    """Prefer Toss account holdings for quantity/avg/current price, preserve manual target/stop/strategy fields."""
+    if toss_df.empty or os.environ.get("TOSSINVEST_PREFER_HOLDINGS", "true").lower() not in {"1", "true", "yes", "y"}:
+        return manual
+
+    manual_by_code = {}
+    manual_by_name = {}
+    for _, r in manual.iterrows():
+        code = normalize_holding_code(r.get("stock_name"), r.get("stock_code"))
+        name = norm_text(r.get("stock_name"))
+        if code:
+            manual_by_code[code] = r
+        if name:
+            manual_by_name[name] = r
+
+    rows = []
+    for _, tr in toss_df.iterrows():
+        name = norm_text(tr.get("stock_name"))
+        code = normalize_holding_code(name, tr.get("stock_code"))
+        mr = manual_by_code.get(code) or manual_by_name.get(name)
+        base = {c: "" for c in [
+            "status","stock_name","stock_code","quantity","avg_price","buy_date","strategy","target_price","stop_loss","weight_note","memo"
+        ]}
+        if mr is not None:
+            for c in base.keys():
+                base[c] = mr.get(c, "")
+        base["status"] = base.get("status") or "holding"
+        base["stock_name"] = name or base.get("stock_name", "")
+        base["stock_code"] = code or base.get("stock_code", "")
+        if norm_text(tr.get("quantity")):
+            base["quantity"] = tr.get("quantity")
+        if norm_text(tr.get("avg_price")):
+            base["avg_price"] = tr.get("avg_price")
+        memo = norm_text(base.get("memo"))
+        base["memo"] = (memo + " / " if memo else "") + "Toss API 보유수량·평단 우선 반영"
+        rows.append(base)
+
+    if rows:
+        return normalize_holdings_df(pd.DataFrame(rows))
+    return manual
+
+
+def toss_price_lookup(stock_name: str, stock_code: str, toss_holdings: pd.DataFrame, toss_prices: pd.DataFrame):
+    name = norm_text(stock_name)
+    code = normalize_holding_code(name, stock_code)
+
+    for df, label in [(toss_prices, "toss_api_price"), (toss_holdings, "toss_api_holding")]:
+        if df.empty:
+            continue
+        for _, r in df.iterrows():
+            rname = norm_text(r.get("stock_name"))
+            rcode = normalize_holding_code(rname, r.get("stock_code"))
+            if (code and rcode == code) or (name and rname == name):
+                price = to_float(r.get("current_price"))
+                if price:
+                    return price, label
+    return None, ""
+
+
 def build_holding_outputs() -> None:
     holdings, source_file = load_holdings()
     data_dir = Path("docs/data")
     data_dir.mkdir(parents=True, exist_ok=True)
+
+    toss_holdings_snapshot = load_toss_holdings_snapshot()
+    toss_price_snapshot = load_toss_price_snapshot()
+    if not toss_holdings_snapshot.empty:
+        holdings = merge_toss_holdings_with_manual(holdings, toss_holdings_snapshot)
+        source_file = source_file + " + toss_holdings_snapshot"
 
     if holdings.empty:
         diagnostic = pd.DataFrame(
@@ -357,8 +442,10 @@ def build_holding_outputs() -> None:
         stock_name = norm_text(row.get("stock_name"))
         stock_code = normalize_holding_code(stock_name, row.get("stock_code"))
 
-        current_price, price_source = fetch_naver_finance_price(stock_code)
-        time.sleep(0.15)
+        current_price, price_source = toss_price_lookup(stock_name, stock_code, toss_holdings_snapshot, toss_price_snapshot)
+        if current_price is None:
+            current_price, price_source = fetch_naver_finance_price(stock_code)
+            time.sleep(0.15)
 
         quantity = to_float(row.get("quantity"))
         avg_price = to_float(row.get("avg_price"))

@@ -1,30 +1,17 @@
-OK: .github/workflows/daily-report.yml :: cron: '0 23 * * 0-4'
-OK: .github/workflows/daily-report.yml :: cron: '45 7 * * 1-5'
-OK: .github/workflows/daily-report.yml :: SKIP_HEAVY_JOB
-OK: .github/workflows/daily-report.yml :: blocked_stale_pm_outside_1545_1830_kst
-OK: .github/workflows/daily-report.yml :: fetch_realtime_holdings_prices_and_naver_news.py
-OK: automation/scripts/publish_legacy_excel_sections.py :: build_continuous_cards
-OK: automation/scripts/publish_legacy_excel_sections.py :: legacy_candidate_dashboard_validation.html generation removed
-OK: automation/scripts/publish_legacy_excel_sections.py :: 출석도장
-OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py :: ETF_CODE_OVERRIDES
-OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py :: 0180V0
-OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py :: load_holding_ai_guidance_map
-OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py :: AI 매니저의 실전 조언
-OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py :: news_three_line_summary
-OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py :: 이 뉴스의 핵심 3줄 요약
-OK: automation/scripts/build_gemini_holding_ai_briefing.py :: ai_stock_explanation
-OK: automation/scripts/build_gemini_holding_ai_briefing.py :: ai_positive_risk_points
-OK: automation/scripts/build_gemini_holding_ai_briefing.py :: ai_price_action_guide
-OK: automation/scripts/build_gemini_holding_ai_briefing.py :: 1. 이 주식의 설명
-OK: automation/scripts/build_gemini_holding_ai_briefing.py :: 5. 관련 뉴스
-OK: automation/scripts/force_refresh_latest.py :: def dashboard_validation_section():
-OK: .github/workflows/daily-report.yml absent :: timezone: Asia/Seoul
-OK: .github/workflows/daily-report.yml absent :: 5 16 * * 1-5
-OK: automation/scripts/force_refresh_latest.py absent :: legacy_candidate_dashboard_validation.html
+OK: 01_REPO_FILES_TO_EDIT_AND_RETURN/automation/scripts/toss_api_client.py :: discover_default_account
+OK: 01_REPO_FILES_TO_EDIT_AND_RETURN/automation/scripts/toss_api_client.py :: TOSSINVEST_ACCOUNT is optional
+OK: 01_REPO_FILES_TO_EDIT_AND_RETURN/automation/scripts/toss_api_client.py :: X-Tossinvest-Account
+OK: 01_REPO_FILES_TO_EDIT_AND_RETURN/automation/scripts/toss_api_client.py :: get_accounts
+OK: 01_REPO_FILES_TO_EDIT_AND_RETURN/.github/workflows/daily-report.yml :: TOSSINVEST_CLIENT_ID
+OK: 01_REPO_FILES_TO_EDIT_AND_RETURN/.github/workflows/daily-report.yml :: TOSSINVEST_CLIENT_SECRET
+OK: 01_REPO_FILES_TO_EDIT_AND_RETURN/.github/workflows/daily-report.yml :: TOSSINVEST_ACCOUNT(optional)
 OK: automation/scripts/build_gemini_holding_ai_briefing.py ast_parse
 OK: automation/scripts/build_gemini_recommendation_company_profiles.py ast_parse
 OK: automation/scripts/build_recommendation_analysis.py ast_parse
 OK: automation/scripts/build_run_manifest.py ast_parse
+OK: automation/scripts/build_toss_holdings_snapshot.py ast_parse
+OK: automation/scripts/build_toss_price_snapshot.py ast_parse
+OK: automation/scripts/build_toss_trade_history.py ast_parse
 OK: automation/scripts/check_gemini_api.py ast_parse
 OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py ast_parse
 OK: automation/scripts/force_refresh_latest.py ast_parse
@@ -32,6 +19,7 @@ OK: automation/scripts/publish_excel_downloads.py ast_parse
 OK: automation/scripts/publish_legacy_excel_sections.py ast_parse
 OK: automation/scripts/send_telegram_report_alert.py ast_parse
 OK: automation/scripts/stock_news_disambiguation.py ast_parse
+OK: automation/scripts/toss_api_client.py ast_parse
 ALL_CHECKS_OK=True
 ALL_PARSE_OK=True
 ALL_OK=True
