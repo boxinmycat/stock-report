@@ -1,10 +1,10 @@
 ﻿stock_name,stock_code,current_price,price_source,fetched_at
-금호타이어,073240,5070.0,naver_finance,2026-06-16 00:44:57 KST
-대창솔루션,096350,2035.0,naver_finance,2026-06-16 00:44:58 KST
-대한해운,005880,2115.0,naver_finance,2026-06-16 00:45:00 KST
-에코플라스틱,038110,2310.0,naver_finance,2026-06-16 00:45:01 KST
-태림포장,011280,2090.0,naver_finance,2026-06-16 00:45:02 KST
-태웅,044490,34200.0,naver_finance,2026-06-16 00:45:04 KST
-HANARO K휴머노이드테마TOP10,0155N0,10855.0,naver_finance,2026-06-16 00:45:05 KST
-TIGER K방산&우주,463250,41680.0,naver_finance,2026-06-16 00:45:06 KST
-컴퍼니케이,307930,7270.0,naver_finance,2026-06-16 00:45:07 KST
+금호타이어,073240,5120.0,naver_stock_no_today,2026-06-16 12:24:52 KST
+대창솔루션,096350,1991.0,naver_stock_no_today,2026-06-16 12:24:54 KST
+대한해운,005880,2135.0,naver_stock_no_today,2026-06-16 12:24:56 KST
+에코플라스틱,038110,2315.0,naver_stock_no_today,2026-06-16 12:24:57 KST
+태림포장,011280,2055.0,naver_stock_no_today,2026-06-16 12:24:59 KST
+태웅,044490,34800.0,naver_stock_no_today,2026-06-16 12:25:01 KST
+HANARO K휴머노이드테마TOP10,0155N0,10645.0,naver_stock_no_today,2026-06-16 12:25:03 KST
+TIGER K방산&우주,463250,45350.0,naver_stock_no_today,2026-06-16 12:25:05 KST
+컴퍼니케이,307930,7230.0,naver_stock_no_today,2026-06-16 12:25:07 KST

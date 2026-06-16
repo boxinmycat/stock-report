@@ -1,12 +1,12 @@
 key,value
 event_name,workflow_dispatch
 event_schedule,
-utc_started_at,2026-06-15 15:10:03 UTC
-kst_started_at,2026-06-16 00:10:03 KST
-kst_hm,0010
+utc_started_at,2026-06-16 02:28:23 UTC
+kst_started_at,2026-06-16 11:28:23 KST
+kst_hm,1128
 kst_dow,2
 report_session,MANUAL
 expected_kst,manual run
 expected_kind,manual
-skip_report,
-guard_reason,
+skip_heavy_job,false
+guard_reason,allowed
