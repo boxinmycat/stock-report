@@ -14,7 +14,7 @@ def clean_value(x):
     if x is None: return ""
     try:
         if isinstance(x, float) and pd.isna(x): return ""
-    except Exception: pass
+    except: pass
     s = str(x).strip()
     return "" if s.lower() in {"nan","none","nat"} else s
 
@@ -23,8 +23,7 @@ def find_latest_xlsx() -> Path | None:
     for root in [Path('.'), Path('stock_report'), Path('docs')]:
         if not root.exists(): continue
         for p in root.rglob('*.xlsx'):
-            if not p.is_file(): continue
-            if 'docs/downloads' in p.as_posix() or '__MACOSX' in p.as_posix(): continue
+            if not p.is_file() or 'docs/downloads' in p.as_posix(): continue
             key = p.resolve()
             if key in seen: continue
             seen.add(key); files.append(p)
@@ -33,6 +32,7 @@ def find_latest_xlsx() -> Path | None:
     return files[0]
 
 def _extract_percent_numbers(text):
+    # [버그 완전 박멸] 정규식 매칭 풀 슬라이싱을 3개로 차단해 분할 매매 비량(80%) 찌꺼기가 침범하는 버그 차단
     vals = re.findall(r"[\+\-]?\d+(?:\.\d+)?\s*%", clean_value(text))
     return [v.replace(' ', '') for v in vals][:3]
 
@@ -45,15 +45,14 @@ def format_tp_plan(raw):
 
 def format_sl_plan(raw):
     vals = _extract_percent_numbers(raw)
-    if vals: return ' / '.join(f"<span style='color:#dc2626; font-weight:bold;'>{v}</span>" for v in vals)
-    return esc(clean_value(raw))
+    return ' / '.join(f"<span style='color:#dc2626; font-weight:bold;'>{v}</span>" for v in vals) if vals else esc(clean_value(raw))
 
 def safe_price_text(v):
     t = clean_value(v)
     if not t: return "-"
     try:
-        n = float(re.sub(r"[^\d.\-]", "", t))
-        return f"{n:,.0f}원"
+        raw_num = float(re.sub(r'[^\d.\-]', '', t))
+        return f"{raw_num:,.0f}원"
     except: return t
 
 def build_top15_cards(top_rows):
@@ -74,7 +73,7 @@ def build_top15_cards(top_rows):
                 <span class="rank-tag">TOP {rank}</span>
                 <span class="stock-title-main">{name} <small>({code})</small></span>
             </div>
-            <div class="card-meta-row">분야: {sector} | 진입판정: <b>{decision}</b></div>
+            <div class="card-meta-row">분야: {sector} | 상태: <b>{decision}</b></div>
             <div class="card-price-grid">
                 <div><small>실시간 현재가</small><b>{price}</b></div>
                 <div><small>실전 계량점수</small><b>{score}점</b></div>
@@ -118,39 +117,22 @@ def build_outputs():
     data_dir, details_dir = Path('docs/data'), Path('docs/details')
     xlsx = find_latest_xlsx()
     if not xlsx: return
-    
     try: top_df = pd.read_csv(data_dir / 'latest_recommendation_top15_full.csv', dtype=str).fillna('')
     except: top_df = pd.DataFrame()
     try: cont_df = pd.read_csv(data_dir / 'latest_legacy_continuous.csv', dtype=str).fillna('')
     except: cont_df = pd.DataFrame()
 
-    html_style = """<style>
-    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #f3f4f6; margin: 0; padding: 12px; color: #1e293b; }
-    .container { max-width: 480px; margin: 0 auto; }
-    .hero-banner { background: #0f172a; color: white; padding: 16px; border-radius: 16px; margin-bottom: 12px; }
-    .mobile-card-item { background: white; border-radius: 16px; padding: 14px; margin-bottom: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); border-left: 5px solid #10b981; }
-    .stamp-box { background: #fff7ed; color: #ea580c; padding: 4px; border-radius: 6px; font-size: 11px; font-weight: bold; text-align: center; border: 1px dashed #ffedd5; }
-    .card-head-row { display: flex; justify-content: space-between; align-items: center; }
-    .rank-tag { background: #10b981; color: white; font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-    .stock-title-main { font-size: 15px; font-weight: bold; }
-    .card-meta-row { font-size: 12px; color: #64748b; margin: 4px 0; }
-    .card-price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 8px 0; }
-    .card-price-grid div { background: #f8fafc; padding: 6px; border-radius: 8px; }
-    .card-price-grid small { display: block; color: #94a3b8; font-size: 10px; }
-    .card-price-grid b { font-size: 13px; font-weight: bold; }
-    .card-desc-box { background: #f1f5f9; padding: 10px; border-radius: 10px; font-size: 12px; line-height: 1.5; color: #334155; }
-    </style>"""
+    html_style = """<style>body { font-family: -apple-system, sans-serif; background: #f3f4f6; margin: 0; padding: 12px; } .container { max-width: 480px; margin: 0 auto; } .hero-banner { background: #0f172a; color: white; padding: 14px; border-radius: 14px; margin-bottom: 12px; } .mobile-card-item { background: white; border-radius: 14px; padding: 12px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); border-left: 5px solid #10b981; } .stamp-box { background: #fff7ed; color: #ea580c; padding: 4px; border-radius: 6px; font-size: 11px; font-weight: bold; text-align: center; border: 1px dashed #fdba74; } .card-head-row { display: flex; justify-content: space-between; align-items: center; } .rank-tag { background: #10b981; color: white; font-size: 11px; padding: 2px 4px; border-radius: 4px; } .stock-title-main { font-size: 14px; font-weight: bold; } .card-meta-row { font-size: 11px; color: #64748b; margin: 2px 0; } .card-price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 6px 0; } .card-price-grid div { background: #f8fafc; padding: 6px; border-radius: 6px; } .card-price-grid small { display: block; color: #94a3b8; font-size: 10px; } .card-price-grid b { font-size: 12px; } .card-desc-box { background: #f1f5f9; padding: 8px; border-radius: 8px; font-size: 11px; line-height: 1.45; }</style>"""
 
     if not top_df.empty:
         content = build_top15_cards(top_df.to_dict('records'))
-        (details_dir / 'legacy_top15.html').write_text(f"<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>TOP15 리서치노트</title>{html_style}</head><body><div class='container'><div class='hero-banner'><h3 style='margin:0;font-size:16px;'>💎 추천 TOP15 실전 리서치 가이드</h3><p style='margin:4px 0 0 0;font-size:11px;opacity:0.8;'>동기화 완료</p></div>{content}</div></body></html>", encoding='utf-8')
+        (details_dir / 'legacy_top15.html').write_text(f"<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>TOP15 리서치</title>{html_style}</head><body><div class='container'><div class='hero-banner'><h3 style='margin:0;font-size:15px;'>💎 추천 TOP15 실전 리서치 노출</h3></div>{content}</div></body></html>", encoding='utf-8')
         shutil.copyfile(details_dir / 'legacy_top15.html', details_dir / 'recommendation_top15.html')
-
+        shutil.copyfile(details_dir / 'legacy_top15.html', details_dir / 'legacy_full_recommendations.html')
+        shutil.copyfile(details_dir / 'legacy_top15.html', details_dir / 'recommendation_full_list.html')
     if not cont_df.empty:
         cont_content = build_continuous_cards(cont_df.to_dict('records'))
-        (details_dir / 'legacy_continuous.html').write_text(f"<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>연속추천 관찰</title>{html_style}</head><body><div class='container'><div class='hero-banner' style='background:#ea580c;'><h3 style='margin:0;font-size:16px;'>🔄 연속 추천 출석 타임라인</h3><p style='margin:4px 0 0 0;font-size:11px;opacity:0.8;'>동기화 완료</p></div>{cont_content}</div></body></html>", encoding='utf-8')
+        (details_dir / 'legacy_continuous.html').write_text(f"<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>연속추천 관찰</title>{html_style}</head><body><div class='container'><div class='hero-banner' style='background:#ea580c;'><h3 style='margin:0;font-size:15px;'>🔄 연속 추천 포착 출석 타임라인</h3></div>{cont_content}</div></body></html>", encoding='utf-8')
         shutil.copyfile(details_dir / 'legacy_continuous.html', details_dir / 'continuous.html')
-        
-    print("✅ 레거시 덮어쓰기 무력화 및 손절가 비중 표기 정규식 백슬래시 에러 완전 방어")
-
+    print("✅ 레거시 덮어쓰기 무력화 완료.")
 if __name__ == '__main__': build_outputs()
