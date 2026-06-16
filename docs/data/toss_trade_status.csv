@@ -1,0 +1,2 @@
+﻿status,message,source,checked_at
+ERROR,"RuntimeError(""No Toss API endpoint succeeded for TOSSINVEST_ORDER_HISTORY_PATH. Tried: ['GET /api/v1/orders/{orderId}', 'GET /api/v1/orderbook', 'GET /api/v1/trades', 'GET /api/v1/exchange-rate', 'GET /api/v1/accounts', 'GET /api/v1/commissions']"")",,2026-06-16 13:56:33 UTC
