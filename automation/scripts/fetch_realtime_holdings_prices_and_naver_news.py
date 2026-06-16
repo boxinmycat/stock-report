@@ -26,7 +26,7 @@ except Exception:
 
 KST = timezone(timedelta(hours=9))
 
-# [치명적 버그 교정] 가짜 코드를 소거하고 네이버 금융 표준 코드인 6자리 숫자로 정밀 매칭
+# [버그 수정] 가짜 코드를 폐기하고 네이버 금융 크롤링 규격인 순수 숫자 6자리로 정밀 세팅
 ETF_CODE_OVERRIDES = {
     "ACE 미국우주테크액티브": "414250",
 }
@@ -233,7 +233,7 @@ def fetch_naver_finance_price(code: str):
     request = urllib.request.Request(
         url,
         headers={
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
             "Accept-Language": "ko-KR,ko;q=0.9",
         },
     )
@@ -309,7 +309,7 @@ def summarize_news_three_lines(title: str, description: str, qscore="", qreason=
     desc = strip_html_tags(description)
     text = re.sub(r"\s+", " ", f"{title}. {desc}").strip()
     if not text:
-        return "• 핵심: 기사 요약 데이터가 부족합니다.\n• 영향: 원문 링크와 공시 여부를 함께 확인하세요.\n• 체크: 단순 시세 기사라면 대응 신뢰도를 낮게 해석합니다."
+        return "• 기사 요약 데이터가 부족합니다.\n• 원문 링크와 공시 여부를 함께 확인하세요.\n• 단순 시세 기사라면 매매 근거로 약하게 봅니다."
     sents = [x.strip(" .") for x in re.split(r"(?<=[.!?。])\s+|[。]", text) if x.strip()]
     if len(sents) < 3:
         chunks = [text[i:i+80] for i in range(0, min(len(text), 240), 80)]
@@ -473,7 +473,8 @@ def build_holding_outputs() -> None:
         source = html.escape(str(row.get('current_price_source', '')))
         ai = ai_guidance_by_name.get(str(row.get('stock_name', '')), {})
         ai_headline = html.escape(str(ai.get('headline') or decision or 'AI 분석 대기'))
-        ai_summary = html.escape(str(ai.get('summary') or '장마감 AI 브리핑 생성 후 이 자리에 실전 조언 가이드가 표시됩니다.')).replace('\n', '<br>')
+        ai_summary_raw = str(ai.get('summary') or '장마감 AI 브리핑 생성 후 이 자리에 실전 가이드가 노출됩니다.')
+        ai_summary = html.escape(ai_summary_raw).replace('\n', '<br>')
         
         cards.append(
             "<article class='holding-card'>"
@@ -499,7 +500,7 @@ def build_holding_outputs() -> None:
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>보유종목 심화분석 (모바일 세로 고정)</title>
+<title>보유종목 심화분석 (모바일 카드 고정)</title>
 <style>
 :root{{color-scheme:light}}
 *{{box-sizing:border-box}}
@@ -664,7 +665,8 @@ def build_news_outputs() -> None:
         query = html.escape(" · ".join([x for x in meta_bits if x]))
         title = html.escape(norm_text(row.get("title")) or "제목 없음")
         description = html.escape(norm_text(row.get("description")))
-        three = html.escape(norm_text(row.get("news_three_line_summary"))).replace('\n', '<br>')
+        three_line_raw = str(row.get("news_three_line_summary") or '')
+        three = html.escape(three_line_raw).replace('\n', '<br>')
         link = norm_text(row.get("link"))
 
         link_html = f'<a class="news-link" href="{html.escape(link)}" target="_blank" rel="noopener">기사 원문 읽기 ↗</a>' if link else ""
@@ -687,7 +689,7 @@ def build_news_outputs() -> None:
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>주요 뉴스 3줄 요약 (모바일 가독성)</title>
+<title>주요 뉴스 3줄 요약</title>
 <style>
 body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f3f4f6;margin:0;padding:12px;color:#111827}}
 .wrap{{max-width:480px;margin:0 auto;}}
@@ -706,7 +708,7 @@ body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgro
 <body>
 <main class="wrap">
 <section class="hero">
-<h1>📰 당일 주요 뉴스 3줄 요약 브리핑</h1>
+<h1>📰 당일 주요 뉴스 전체 브리핑</h1>
 <p>갱신: {html.escape(now_kst())}</p>
 </section>
 {''.join(cards)}
