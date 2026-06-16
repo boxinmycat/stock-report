@@ -34,21 +34,17 @@ def main():
     prof = read_csv(data/"latest_recommendation_profile_status.csv")
     legacy = read_csv(data/"latest_legacy_sections_status.csv")
     hold = read_csv(data/"latest_holding_ai_briefing.csv")
-    price = read_csv(data/"latest_price_validation.csv")
-    price_bad = [r for r in price if (r.get('price_validation_status') or '').upper() == 'PRICE_MISMATCH']
     rows = [
         ("event_name", sched.get("event_name")),
         ("event_schedule", sched.get("event_schedule")),
         ("expected_kst", sched.get("expected_kst")),
         ("kst_started_at", sched.get("kst_started_at")),
-        ("skip_report", sched.get("skip_report")),
+        ("skip_heavy_job", sched.get("skip_heavy_job") or sched.get("skip_report")),
         ("guard_reason", sched.get("guard_reason")),
         ("recommendation_profile_status", prof[0].get("status") if prof else ""),
         ("recommendation_profile_count", prof[0].get("profile_count") if prof else ""),
         ("holding_ai_rows", len(hold)),
         ("legacy_status_rows", len(legacy)),
-        ("price_validation_rows", len(price)),
-        ("price_mismatch_count", len(price_bad)),
         ("manifest_generated_at", now()),
     ]
     trs = "".join(f"<tr><th>{esc(k)}</th><td>{esc(v)}</td></tr>" for k,v in rows)

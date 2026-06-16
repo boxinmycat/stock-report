@@ -208,12 +208,24 @@ def table_html(rows, headers=None, max_rows=60):
     if not rows:
         return "<p class='hint'>표시할 데이터가 없습니다.</p>"
     headers = headers or reorder_headers(rows)
-    colgroup = ''.join(f"<col style='min-width:{col_width_px(h)};width:{col_width_px(h)}'>" for h in headers)
-    th = ''.join(f"<th>{esc(h)}</th>" for h in headers)
-    body = ''.join('<tr>' + ''.join(f"<td>{esc(r.get(h,''))}</td>" for h in headers) + '</tr>' for r in rows)
-    return f"<div class='tablewrap'><table><colgroup>{colgroup}</colgroup><thead><tr>{th}</tr></thead><tbody>{body}</tbody></table></div>"
+    cards = []
+    title_keys = ['종목명','stock_name','name','전략명','strategy','순위','rank']
+    for idx, r in enumerate(rows, start=1):
+        title = ''
+        for key in title_keys:
+            title = pick(r, [key])
+            if title: break
+        if not title:
+            title = f"{idx}번 항목"
+        fields = []
+        for h in headers:
+            v = clean_value(r.get(h, ''))
+            if not v: continue
+            fields.append(f"<b>{esc(h)}</b><span>{esc(v)}</span>")
+        cards.append(f"<article class='row-card'><h3>{esc(title)}</h3><div class='kv'>{''.join(fields)}</div></article>")
+    return "<div class='mobile-table-cards'>" + ''.join(cards) + "</div>"
 
-CSS = """body{margin:0;background:#f6f7fb;color:#111827;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{max-width:1080px;margin:auto;padding:20px}.hero{background:#172554;color:white;border-radius:22px;padding:22px;margin-bottom:16px}.hero p{color:#dbeafe;line-height:1.55}.box,.card{background:white;border-radius:18px;padding:16px;margin-bottom:16px;box-shadow:0 4px 16px rgba(0,0,0,.06)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}.card h3{margin:0 0 8px}.pill{display:inline-block;background:#dbeafe;color:#1e40af;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700}.meta,.hint{font-size:13px;color:#6b7280;line-height:1.55}p,li{font-size:14px;line-height:1.68;color:#374151}.tablewrap{overflow:auto;background:white;border-radius:16px;border:1px solid #e5e7eb}table{border-collapse:collapse;width:max-content;min-width:100%}th,td{border-bottom:1px solid #e5e7eb;padding:10px;font-size:13px;text-align:left;vertical-align:top;white-space:normal;word-break:keep-all}th{background:#f3f4f6;color:#334155}a{color:#2563eb;font-weight:700;text-decoration:none}.links{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}.links a{display:block;background:#fff;border-radius:16px;padding:14px;box-shadow:0 4px 16px rgba(0,0,0,.06)}"""
+CSS = """*{box-sizing:border-box}body{margin:0;background:#f6f7fb;color:#111827;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{max-width:1040px;margin:auto;padding:18px}.hero{background:linear-gradient(135deg,#172554,#1e40af);color:white;border-radius:24px;padding:22px;margin-bottom:16px;box-shadow:0 8px 24px rgba(15,23,42,.16)}.hero h1{margin:0 0 8px;letter-spacing:-.03em}.hero p{color:#dbeafe;line-height:1.55;margin:0}.box,.card{background:white;border-radius:20px;padding:16px;margin-bottom:16px;box-shadow:0 6px 18px rgba(15,23,42,.07);border:1px solid #e5e7eb}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(286px,1fr));gap:14px}.card h3{margin:0 0 8px;font-size:19px}.pill{display:inline-flex;background:#dbeafe;color:#1e40af;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:800}.meta,.hint{font-size:13px;color:#6b7280;line-height:1.55}p,li{font-size:14px;line-height:1.68;color:#374151}.links{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}.links a{display:block;background:#fff;border-radius:16px;padding:14px;box-shadow:0 4px 16px rgba(0,0,0,.06)}a{color:#2563eb;font-weight:700;text-decoration:none}.mobile-table-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:12px}.row-card{background:white;border:1px solid #e5e7eb;border-radius:18px;padding:14px;box-shadow:0 4px 14px rgba(15,23,42,.05)}.row-card h3{font-size:17px;margin:0 0 10px}.kv{display:grid;grid-template-columns:104px minmax(0,1fr);gap:7px 10px;border-top:1px solid #f1f5f9;padding-top:10px}.kv b{font-size:12px;color:#64748b}.kv span{font-size:13px;color:#111827;word-break:break-word;line-height:1.45}.strategy-compact{display:grid;gap:4px}.price-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0}.price-grid div{background:#f8fafc;border-radius:14px;padding:10px}.price-grid small{display:block;color:#64748b;font-size:11px;margin-bottom:4px}.price-grid b{font-size:14px}.desc{white-space:pre-line;background:#f9fafb;border-radius:14px;padding:12px}.badge{display:inline-flex;align-items:center;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:800;background:#eef2ff;color:#3730a3}@media(max-width:480px){.wrap{padding:12px}.hero{border-radius:20px;padding:18px}.grid,.mobile-table-cards{display:block}.card,.row-card{margin-bottom:12px}.price-grid{grid-template-columns:1fr}.kv{grid-template-columns:92px minmax(0,1fr)}}"""
 
 def write_page(path: Path, title: str, subtitle: str, content: str):
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -312,14 +324,34 @@ def news_meta(row):
 
 def build_top_cards(top_rows, entry_rows, guide_rows, news_rows):
     entry_by, guide_by = by_name(entry_rows), by_name(guide_rows, ['stock_name','종목명'])
+    profile_by = recommendation_profile_map()
     cards = ''
     for r in top_rows[:15]:
-        name = pick(r, ['종목명','stock_name']); e = entry_by.get(name, {}); g = guide_by.get(name, {})
-        rank = pick(r, ['순위','rank']); sector = pick(r, ['섹터/분야','분야','sector']); score = pick(r, ['실전점수','점수','score','기본점수']); price = pick(r, ['현재가','current_price']); entry_decision = pick(r, ['진입판정','entry_action','entry_guide'])
+        name = pick(r, ['종목명','stock_name'])
+        e = entry_by.get(name, {})
+        g = guide_by.get(name, {})
+        rank = pick(r, ['순위','rank'])
+        sector = pick(r, ['섹터/분야','분야','sector'])
+        score = pick(r, ['실전점수','점수','score','기본점수'])
+        price = pick(r, ['현재가','current_price'])
+        entry_decision = pick(r, ['진입판정','entry_action','entry_guide'])
         news = related_news(news_rows, name, 3)
-        basic = stock_basic_info(name, sector, pick(g, ['entry_guide']) or entry_decision, price, score, entry_decision, news)
-        cards += f"""<article class="card"><h3>#{esc(rank)} {esc(name)}</h3><div class="meta">{esc(normalize_category(name, sector))} · 현재가 {esc(price)} · 실전점수 {esc(score)} · {esc(entry_decision or '진입판정 확인')}</div><p>{esc(basic)}</p><p><b>공격/기준/보수 진입가:</b> {esc(pick(e, ['공격진입가']))} / {esc(pick(e, ['기준진입가']))} / {esc(pick(e, ['보수진입가']))}</p><p><b>돌파 진입가:</b> {esc(pick(e, ['돌파진입가']))}<br><b>손절 기준가:</b> {esc(pick(e, ['손절기준가']))}</p><p><b>익절:</b> {format_tp_plan(pick(r, ['익절계획']) or pick(g, ['take_profit_guide']))}<br><b>손절:</b> {format_sl_plan(pick(r, ['손절계획']) or pick(g, ['stop_loss_guide']) or pick(e, ['손절기준가']))}</p></article>"""
+        desc = profile_by.get(name) or stock_basic_info(name, sector, pick(g, ['entry_guide']) or entry_decision, '', '', '', news)
+        cards += f"""<article class="card top-card">
+<div class="meta"><span class="badge">#{esc(rank)}</span> <span>{esc(normalize_category(name, sector))}</span></div>
+<h3>{esc(name)}</h3>
+<div class="price-grid">
+<div><small>현재가</small><b>{esc(safe_price_text(price))}</b></div>
+<div><small>실전점수</small><b>{esc(score)}</b></div>
+<div><small>돌파 진입가</small><b>{esc(safe_price_text(pick(e, ['돌파진입가'])))}</b></div>
+<div><small>손절 기준가</small><b>{esc(safe_price_text(pick(e, ['손절기준가'])))}</b></div>
+</div>
+<p class="meta"><b>진입판정:</b> {esc(entry_decision or '확인 필요')}</p>
+<p><b>익절:</b> {format_tp_plan(pick(r, ['익절계획']) or pick(g, ['take_profit_guide']))}<br><b>손절:</b> {format_sl_plan(pick(r, ['손절계획']) or pick(g, ['stop_loss_guide']) or pick(e, ['손절기준가']))}</p>
+<div class="desc">{esc(desc)}</div>
+</article>"""
     return f"<section class='grid'>{cards}</section>" if cards else "<p class='hint'>TOP 후보 데이터가 없습니다.</p>"
+
 
 def build_strategy_summary(strategy_rows, perf_rows, account_rows, guide_rows):
     parts=[]
@@ -380,7 +412,7 @@ def build_outputs():
             sector=normalize_category(name,pick(r,['섹터/분야','분야']),pick(g,['entry_guide'])); news=related_news(news_rows,name,3)
             alias.append({'rank':pick(r,['순위']),'stock_name':name,'stock_code':pick(r,['종목코드','stock_code']),'market':pick(r,['시장']),'sector':sector,'source':pick(r,['후보출처']),'current_price':pick(r,['현재가']),'base_score':pick(r,['기본점수']),'score':pick(r,['실전점수','점수']),'overheat':pick(r,['과열판정']),'entry_decision':pick(r,['진입판정']),'attack_entry':pick(e,['공격진입가']),'base_entry':pick(e,['기준진입가']),'conservative_entry':pick(e,['보수진입가']),'breakout_entry':pick(e,['돌파진입가']),'stop_price':pick(e,['손절기준가']),'take_profit_plan':pick(r,['익절계획']) or pick(g,['take_profit_guide']),'stop_loss_plan':pick(r,['손절계획']) or pick(g,['stop_loss_guide']),'entry_guide':pick(g,['entry_guide']),'do_not_chase':pick(g,['do_not_chase']),'check_points':pick(g,['check_points']),'stock_description':profile_by.get(name) or stock_basic_info(name,sector,pick(g,['entry_guide']),pick(r,['현재가']),pick(r,['실전점수','점수']),pick(r,['진입판정']),news)})
         write_df(pd.DataFrame(alias), data/'latest_recommendation_top15_full.csv'); write_df(pd.DataFrame(alias), data/'latest_recommendation_analysis.csv')
-    write_page(details/'legacy_top15.html','추천 TOP15 + 진입 시나리오',f'원천 파일: {xlsx.as_posix()} · TOP후보_요약/진입시나리오/진입가이드_요약 시트를 함께 보여줍니다.', build_top_cards(top_rows,entry_rows,guide_rows,news_rows)+"<section class='box'><h2>TOP 후보 원본 표</h2>"+table_html(top_rows,max_rows=20)+"</section>")
+    write_page(details/'legacy_top15.html','추천 TOP15 + 진입 시나리오',f'원천 파일: {xlsx.as_posix()} · TOP후보_요약/진입시나리오/진입가이드_요약 시트를 함께 보여줍니다.', build_top_cards(top_rows,entry_rows,guide_rows,news_rows))
     full_priority=['순위','종목명','시장','섹터/분야','현재가','기본점수','실전점수','과열판정','진입판정','익절계획','손절계획','추세','백테스트신뢰도','상세전략가이드','entry_guide','take_profit_guide','stop_loss_guide','do_not_chase']
     write_page(details/'legacy_full_recommendations.html','전체 추천 명단 · 기존 엑셀 데이터',f'원천 파일: {xlsx.as_posix()} · 추천 리스트 시트 기반입니다. 비어 있는 TOSS 관련 열은 뒤쪽으로 밀고, 데이터가 많은 열을 앞쪽에 배치했습니다.', table_html(full_rows, headers=reorder_headers(full_rows,full_priority), max_rows=120))
     write_page(details/'legacy_entry_scenario.html','진입 시나리오 · 기존 엑셀 데이터',f'원천 파일: {xlsx.as_posix()} · 진입시나리오/진입가이드_요약 시트를 활용합니다.', build_top_cards(top_rows,entry_rows,guide_rows,news_rows)+"<section class='box'><h2>진입 시나리오 원본 표</h2>"+table_html(entry_rows,max_rows=20)+"</section><section class='box'><h2>진입가이드 요약표</h2>"+table_html(guide_rows,max_rows=20)+"</section>")

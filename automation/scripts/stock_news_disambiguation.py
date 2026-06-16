@@ -27,6 +27,9 @@ LOW_VALUE_NEWS_WORDS = [
 ETF_CONTEXT_WORDS = ["ETF","상장지수펀드","순자산","분배금","커버드콜","월배당","추종","지수","S&P500","나스닥","미국채","국채","채권","구성종목","리밸런싱"]
 
 PREFERRED_PRESS = ["연합뉴스","한국경제","매일경제","서울경제","이데일리","머니투데이","조선비즈","비즈니스포스트","더벨","전자신문","ZDNet","블로터","뉴스핌"]
+FUNDAMENTAL_BONUS_SCORE = 15
+PRICE_ONLY_PENALTY_SCORE = -35
+
 LOW_PRIORITY_PRESS_HINTS = ["지역","투데이","시민","데일리한국","국제뉴스","핀포인트뉴스","와이드경제","전국매일","농업경제"]
 
 DOMAIN_PRESS_MAP = {
@@ -177,7 +180,15 @@ def extract_publisher(link: str = "", originallink: str = "", raw: str = "") -> 
     return ""
 
 def news_quality_score(title: str, description: str = "", pubDate: str = "", publisher: str = "", link: str = "", originallink: str = ""):
-    title = strip_html(title); desc = strip_html(description)
+    """Return (score, reason) for stock-news usefulness.
+
+    Strong policy:
+    - fundamental/business articles: +15 per meaningful cluster, capped
+    - stale/simple price relay articles: -35 hard penalty
+    This function is intentionally standalone so importing modules never depend on globals outside this file.
+    """
+    title = strip_html(title)
+    desc = strip_html(description)
     text = f"{title} {desc}"
     score = 0
     reasons = []
@@ -185,29 +196,40 @@ def news_quality_score(title: str, description: str = "", pubDate: str = "", pub
     dt = parse_pubdate(pubDate)
     if dt:
         age_days = max(0, (datetime.now(KST) - dt).days)
-        if age_days <= 3: score += 5; reasons.append("fresh_3d")
-        elif age_days <= 14: score += 3; reasons.append("fresh_14d")
-        elif age_days <= 45: score += 1; reasons.append("fresh_45d")
-        else: score -= 6; reasons.append("old_45d_plus")
+        if age_days <= 3:
+            score += 5; reasons.append("fresh_3d")
+        elif age_days <= 14:
+            score += 3; reasons.append("fresh_14d")
+        elif age_days <= 45:
+            score += 1; reasons.append("fresh_45d")
+        else:
+            score -= 10; reasons.append("old_45d_plus")
 
-    imp = sum(1 for w in IMPORTANT_NEWS_WORDS if w in text)
-    low = sum(1 for w in LOW_VALUE_NEWS_WORDS if w in title)
-    score += min(imp * 2, 10)
-    if imp: reasons.append(f"important:{imp}")
-    if low and not imp:
-        score -= min(low * 2, 6); reasons.append(f"price_only:{low}")
+    fundamental_hits = [w for w in IMPORTANT_NEWS_WORDS if w in text]
+    if fundamental_hits:
+        clusters = min(len(set(fundamental_hits)), 3)
+        score += FUNDAMENTAL_BONUS_SCORE * clusters
+        reasons.append(f"fundamental_bonus:{clusters}")
+
+    low_hits = [w for w in LOW_VALUE_NEWS_WORDS if w in title]
+    price_pattern = bool(re.search(r"\d{1,3}(?:,\d{3})*원", title) or re.search(r"[+\-]?\d+(?:\.\d+)?%", title))
+    dated_price_close = bool(re.search(r"\d{1,2}월\s*\d{1,2}일", title) and ("마감" in title or price_pattern))
+    plain_price_relay = bool(("주가" in title or "장중" in title or "마감" in title) and price_pattern and not fundamental_hits)
+    if plain_price_relay or dated_price_close:
+        score += PRICE_ONLY_PENALTY_SCORE
+        reasons.append("price_relay_penalty:-35")
+    elif low_hits and not fundamental_hits:
+        score -= min(len(low_hits) * 5, 20)
+        reasons.append(f"low_value_price_words:{len(low_hits)}")
 
     pub = publisher or extract_publisher(link, originallink)
     if any(p in pub for p in PREFERRED_PRESS):
-        score += 2; reasons.append("preferred_press")
+        score += 3; reasons.append("preferred_press")
     if any(h in pub for h in LOW_PRIORITY_PRESS_HINTS):
-        score -= 2; reasons.append("low_priority_press")
+        score -= 4; reasons.append("low_priority_press")
 
-    # Example: "5월 19일 4,840원 2.42% 하락 마감" is often stale/price-only.
-    if re.search(r"\d{1,2}월\s*\d{1,2}일", title) and ("마감" in title or "%" in title) and not imp:
-        score -= 5; reasons.append("dated_price_close_article")
+    return int(score), ",".join(reasons) or "neutral"
 
-    return score, ",".join(reasons) or "neutral"
 
 def build_news_queries(stock_name: str, stock_code: str = "", category: str = "") -> list[str]:
     stock_name = (stock_name or "").strip()

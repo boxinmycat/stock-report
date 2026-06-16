@@ -62,17 +62,16 @@ def normalize_code(value) -> str:
     text = norm_text(value)
     if not text:
         return ""
-
     text = text.replace("=", "").replace('"', "").replace("'", "")
-    text = text.replace(",", "").replace(" ", "").strip()
-
+    text = text.replace(",", "").replace(" ", "").strip().upper()
     if re.fullmatch(r"\d+\.0", text):
         text = text[:-2]
-
-    if re.fullmatch(r"\d+", text):
+    text = re.sub(r"[^0-9A-Z]", "", text)
+    if not text:
+        return ""
+    if re.fullmatch(r"[0-9A-Z]+", text):
         return text.zfill(6)
-
-    return text.upper()
+    return text
 
 
 def to_float(value):
@@ -196,12 +195,29 @@ def build_code_lookup() -> dict[str, str]:
     return lookup
 
 
+def format_won(value) -> str:
+    num = to_float(value)
+    if num is None:
+        return "-"
+    return f"{int(round(num)):,.0f}원"
+
+def format_pct(value) -> str:
+    num = to_float(value)
+    if num is None:
+        return "-"
+    return f"{num:+.2f}%"
+
+def pnl_class(value) -> str:
+    num = to_float(value)
+    if num is None:
+        return "neutral"
+    return "profit" if num > 0 else "loss" if num < 0 else "neutral"
+
+
 def fetch_naver_finance_price(code: str):
     code = normalize_code(code)
-
     if not code:
         return None, "no_code"
-
     url = f"https://finance.naver.com/item/main.naver?code={code}"
     request = urllib.request.Request(
         url,
@@ -210,25 +226,28 @@ def fetch_naver_finance_price(code: str):
             "Accept-Language": "ko-KR,ko;q=0.9,en;q=0.8",
         },
     )
-
     try:
         with urllib.request.urlopen(request, timeout=12) as response:
             text = response.read().decode("euc-kr", errors="ignore")
 
-        match = re.search(
-            r'<p class="no_today">.*?<span class="blind">([\d,]+)</span>',
-            text,
-            re.S,
-        )
-
-        if not match:
-            match = re.search(r'<span class="blind">([\d,]+)</span>', text, re.S)
-
-        if match:
-            return float(match.group(1).replace(",", "")), "naver_finance"
-
+        patterns = [
+            # 일반 주식 현재가
+            (r'<p class="no_today">\s*<em[^>]*>\s*<span class="blind">([\d,]+)</span>', 'naver_stock_no_today'),
+            (r'<div class="today">.*?<span class="blind">([\d,]+)</span>', 'naver_stock_today'),
+            # ETF/ETN/펀드 요약 레이어 또는 rate_info 주변 현재가
+            (r'<div class="rate_info">.*?<span class="blind">([\d,]+)</span>', 'naver_rate_info'),
+            (r'<em class="no_up">\s*<span class="blind">([\d,]+)</span>', 'naver_etf_up'),
+            (r'<em class="no_down">\s*<span class="blind">([\d,]+)</span>', 'naver_etf_down'),
+            (r'<span class="blind">([\d,]+)</span>', 'naver_blind_fallback'),
+        ]
+        for pattern, source in patterns:
+            match = re.search(pattern, text, re.S)
+            if not match:
+                continue
+            value = float(match.group(1).replace(',', ''))
+            if value > 0:
+                return value, source
         return None, "parse_failed"
-
     except urllib.error.HTTPError as exc:
         return None, f"http_{exc.code}"
     except Exception as exc:
@@ -353,19 +372,32 @@ def build_holding_outputs() -> None:
     write_csv_safely(pd.DataFrame(deep_rows), data_dir / "latest_holding_deep_analysis.csv")
     write_csv_safely(pd.DataFrame(guide_rows), data_dir / "latest_holding_action_guide.csv")
 
-    table_rows = []
+    cards = []
     for row in deep_rows:
-        table_rows.append(
-            "<tr>"
-            f"<td>{html.escape(str(row.get('stock_name', '')))}</td>"
-            f"<td>{html.escape(str(row.get('stock_code', '')))}</td>"
-            f"<td>{html.escape(str(row.get('decision', '')))}</td>"
-            f"<td>{html.escape(str(row.get('avg_price', '')))}</td>"
-            f"<td>{html.escape(str(row.get('current_price', '')))}</td>"
-            f"<td>{html.escape(str(row.get('unrealized_pnl_pct', '')))}</td>"
-            f"<td>{html.escape(str(row.get('current_price_source', '')))}</td>"
-            f"<td>{html.escape(str(row.get('memo', '')))}</td>"
-            "</tr>"
+        name = html.escape(str(row.get('stock_name', '')))
+        code = html.escape(str(row.get('stock_code', '')))
+        decision = html.escape(str(row.get('decision', '')))
+        avg = format_won(row.get('avg_price'))
+        current = format_won(row.get('current_price'))
+        target = format_won(row.get('target_price'))
+        stop = format_won(row.get('stop_loss'))
+        pnl_text = format_pct(row.get('unrealized_pnl_pct'))
+        cls = pnl_class(row.get('unrealized_pnl_pct'))
+        memo = html.escape(str(row.get('memo', '')))
+        source = html.escape(str(row.get('current_price_source', '')))
+        cards.append(
+            "<article class='holding-card'>"
+            f"<div class='card-top'><div><h2>{name}</h2><p class='code'>{code}</p></div><span class='badge'>{decision}</span></div>"
+            "<div class='metrics'>"
+            f"<div><small>평단가</small><b>{avg}</b></div>"
+            f"<div><small>현재가</small><b>{current}</b></div>"
+            f"<div><small>손익률</small><b class='{cls}'>{pnl_text}</b></div>"
+            "</div>"
+            "<div class='line'></div>"
+            f"<p class='targets'><b>목표가</b> {target} <span></span><b>손절가</b> {stop}</p>"
+            f"<p class='memo'>{memo}</p>"
+            f"<p class='source'>현재가 출처: {source}</p>"
+            "</article>"
         )
 
     v11_page = Path("docs/v11_holdings/index.html")
@@ -378,13 +410,30 @@ def build_holding_outputs() -> None:
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>보유종목 심화분석</title>
 <style>
+:root{{color-scheme:light}}
+*{{box-sizing:border-box}}
 body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f6f7fb;margin:0;color:#111827}}
-.wrap{{max-width:1100px;margin:auto;padding:20px}}
-.hero{{background:#111827;color:white;border-radius:20px;padding:20px;margin-bottom:16px}}
-.box{{overflow:auto;background:white;border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,.06)}}
-table{{border-collapse:collapse;width:100%;min-width:900px}}
-th,td{{border-bottom:1px solid #e5e7eb;padding:10px;font-size:13px;text-align:left;vertical-align:top}}
-th{{background:#f3f4f6}}
+.wrap{{max-width:920px;margin:auto;padding:18px}}
+.hero{{background:linear-gradient(135deg,#111827,#1e3a8a);color:white;border-radius:24px;padding:22px;margin-bottom:16px;box-shadow:0 8px 24px rgba(17,24,39,.18)}}
+.hero h1{{margin:0 0 8px;font-size:24px}}
+.hero p{{margin:4px 0;color:#dbeafe;line-height:1.55}}
+.card-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}}
+.holding-card{{background:white;border-radius:22px;padding:17px;box-shadow:0 8px 22px rgba(15,23,42,.08);border:1px solid #e5e7eb}}
+.card-top{{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}}
+.card-top h2{{font-size:20px;margin:0 0 4px;letter-spacing:-.02em}}
+.code{{margin:0;color:#6b7280;font-size:13px}}
+.badge{{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;background:#eef2ff;color:#3730a3;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:800}}
+.metrics{{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:16px 0}}
+.metrics div{{background:#f9fafb;border-radius:16px;padding:11px;min-width:0}}
+.metrics small{{display:block;color:#6b7280;font-size:11px;margin-bottom:5px}}
+.metrics b{{font-size:15px;word-break:break-all}}
+.profit{{color:#dc2626!important}}.loss{{color:#2563eb!important}}.neutral{{color:#374151!important}}
+.line{{height:1px;background:#e5e7eb;margin:12px 0}}
+.targets{{display:flex;gap:8px;flex-wrap:wrap;font-size:14px;color:#374151;line-height:1.5}}
+.targets span{{width:8px}}
+.memo{{background:#fff7ed;color:#9a3412;border-radius:14px;padding:10px;font-size:13px;line-height:1.55}}
+.source{{color:#6b7280;font-size:12px;margin-bottom:0}}
+@media(max-width:480px){{.wrap{{padding:12px}}.hero{{border-radius:20px;padding:18px}}.card-grid{{display:block}}.holding-card{{margin-bottom:12px;border-radius:20px}}.metrics{{grid-template-columns:1fr}}}}
 </style>
 </head>
 <body>
@@ -392,20 +441,11 @@ th{{background:#f3f4f6}}
 <section class="hero">
 <h1>보유종목 심화분석</h1>
 <p>갱신: {html.escape(now_kst())}</p>
-<p>현재가는 네이버 금융 종목코드 직접 조회 기준입니다.</p>
+<p>현재가는 네이버 금융 종목코드 직접 조회 기준입니다. 모든 항목은 모바일 세로 카드형으로 표시됩니다.</p>
 </section>
-<div class="box">
-<table>
-<thead>
-<tr>
-<th>종목명</th><th>코드</th><th>판단</th><th>평균단가</th><th>현재가</th><th>손익률%</th><th>출처</th><th>메모</th>
-</tr>
-</thead>
-<tbody>
-{''.join(table_rows)}
-</tbody>
-</table>
-</div>
+<section class="card-grid">
+{''.join(cards)}
+</section>
 </main>
 </body>
 </html>
