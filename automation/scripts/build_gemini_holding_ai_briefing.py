@@ -66,10 +66,10 @@ def related(news,name,limit=3):
         title = clean(get(r,'title','제목'))
         desc = clean(get(r,'description','요약','본문'))
         link = get(r,'link','링크')
-        pub = get(r,'published_at') or format_pubdate(get(r,'pubDate','날짜'))
+        pub = get(r['pubDate']) if get(r,'pubDate') else (get(r,'published_at') or '')
         press = get(r,'publisher') or extract_publisher(link, get(r,'originallink','origin_link'))
-        qscore, qreason = news_quality_score(title, desc, get(r,'pubDate','날짜'), press, link, get(r,'originallink','origin_link'))
-        out.append({'title':title,'description':desc,'link':link,'pubDate':get(r,'pubDate','날짜'),'published_at':pub,'publisher':press,'news_quality_score':qscore,'news_quality_reason':qreason})
+        qscore, qreason = news_quality_score(title, desc, pub, press, link, get(r,'originallink','origin_link'))
+        out.append({'title':title,'description':desc,'link':link,'pubDate':pub,'published_at':pub,'publisher':press,'news_quality_score':qscore,'news_quality_reason':qreason})
     return out
 
 def practical_action(h):
@@ -180,7 +180,7 @@ def build():
                 <h2>{html.escape(name)} <small>({get(h,'stock_code','')})</small></h2>
                 <span class="badge">{html.escape(headline)} · {out.get('ai_sentiment','중립')}</span>
             </div>
-            <div class="meta-info">평단: {get(h,'avg_price','')}원 \| 현재가: {get(h,'current_price','')}원 \| 손익률: {pnl}%</div>
+            <div class="meta-info">평단: {get(h,'avg_price','')}원 | 현재가: {get(h,'current_price','')}원 | 손익률: {pnl}%</div>
             <div class="step-box"><h3>1. 이 주식의 설명</h3><p>{html.escape(expl)}</p></div>
             <div class="step-box"><h3>2. 현재 이 주식, 회사의 긍정 포인트 / 리스크 포인트</h3><p>{points}</p></div>
             <div class="step-box"><h3>3. 가격&보유 관점과 향후 대응 가이드</h3><p style="color:#1e3a8a; font-weight:700;">{html.escape(guide)}</p></div>
