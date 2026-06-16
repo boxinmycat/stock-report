@@ -1,10 +1,18 @@
-OK: 01_REPO_FILES_TO_EDIT_AND_RETURN/automation/scripts/toss_api_client.py :: discover_default_account
-OK: 01_REPO_FILES_TO_EDIT_AND_RETURN/automation/scripts/toss_api_client.py :: TOSSINVEST_ACCOUNT is optional
-OK: 01_REPO_FILES_TO_EDIT_AND_RETURN/automation/scripts/toss_api_client.py :: X-Tossinvest-Account
-OK: 01_REPO_FILES_TO_EDIT_AND_RETURN/automation/scripts/toss_api_client.py :: get_accounts
-OK: 01_REPO_FILES_TO_EDIT_AND_RETURN/.github/workflows/daily-report.yml :: TOSSINVEST_CLIENT_ID
-OK: 01_REPO_FILES_TO_EDIT_AND_RETURN/.github/workflows/daily-report.yml :: TOSSINVEST_CLIENT_SECRET
-OK: 01_REPO_FILES_TO_EDIT_AND_RETURN/.github/workflows/daily-report.yml :: TOSSINVEST_ACCOUNT(optional)
+OK: .github/workflows/daily-report.yml :: cron: '0 23 * * 0-4'
+OK: .github/workflows/daily-report.yml :: cron: '45 7 * * 1-5'
+OK: .github/workflows/daily-report.yml :: Build Toss Invest read-only snapshots
+OK: .github/workflows/daily-report.yml :: SKIP_HEAVY_JOB
+OK: .github/workflows/daily-report.yml :: REPORT_GUARD_REASON
+OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py :: load_holding_ai_guidance_map
+OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py :: AI 매니저의 실전 조언
+OK: automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py :: news_three_line_summary
+OK: automation/scripts/build_gemini_holding_ai_briefing.py :: news_quality_score
+OK: automation/scripts/build_gemini_holding_ai_briefing.py :: BANNED_MANAGER_PHRASES
+OK: automation/scripts/build_gemini_holding_ai_briefing.py :: clean_manager_text
+OK: automation/scripts/build_gemini_recommendation_company_profiles.py :: gemini-1.5-flash
+OK: automation/scripts/toss_api_client.py :: discover_default_account
+OK: automation/scripts/toss_api_client.py :: TOSSINVEST_ACCOUNT is optional
+OK: .github/workflows/daily-report.yml absent :: timezone: Asia/Seoul
 OK: automation/scripts/build_gemini_holding_ai_briefing.py ast_parse
 OK: automation/scripts/build_gemini_recommendation_company_profiles.py ast_parse
 OK: automation/scripts/build_recommendation_analysis.py ast_parse

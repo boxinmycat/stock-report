@@ -1,3 +1,20 @@
+
+
+BANNED_MANAGER_PHRASES = [
+    "신중하게 접근",
+    "신중히 접근",
+    "관찰이 요망",
+    "추이를 관찰",
+    "지켜봐야",
+    "주의가 필요",
+]
+
+def clean_manager_text(value: str) -> str:
+    text = str(value or "")
+    for phrase in BANNED_MANAGER_PHRASES:
+        text = text.replace(phrase, "가격 기준을 확인")
+    return text.strip()
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # v12.2.27 Toss API-aware holding AI briefing
@@ -120,7 +137,7 @@ def extract_json(text):
     return json.loads(text)
 def call_gemini(prompt):
     key=os.environ.get('GEMINI_API_KEY','').strip()
-    primary=os.environ.get('GEMINI_MODEL','gemini-3.5-flash').strip() or 'gemini-3.5-flash'
+    primary=os.environ.get('GEMINI_MODEL','gemini-1.5-flash').strip() or 'gemini-1.5-flash'
     models=[]
     for m in [primary, 'gemini-2.5-flash', 'gemini-2.5-flash-lite']:
         if m and m not in models:
@@ -131,7 +148,7 @@ def call_gemini(prompt):
     for model in models:
         try:
             url=f'https://generativelanguage.googleapis.com/v1beta/models/{urllib.parse.quote(model)}:generateContent'
-            payload={'system_instruction':{'parts':[{'text':"당신은 한국 주식 보유자를 위한 실전형 포트폴리오 매니저입니다. 신중하게 접근, 관찰이 요망, 추이를 지켜보자 같은 면피성 표현을 금지합니다. 반드시 보유 유지/부분 정리/손절 검토/추가 매수 보류/원금 회복 확인/반등 시 축소 중 하나를 ai_action_headline에 넣습니다. 출력은 정확히 5개 섹션: 1 이 주식의 설명, 2 긍정 포인트/리스크 포인트, 3 가격&보유 관점과 향후 대응 가이드, 4 3줄 요약, 5 관련 뉴스 형식으로만 구성합니다. 반드시 JSON만 출력하세요."}]},'contents':[{'parts':[{'text':prompt}]}],'generationConfig':{'temperature':0.25,'maxOutputTokens':1200,'responseMimeType':'application/json'}}
+            payload={'system_instruction':{'parts':[{'text':"당신은 한국 주식 보유자를 위한 실전형 포트폴리오 매니저입니다. 신중하게 접근, 신중히 접근, 관찰이 요망, 추이를 지켜보자, 지켜봐야 한다 같은 면피성 표현을 금지합니다. 반드시 보유 유지/부분 정리/손절 검토/추가 매수 보류/원금 회복 확인/반등 시 축소 중 하나를 ai_action_headline에 넣습니다. 관련 뉴스는 최대 2~3개만 사용하고 단순 주가 등락/하락 마감 기사는 배제합니다. 출력은 정확히 5개 섹션: 1 이 주식의 설명, 2 긍정 포인트/리스크 포인트, 3 가격&보유 관점과 향후 대응 가이드, 4 3줄 요약, 5 관련 뉴스 형식으로만 구성합니다. 반드시 JSON만 출력하세요."}]},'contents':[{'parts':[{'text':prompt}]}],'generationConfig':{'temperature':0.25,'maxOutputTokens':1200,'responseMimeType':'application/json'}}
             req=urllib.request.Request(url,data=json.dumps(payload,ensure_ascii=False).encode('utf-8'),headers={'Content-Type':'application/json','x-goog-api-key':key})
             with urllib.request.urlopen(req,timeout=35) as res:
                 data=json.loads(res.read().decode('utf-8'))
@@ -210,7 +227,7 @@ def build():
             out=call_gemini(prompt_for(h,links)); out['ai_status']='gemini_ok'
         except Exception as e:
             out=fallback(name,dec,pnl,links); out['ai_error']=repr(e)
-        out['ai_action_headline']=out.get('ai_action_headline') or practical_action(h)
+        out['ai_action_headline']=clean_manager_text(out.get('ai_action_headline') or practical_action(h))
         if out.get('ai_action_headline') not in ACTIONS:
             out['ai_action_headline']=practical_action(h)
         out['ai_stock_explanation'] = out.get('ai_stock_explanation') or out.get('ai_issue_summary') or ''

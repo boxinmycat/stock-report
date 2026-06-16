@@ -265,6 +265,13 @@ def fetch_naver_finance_price(code: str):
         return None, f"error_{type(exc).__name__}"
 
 
+def safe_money(value) -> str:
+    num = to_float(value)
+    if num is None:
+        return "-"
+    return f"{int(round(num)):,}원"
+
+
 def make_decision(pnl_pct, target_price, stop_loss, current_price):
     if current_price is None:
         return "PRICE_NOT_MATCHED", "현재가 직접 조회 실패. 종목코드 6자리와 네이버 금융 조회 가능 여부를 확인하세요."

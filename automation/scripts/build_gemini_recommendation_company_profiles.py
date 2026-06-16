@@ -69,7 +69,7 @@ def extract_json(text):
 
 def call_gemini(prompt):
     key = os.environ.get("GEMINI_API_KEY", "").strip()
-    primary = os.environ.get("GEMINI_MODEL", "gemini-3.5-flash").strip() or "gemini-3.5-flash"
+    primary = os.environ.get("GEMINI_MODEL", "gemini-1.5-flash").strip() or "gemini-1.5-flash"
     models = []
     for m in [primary, "gemini-2.5-flash", "gemini-2.5-flash-lite"]:
         if m and m not in models: models.append(m)
@@ -79,7 +79,7 @@ def call_gemini(prompt):
         try:
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{urllib.parse.quote(model)}:generateContent"
             payload = {
-                "system_instruction": {"parts": [{"text": "당신은 한국 주식 투자자를 위한 리서치 노트 작성자입니다. 출력은 반드시 미니 리서치 노트여야 합니다. 이미 표에 있는 현재가, 목표가, 손절가, 실전점수, 진입판정, 수익률 숫자를 본문에서 반복하지 마세요. 흔한 업종 개요, 공공재 수준의 회사 소개, 숫자 앵무새 반복을 금지하고, 고객사/수주/실적/공시/ETF 노출 테마 밀도처럼 투자 판단에 필요한 정보만 씁니다. 반드시 JSON만 출력하세요."}]},
+                "system_instruction": {"parts": [{"text": "당신은 한국 주식 투자자를 위한 리서치 노트 작성자입니다. 출력은 반드시 미니 리서치 노트여야 합니다. 이미 표에 있는 현재가, 목표가, 손절가, 실전점수, 진입판정, 수익률 숫자를 본문에서 반복하지 마세요. 흔한 업종 개요, 공공재 수준의 회사 소개, 공공재 수준의 회사 소개, 숫자 앵무새 반복을 금지하고, 고객사/수주/실적/공시/ETF 노출 테마 밀도처럼 투자 판단에 필요한 정보만 씁니다. 반드시 JSON만 출력하세요."}]},
                 "contents": [{"parts": [{"text": prompt}]}],
                 "generationConfig": {"temperature": 0.35, "maxOutputTokens": 6000, "responseMimeType": "application/json"}
             }

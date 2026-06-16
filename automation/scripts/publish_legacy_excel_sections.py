@@ -458,7 +458,7 @@ def build_outputs():
         holding_info.append({'stock_name':name,'stock_code':pick(r,['stock_code','종목코드']),'decision':decision,'current_price':price,'pnl_pct':pnl,'stock_description':stock_basic_info(name,'',decision,price,'',decision,news),'news_match_note':'strict_name_filter_applied','checked_at':now()})
     if holding_info: write_df(pd.DataFrame(holding_info), data/'latest_holding_stock_descriptions.csv')
     write_df(pd.DataFrame([{'summary':build_news_summary(news_rows),'checked_at':now()}]), data/'latest_major_news_summary.csv')
-    # v12.2.26: REMOVED_legacy_candidate_dashboard_validation.html generation removed by request.
+    # v12.2.26: REMOVED_REMOVED_legacy_candidate_dashboard_validation.html generation removed by request.
 
     write_df(pd.DataFrame(status_rows), data/'latest_legacy_sections_status.csv')
     print('✅ legacy Excel sections restored and refined'); print(f'xlsx: {xlsx}'); print(f'sheets: {len(extracted)}')
