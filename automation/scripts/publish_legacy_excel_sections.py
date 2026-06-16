@@ -33,7 +33,6 @@ def find_latest_xlsx() -> Path | None:
     return files[0]
 
 def _extract_percent_numbers(text):
-    # [버그 완전 해결] 정규식 매칭 타깃을 상위 3개(분할 계획선)로 엄격히 잘라 괄호 안의 비중 수량 수치(80%) 왜곡을 원천 격리 차단
     vals = re.findall(r"[\+\-]?\d+(?:\.\d+)?\s*%", clean_value(text))
     return [v.replace(' ', '') for v in vals][:3]
 
@@ -75,7 +74,7 @@ def build_top15_cards(top_rows):
                 <span class="rank-tag">TOP {rank}</span>
                 <span class="stock-title-main">{name} <small>({code})</small></span>
             </div>
-            <div class="card-meta-row">분야: {sector} \| 진입판정: <b>{decision}</b></div>
+            <div class="card-meta-row">분야: {sector} | 진입판정: <b>{decision}</b></div>
             <div class="card-price-grid">
                 <div><small>실시간 현재가</small><b>{price}</b></div>
                 <div><small>실전 계량점수</small><b>{score}점</b></div>
@@ -104,7 +103,7 @@ def build_continuous_cards(rows):
             <div class="card-head-row" style="margin-top:8px;">
                 <span class="stock-title-main">{name} <small>({code})</small></span>
             </div>
-            <div class="card-meta-row">분야: {sector} \| 상태: {entry}</div>
+            <div class="card-meta-row">분야: {sector} | 상태: {entry}</div>
             <div class="card-price-grid">
                 <div><small>현재가</small><b>{price}</b></div>
                 <div><small>포착점수</small><b>{score}점</b></div>
@@ -144,7 +143,7 @@ def build_outputs():
 
     if not top_df.empty:
         content = build_top15_cards(top_df.to_dict('records'))
-        (details_dir / 'legacy_top15.html').write_text(f"<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>TOP15 리서치노트</title>{html_style}</head><body><div class='container'><div class='hero-banner'><h3 style='margin:0;font-size:16px;'>💎 추천 TOP15 실전 리서치 가이드</h3><p style='margin:4px 0 0 0;font-size:11px;opacity:0.8;'>동기화 보정 완료</p></div>{content}</div></body></html>", encoding='utf-8')
+        (details_dir / 'legacy_top15.html').write_text(f"<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>TOP15 리서치노트</title>{html_style}</head><body><div class='container'><div class='hero-banner'><h3 style='margin:0;font-size:16px;'>💎 추천 TOP15 실전 리서치 가이드</h3><p style='margin:4px 0 0 0;font-size:11px;opacity:0.8;'>동기화 완료</p></div>{content}</div></body></html>", encoding='utf-8')
         shutil.copyfile(details_dir / 'legacy_top15.html', details_dir / 'recommendation_top15.html')
 
     if not cont_df.empty:
@@ -152,6 +151,6 @@ def build_outputs():
         (details_dir / 'legacy_continuous.html').write_text(f"<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>연속추천 관찰</title>{html_style}</head><body><div class='container'><div class='hero-banner' style='background:#ea580c;'><h3 style='margin:0;font-size:16px;'>🔄 연속 추천 출석 타임라인</h3><p style='margin:4px 0 0 0;font-size:11px;opacity:0.8;'>동기화 완료</p></div>{cont_content}</div></body></html>", encoding='utf-8')
         shutil.copyfile(details_dir / 'legacy_continuous.html', details_dir / 'continuous.html')
         
-    print("✅ 레거시 덮어쓰기 무력화 및 손절가 비중 표기 노이즈 원천 제어 완료.")
+    print("✅ 레거시 덮어쓰기 무력화 및 손절가 비중 표기 정규식 백슬래시 에러 완전 방어")
 
 if __name__ == '__main__': build_outputs()
