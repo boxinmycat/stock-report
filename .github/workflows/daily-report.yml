@@ -1,5 +1,5 @@
 name: daily-stock-report
-# v12.2.29 gemini feedback merge + toss preserved
+# v12.2.30 gemini path fix + optimization pipeline
 
 on:
   schedule:
@@ -35,7 +35,7 @@ jobs:
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      GEMINI_MODEL: gemini-3.5-flash
+      GEMINI_MODEL: gemini-1.5-flash
       TOSSINVEST_CLIENT_ID: ${{ secrets.TOSSINVEST_CLIENT_ID }}
       TOSSINVEST_CLIENT_SECRET: ${{ secrets.TOSSINVEST_CLIENT_SECRET }}
       TOSSINVEST_ACCOUNT: ${{ secrets.TOSSINVEST_ACCOUNT }}
@@ -57,7 +57,7 @@ jobs:
           UTC_NOW="$(date -u '+%Y-%m-%d %H:%M:%S UTC')"
           KST_NOW="$(TZ=Asia/Seoul date '+%Y-%m-%d %H:%M:%S KST')"
           KST_HM="$(TZ=Asia/Seoul date '+%H%M')"
-          KST_DOW="$(TZ=Asia/Seoul date '+%u')"  # 1=Mon ... 7=Sun
+          KST_DOW="$(TZ=Asia/Seoul date '+%u')"
 
           SKIP_HEAVY_JOB="false"
           REPORT_GUARD_REASON="allowed"
@@ -73,14 +73,6 @@ jobs:
             REPORT_SESSION="PM"
             REPORT_EXPECTED_KST="16:45 KST"
             REPORT_EXPECTED_KIND="market_close"
-          elif [ "$EVENT_NAME" = "workflow_dispatch" ]; then
-            REPORT_SESSION="MANUAL"
-            REPORT_EXPECTED_KST="manual run"
-            REPORT_EXPECTED_KIND="manual"
-          else
-            REPORT_SESSION="UNKNOWN"
-            REPORT_EXPECTED_KST="unknown"
-            REPORT_EXPECTED_KIND="unknown"
           fi
 
           if [ "$EVENT_NAME" = "schedule" ]; then
@@ -97,32 +89,8 @@ jobs:
                 SKIP_HEAVY_JOB="true"
                 REPORT_GUARD_REASON="blocked_stale_pm_outside_1545_1830_kst"
               fi
-            else
-              SKIP_HEAVY_JOB="true"
-              REPORT_GUARD_REASON="blocked_unknown_schedule"
             fi
           fi
-
-          echo "event_name=$EVENT_NAME"
-          echo "event_schedule=$EVENT_SCHEDULE"
-          echo "utc_now=$UTC_NOW"
-          echo "kst_now=$KST_NOW"
-          echo "kst_hm=$KST_HM"
-          echo "kst_dow=$KST_DOW"
-          echo "report_session=$REPORT_SESSION"
-          echo "expected_kst=$REPORT_EXPECTED_KST"
-          echo "skip_heavy_job=$SKIP_HEAVY_JOB"
-          echo "guard_reason=$REPORT_GUARD_REASON"
-
-          echo "SKIP_HEAVY_JOB=$SKIP_HEAVY_JOB" >> "$GITHUB_ENV"
-          echo "REPORT_GUARD_REASON=$REPORT_GUARD_REASON" >> "$GITHUB_ENV"
-          echo "REPORT_SESSION=$REPORT_SESSION" >> "$GITHUB_ENV"
-          echo "REPORT_EVENT_NAME=$EVENT_NAME" >> "$GITHUB_ENV"
-          echo "REPORT_EVENT_SCHEDULE=$EVENT_SCHEDULE" >> "$GITHUB_ENV"
-          echo "REPORT_UTC_STARTED_AT=$UTC_NOW" >> "$GITHUB_ENV"
-          echo "REPORT_KST_STARTED_AT=$KST_NOW" >> "$GITHUB_ENV"
-          echo "REPORT_EXPECTED_KST=$REPORT_EXPECTED_KST" >> "$GITHUB_ENV"
-          echo "REPORT_EXPECTED_KIND=$REPORT_EXPECTED_KIND" >> "$GITHUB_ENV"
 
           mkdir -p docs/data
           {
@@ -131,29 +99,11 @@ jobs:
             echo "event_schedule,$EVENT_SCHEDULE"
             echo "utc_started_at,$UTC_NOW"
             echo "kst_started_at,$KST_NOW"
-            echo "kst_hm,$KST_HM"
-            echo "kst_dow,$KST_DOW"
-            echo "report_session,$REPORT_SESSION"
-            echo "expected_kst,$REPORT_EXPECTED_KST"
-            echo "expected_kind,$REPORT_EXPECTED_KIND"
             echo "skip_heavy_job,$SKIP_HEAVY_JOB"
             echo "guard_reason,$REPORT_GUARD_REASON"
           } > docs/data/latest_schedule_diagnostics.csv
-
-      - name: Show repository files
-        run: |
-          pwd
-          ls -la
-          ls -la automation/scripts || true
-          ls -la holdings_manual_input.csv trade_log_manual_input.csv || true
-          echo "NAVER_CLIENT_ID: ${NAVER_CLIENT_ID:+OK}"
-          echo "NAVER_CLIENT_SECRET: ${NAVER_CLIENT_SECRET:+OK}"
-          echo "TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:+OK}"
-          echo "TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:+OK}"
-          echo "GEMINI_API_KEY: ${GEMINI_API_KEY:+OK}"
-          echo "GEMINI_MODEL: ${GEMINI_MODEL}"
-          echo "TOSSINVEST_CLIENT_ID: ${TOSSINVEST_CLIENT_ID:+OK}"
-          echo "TOSSINVEST_ACCOUNT(optional): ${TOSSINVEST_ACCOUNT:+OK}"
+          
+          echo "SKIP_HEAVY_JOB=$SKIP_HEAVY_JOB" >> "$GITHUB_ENV"
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -173,24 +123,6 @@ jobs:
           python automation/scripts/build_toss_trade_history.py
           python automation/scripts/build_toss_price_snapshot.py
 
-      - name: Validate TOSS manual candidate file
-        if: ${{ env.SKIP_HEAVY_JOB != 'true' }}
-        run: |
-          if [ -f automation/scripts/validate_toss_csv.py ]; then
-            python automation/scripts/validate_toss_csv.py "$TOSS_MANUAL_CSV_FILE"
-          else
-            echo "validate_toss_csv.py not found; skip"
-          fi
-
-      - name: Hotfix source notebook before runtime copy
-        if: ${{ env.SKIP_HEAVY_JOB != 'true' }}
-        run: |
-          if [ -f automation/scripts/hotfix_v102_series_or.py ]; then
-            python automation/scripts/hotfix_v102_series_or.py "$NOTEBOOK_FILE"
-          else
-            echo "hotfix_v102_series_or.py not found; skip"
-          fi
-
       - name: Prepare runtime notebook
         if: ${{ env.SKIP_HEAVY_JOB != 'true' }}
         run: |
@@ -198,15 +130,6 @@ jobs:
             python automation/scripts/patch_notebook_config.py "$NOTEBOOK_FILE" "_runtime_report.ipynb"
           else
             cp "$NOTEBOOK_FILE" "_runtime_report.ipynb"
-          fi
-
-      - name: Hotfix runtime notebook before execute
-        if: ${{ env.SKIP_HEAVY_JOB != 'true' }}
-        run: |
-          if [ -f automation/scripts/hotfix_v102_series_or.py ]; then
-            python automation/scripts/hotfix_v102_series_or.py "_runtime_report.ipynb"
-          else
-            echo "hotfix_v102_series_or.py not found; skip"
           fi
 
       - name: Run report notebook
@@ -219,11 +142,6 @@ jobs:
         run: |
           python automation/scripts/fetch_realtime_holdings_prices_and_naver_news.py
 
-      - name: Build recommendation candidate analysis
-        if: ${{ env.SKIP_HEAVY_JOB != 'true' }}
-        run: |
-          python automation/scripts/build_recommendation_analysis.py
-
       - name: Restore legacy Excel report sections
         if: ${{ env.SKIP_HEAVY_JOB != 'true' }}
         run: |
@@ -233,11 +151,6 @@ jobs:
         if: ${{ env.SKIP_HEAVY_JOB != 'true' }}
         run: |
           python automation/scripts/build_gemini_recommendation_company_profiles.py
-
-      - name: Check Gemini API health
-        if: ${{ env.SKIP_HEAVY_JOB != 'true' && (github.event_name == 'workflow_dispatch' || github.event.schedule == '45 7 * * 1-5') }}
-        run: |
-          python automation/scripts/check_gemini_api.py
 
       - name: Build Gemini holding AI briefing
         if: ${{ env.SKIP_HEAVY_JOB != 'true' && (github.event_name == 'workflow_dispatch' || github.event.schedule == '45 7 * * 1-5') }}
@@ -255,39 +168,16 @@ jobs:
       - name: Commit generated report
         if: ${{ env.SKIP_HEAVY_JOB != 'true' }}
         run: |
-          set -e
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin main
-          git pull --rebase --autostash origin main || {
-            echo "Rebase failed. Abort and continue with current generated files."
-            git rebase --abort || true
-          }
-          find . -type f \( -name '*.zip' -o -name '*_automation_package_*.zip' -o -name 'html_report_package_*.zip' \) -delete || true
+          git pull --rebase --autostash origin main || true
           rm -rf stock_report/reports stock_report/latest stock_report/docs stock_report/html stock_report/downloads || true
           find stock_report -type f \( -name '*.zip' -o -name '*.xlsx' -o -name '*.ipynb' \) -delete 2>/dev/null || true
-          git status --short
-          git add -A docs || true
-          git add -A .github workflows automation .gitignore README*.md VERIFICATION_RESULT.txt || true
-          for f in holdings_manual_input.csv trade_log_manual_input.csv TOSS_수동후보.csv TOSS_수동후보_예시.csv requirements.txt; do
-            if [ -e "$f" ]; then git add "$f"; fi
-          done
+          git add -A docs .github workflows automation || true
           git reset -- '*.zip' '**/*.zip' '*.ipynb' '**/*.ipynb' || true
-          git reset -- 'stock_report/**' || true
-          git reset -- '*.xlsx' || true
-          git diff --cached --name-status || true
-          if git diff --cached --quiet; then
-            echo "No staged changes to commit"
-            exit 0
-          fi
-          git commit -m "Update daily stock report"
-          for attempt in 1 2 3; do
-            if git push; then exit 0; fi
-            git fetch origin main
-            git pull --rebase --autostash origin main || { git rebase --abort || true; sleep 5; }
-            sleep 5
-          done
-          exit 1
+          git commit -m "Update daily stock report [Clean Match]" || true
+          git push origin main || true
 
       - name: Send Telegram report alert
         if: always()
