@@ -1052,4 +1052,3 @@ class TossInvestClient:
             account_required=False,
             max_attempts=4,
         )
-```
