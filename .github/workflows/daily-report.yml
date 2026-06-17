@@ -1,11 +1,10 @@
 name: daily-stock-report
-# v12.2.30 gemini path fix + optimization pipeline
+# v12.2.35 gemini path fix + optimization pipeline
 
 on:
+  shell_command:
   schedule:
-    # 장전 리포트: KST 08:00 = UTC 23:00, Sunday-Thursday
     - cron: '0 23 * * 0-4'
-    # 장마감 리포트: KST 16:45 = UTC 07:45, Monday-Friday
     - cron: '45 7 * * 1-5'
   workflow_dispatch:
 
@@ -26,7 +25,6 @@ jobs:
       TOSS_MANUAL_CSV_FILE: TOSS_수동후보.csv
       HOLDINGS_CSV_FILE: holdings_manual_input.csv
       TRADE_LOG_CSV_FILE: trade_log_manual_input.csv
-      USE_GOOGLE_DRIVE: "false"
       REPORT_ROOT_MODE: LOCAL
       OPEN_DART_API_KEY: ${{ secrets.OPEN_DART_API_KEY }}
       DART_API_KEY: ${{ secrets.OPEN_DART_API_KEY }}
@@ -40,7 +38,6 @@ jobs:
       TOSSINVEST_CLIENT_SECRET: ${{ secrets.TOSSINVEST_CLIENT_SECRET }}
       TOSSINVEST_ACCOUNT: ${{ secrets.TOSSINVEST_ACCOUNT }}
       TOSSINVEST_BASE_URL: https://openapi.tossinvest.com
-      TOSSINVEST_OPENAPI_URL: https://openapi.tossinvest.com/openapi-docs/latest/openapi.json
       TOSSINVEST_USE_API: "true"
       TOSSINVEST_PREFER_HOLDINGS: "true"
 
@@ -62,17 +59,11 @@ jobs:
           SKIP_HEAVY_JOB="false"
           REPORT_GUARD_REASON="allowed"
           REPORT_SESSION="MANUAL"
-          REPORT_EXPECTED_KST="manual run"
-          REPORT_EXPECTED_KIND="manual"
 
           if [ "$EVENT_NAME" = "schedule" ] && [ "$EVENT_SCHEDULE" = "0 23 * * 0-4" ]; then
             REPORT_SESSION="AM"
-            REPORT_EXPECTED_KST="08:00 KST"
-            REPORT_EXPECTED_KIND="morning"
           elif [ "$EVENT_NAME" = "schedule" ] && [ "$EVENT_SCHEDULE" = "45 7 * * 1-5" ]; then
             REPORT_SESSION="PM"
-            REPORT_EXPECTED_KST="16:45 KST"
-            REPORT_EXPECTED_KIND="market_close"
           fi
 
           if [ "$EVENT_NAME" = "schedule" ]; then
@@ -111,12 +102,11 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        if: ${{ env.SKIP_HEAVY_JOB != 'true' }}
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Build Toss Invest read-only snapshots
+      - name: Build Toss Invest snapshots
         if: ${{ env.SKIP_HEAVY_JOB != 'true' && env.TOSSINVEST_USE_API == 'true' }}
         run: |
           python automation/scripts/build_toss_holdings_snapshot.py
@@ -157,6 +147,11 @@ jobs:
         run: |
           python automation/scripts/build_gemini_holding_ai_briefing.py
 
+      - name: Build Gemini trade history evaluation
+        if: ${{ env.SKIP_HEAVY_JOB != 'true' && (github.event_name == 'workflow_dispatch' || github.event.schedule == '45 7 * * 1-5') }}
+        run: |
+          python automation/scripts/build_gemini_trade_performance_evaluation.py
+
       - name: Final UI Responsive Rebuild
         if: ${{ env.SKIP_HEAVY_JOB != 'true' }}
         run: |
@@ -176,7 +171,9 @@ jobs:
           find stock_report -type f \( -name '*.zip' -o -name '*.xlsx' -o -name '*.ipynb' \) -delete 2>/dev/null || true
           git add -A docs .github workflows automation || true
           git reset -- '*.zip' '**/*.zip' '*.ipynb' '**/*.ipynb' || true
-          git commit -m "Update daily stock report [Clean Match]" || true
+          git reset -- 'stock_report/**' || true
+          git reset -- '*.xlsx' || true
+          git commit -m "Update daily stock report" || true
           git push origin main || true
 
       - name: Send Telegram report alert
