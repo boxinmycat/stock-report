@@ -3,7 +3,7 @@
 """
 Toss Invest Open API read-only client.
 
-v12.2.31 endpoint-group strict routing
+v12.2.32 endpoint-group strict routing + OAuth form-urlencoded fix
 
 핵심 수정:
 - market-info / exchange-rate API를 주식 현재가/잔고/체결내역 후보에서 완전히 제외
@@ -12,6 +12,7 @@ v12.2.31 endpoint-group strict routing
 - 체결내역은 order execution/history 계열에서만 탐색
 - 정확한 endpoint는 OpenAPI JSON을 읽어 tag/path/operationId 기준으로 분리
 - API 실패 시 리포트 전체가 죽지 않도록 debug CSV 저장
+- OAuth token 발급 요청을 application/x-www-form-urlencoded로 전송
 
 필수 GitHub Secrets:
 - TOSSINVEST_CLIENT_ID
@@ -254,11 +255,20 @@ class TossInvestClient:
         timeout: int = 25,
     ) -> Any:
         headers = headers or {}
-
         body = None
+
         if data is not None:
-            body = json.dumps(data, ensure_ascii=False).encode("utf-8")
-            headers.setdefault("Content-Type", "application/json")
+            content_type = headers.get("Content-Type", "")
+
+            # 핵심 수정:
+            # Toss OAuth token 발급 요청은 JSON이 아니라
+            # application/x-www-form-urlencoded 방식으로 전송한다.
+            if "oauth2/token" in url or content_type == "application/x-www-form-urlencoded":
+                body = urllib.parse.urlencode(data).encode("utf-8")
+                headers["Content-Type"] = "application/x-www-form-urlencoded"
+            else:
+                body = json.dumps(data, ensure_ascii=False).encode("utf-8")
+                headers.setdefault("Content-Type", "application/json")
 
         req = urllib.request.Request(
             url,
@@ -415,7 +425,9 @@ class TossInvestClient:
                     "client_id": self.client_id,
                     "client_secret": self.client_secret,
                 },
-                {},
+                {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
             ),
             (
                 {
@@ -423,7 +435,10 @@ class TossInvestClient:
                     "clientId": self.client_id,
                     "clientSecret": self.client_secret,
                 },
-                {"Authorization": f"Basic {basic}"},
+                {
+                    "Authorization": f"Basic {basic}",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
             ),
         ]
 
