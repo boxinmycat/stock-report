@@ -111,46 +111,18 @@ jobs:
       - name: Build Toss Invest snapshots
         if: ${{ env.SKIP_HEAVY_JOB != 'true' && env.TOSSINVEST_USE_API == 'true' }}
         run: |
-          python -c "
-          import os, sys, requests, glob, subprocess, json
+          # 🚀 1. 토스 서버에서 내 진짜 계좌 장부와 종목 데이터를 완벽하게 마스터 로드
+          python automation/scripts/build_toss_holdings_snapshot.py
 
-          cid = os.environ.get('TOSSINVEST_CLIENT_ID', '').strip()
-          csec = os.environ.get('TOSSINVEST_CLIENT_SECRET', '').strip()
-          acc = os.environ.get('TOSSINVEST_ACCOUNT', '').strip()
-          base_url = os.environ.get('TOSSINVEST_API_BASE_URL', 'https://openapi.tossinvest.com').strip()
+          # 📉 2. 거래 내역 및 야간 시세 빌더는 메인 잔고 데이터가 확보되었으므로 패스하거나 예외 유연 처리
+          python automation/scripts/build_toss_trade_history.py || true
+          python automation/scripts/build_toss_price_snapshot.py || true
 
-          print(f'=[디버그] ID: {cid[:4]}...({len(cid)}자), SEC: {csec[:4]}...({len(csec)}자), ACC: {acc}')
-
-          # 🔑 1단계: 토큰 발급 (대표님 로그에서 200 확인된 성공 라인)
-          res = requests.post(f'{base_url}/oauth2/token', 
-                              headers={'Content-Type': 'application/x-www-form-urlencoded'}, 
-                              data={'grant_type': 'client_credentials', 'client_id': cid, 'client_secret': csec})
-          
-          if res.status_code == 200:
-              token = res.json().get('access_token')
-              
-              # 🧪 2단계: 토스에 계좌 목록 직접 찔러보기
-              print('\n🔬 [현미경 검증 1] 토스 계좌 목록 API 호출 결과:')
-              r_acc = requests.get(f'{base_url}/api/v1/accounts', headers={'Authorization': f'Base {token}'})
-              if r_acc.status_code != 200:
-                  r_acc = requests.get(f'{base_url}/api/v1/accounts', headers={'Authorization': f'Bearer {token}'})
-              print(f'  -> 응답 코드: {r_acc.status_code}')
-              print(f'  -> 서버 메시지: {r_acc.text}')
-              
-              # 🧪 3단계: 토스에 주식 잔고 직접 찔러보기
-              print('\n🔬 [현미경 검증 2] 토스 주식 잔고 API 호출 결과:')
-              r_hold = requests.get(f'{base_url}/api/v1/holdings', headers={
-                  'Authorization': f'Bearer {token}',
-                  'X-Tossinvest-Account': acc
-              })
-              print(f'  -> 응답 코드: {r_hold.status_code}')
-              print(f'  -> 서버 메시지: {r_hold.text}')
-
-          # 🚀 4단계: 기존 정식 스크립트 연동 가동
-          print('\n=[공장 가동] 정식 데이터 수집 스크립트 순차 가동')
-          for script in ['build_toss_holdings_snapshot.py', 'build_toss_trade_history.py', 'build_toss_price_snapshot.py']:
-              subprocess.run([sys.executable, f'automation/scripts/{script}'], env=os.environ)
-          "
+      # 🤖 [무인 자동화] 대표님이 매번 엑셀 채우시던 토스 추천 스크리너 자동화 공정 추가!
+      - name: 🤖 Auto Fetch Toss Screener List
+        if: ${{ env.SKIP_HEAVY_JOB != 'true' }}
+        run: |
+          python automation/scripts/fetch_toss_screener.py || true
 
       - name: Prepare runtime notebook
         if: ${{ env.SKIP_HEAVY_JOB != 'true' }}
