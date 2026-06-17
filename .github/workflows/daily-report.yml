@@ -25,6 +25,7 @@ jobs:
     env:
       PYTHONUTF8: "1"
       JUPYTER_ALLOW_INSECURE_WRITES: "1"
+      TOSSINVEST_ORDER_HISTORY_PATH: "/api/v1/orders"
       NOTEBOOK_FILE: 실전매매_통합시스템_v10_2_연속추천관찰_자동조건검색_드라이브준비.ipynb
       CANDIDATE_SOURCE_MODE: HYBRID
       REQUIRE_TOSS_FILE: "false"
