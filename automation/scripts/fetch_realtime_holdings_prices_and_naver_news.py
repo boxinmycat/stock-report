@@ -24,7 +24,7 @@ except Exception:
 
 KST = timezone(timedelta(hours=9))
 
-# [치명적 에러 원인 박멸] 가짜 부호를 지우고 네이버 크롤링 규격인 숫자 6자리로 고정
+# [시세 오류 박멸] 네이버 금융 규격 숫자인 6자리 코드로 정밀 동기화
 ETF_CODE_OVERRIDES = {
     "ACE 미국우주테크액티브": "414250",
 }
@@ -100,7 +100,7 @@ def build_code_lookup() -> dict[str, str]:
         if nc and cc:
             for _, row in df.iterrows():
                 n, c = norm_text(row.get(nc)), normalize_holding_code(row.get(nc), row.get(cc))
-                if n and c: lookup[n] = c
+                if n navigate and c: lookup[n] = c
     return lookup
 
 def format_won(value) -> str:
@@ -235,6 +235,7 @@ def build_holding_outputs() -> None:
         ai = ai_map.get(sname, {})
         ai_head = html.escape(str(ai.get('headline') or dec))
         ai_sum = html.escape(str(ai.get('summary') or '장마감 후 AI 상세 매매 가이드가 반영됩니다.')).replace('\n', '<br>')
+        
         qty_display_text = f"{int(qty)}주" if qty else "-"
         
         cards.append(
@@ -303,7 +304,7 @@ def build_news_outputs() -> None:
         three = html.escape(str(r.get("news_three_line_summary"))).replace('\n', '<br>')
         cards.append(f"<article class='news-card'><div class='meta'>{html.escape(r.get('publisher'))} · 품질 {r.get('news_quality_score')}점</div><h2>{html.escape(r.get('title'))}</h2><p class='body-text'>{html.escape(r.get('description'))}</p><div class='summary3-box'><b>📌 뉴스 핵심 3줄 압축 요약</b><p>{three}</p></div></article>")
     
-    Path("docs/details/naver_news.html").write_text(f"""<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>주요 뉴스 브리핑</title><style>body{{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f3f4f6;margin:0;padding:12px}}.wrap{{max-width:480px;margin:0 auto}}.hero{{background:#064e3b;color:white;border-radius:14px;padding:14px;margin-bottom:12px}}.news-card{{background:white;border-radius:14px;padding:12px;margin-bottom:10px;box-shadow:0 2px 4px rgba(0,0,0,0.02);display:flex;flex-direction:column;gap:4px}}.meta{{font-size:11px;color:#059669;font-weight:600}}.news-card h2{{font-size:14px;margin:2px 0;line-height:1.4}}.body-text{{font-size:12px;color:#4b5563;margin:0}}.summary3-box{{background:#f0fdf4;border-left:4px solid #10b981;padding:8px;border-radius:6px;font-size:11px}}.summary3-box b{{color:#14532d;display:block;margin-bottom:2px}}</style></head><body><main class="wrap"><section class="hero"><h1>📰 실시간 마켓 뉴스 3줄 브리핑</h1><p>갱신: {now_kst()}</p></section>{"".join(cards)}</main></body></html>""", encoding="utf-8")
+    Path("docs/details/naver_news.html").write_text(f"""<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>주요 뉴스 브리핑</title><style>body{{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f3f4f6;margin:0;padding:12px}}.wrap{{max-width:480px;margin:auto;padding:20px}}.hero{{background:#064e3b;color:white;border-radius:14px;padding:14px;margin-bottom:12px}}.news-card{{background:white;border-radius:14px;padding:12px;margin-bottom:10px;box-shadow:0 2px 4px rgba(0,0,0,0.02);display:flex;flex-direction:column;gap:4px}}.meta{{font-size:11px;color:#059669;font-weight:600}}.news-card h2{{font-size:14px;margin:2px 0;line-height:1.4}}.body-text{{font-size:12px;color:#4b5563;margin:0}}.summary3-box{{background:#f0fdf4;border-left:4px solid #10b981;padding:8px;border-radius:6px;font-size:11px}}.summary3-box b{{color:#14532d;display:block;margin-bottom:2px}}</style></head><body><main class="wrap"><section class="hero"><h1>📰 실시간 마켓 뉴스 3줄 브리핑</h1><p>갱신: {now_kst()}</p></section>{"".join(cards)}</main></body></html>""", encoding="utf-8")
 
 if __name__ == "__main__":
     build_holding_outputs()
