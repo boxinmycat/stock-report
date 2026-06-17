@@ -32,6 +32,7 @@ def find_latest_xlsx() -> Path | None:
     return files[0]
 
 def _extract_percent_numbers(text):
+    # [버그 완전 박멸] 정규식 매칭 풀 슬라이싱을 3개로 차단해 분할 매매 비량(80%) 찌꺼기가 침범하는 버그 차단
     vals = re.findall(r"[\+\-]?\d+(?:\.\d+)?\s*%", clean_value(text))
     return [v.replace(' ', '') for v in vals][:3]
 
