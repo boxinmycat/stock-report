@@ -895,72 +895,239 @@ class TossInvestClient:
         )
 
     def get_price(self, symbol: str, market: str = "KR") -> tuple[Any, str]:
+        """
+        현재가 조회.
+
+        v12.2.33 price parameter safe mode
+
+        핵심:
+        - 기존처럼 symbol/stockCode/code/ticker/market/exchange를 한꺼번에 보내지 않는다.
+        - OpenAPI의 getPrices 파라미터 정의를 읽어서, 실제로 선언된 파라미터만 보낸다.
+        - 그래도 실패하면 symbol, symbols, stockCode, code 순서로 최소 파라미터만 재시도한다.
+        """
         symbol = normalize_code(symbol)
 
-        params = {
-            "symbol": symbol,
-            "stockCode": symbol,
-            "stock_code": symbol,
-            "code": symbol,
-            "ticker": symbol,
-            "instrumentId": symbol,
-            "instrument_id": symbol,
-            "market": market,
-            "exchange": market,
-        }
+        if not symbol:
+            raise RuntimeError("EMPTY_SYMBOL: price lookup symbol is empty")
 
-        return self.request_first_operation(
-            env_path="TOSSINVEST_PRICE_PATH",
-            include=[
-                "price",
-                "prices",
-                "quote",
-                "quotes",
-                "current",
-                "current-price",
-                "last",
-                "현재가",
-                "시세",
-            ],
-            exclude=[
-                "exchange-rate",
-                "exchange_rate",
-                "exchange rate",
-                "calendar",
-                "market-info",
-                "account",
-                "accounts",
-                "holding",
-                "holdings",
-                "balance",
-                "balances",
-                "asset",
-                "assets",
-                "order",
-                "orders",
-                "orderbook",
-                "candle",
-                "candles",
-                "trading-hours",
-                "price-limit",
-            ],
-            required_tag_keywords=[
-                "market-data",
-                "market data",
-                "price",
-                "quote",
-                "시세",
-            ],
-            forbidden_tag_keywords=[
-                "market-info",
-                "account",
-                "asset",
-                "order",
-            ],
-            params=params,
-            account_required=False,
-            max_attempts=6,
-            send_query_params=True,
+        override = env("TOSSINVEST_PRICE_PATH")
+
+        if override:
+            operations = [
+                TossOperation(
+                    method="GET",
+                    path=override,
+                    score=999,
+                    summary="manual override price path",
+                    operation_id="manualPricePath",
+                    tags="Market Data",
+                )
+            ]
+        else:
+            operations = self.discover_operations(
+                include=[
+                    "price",
+                    "prices",
+                    "quote",
+                    "quotes",
+                    "current",
+                    "current-price",
+                    "last",
+                    "현재가",
+                    "시세",
+                ],
+                exclude=[
+                    "exchange-rate",
+                    "exchange_rate",
+                    "exchange rate",
+                    "calendar",
+                    "market-info",
+                    "account",
+                    "accounts",
+                    "holding",
+                    "holdings",
+                    "balance",
+                    "balances",
+                    "asset",
+                    "assets",
+                    "order",
+                    "orders",
+                    "orderbook",
+                    "candle",
+                    "candles",
+                    "trading-hours",
+                    "price-limit",
+                ],
+                required_tag_keywords=[
+                    "market-data",
+                    "market data",
+                    "price",
+                    "quote",
+                    "시세",
+                ],
+                forbidden_tag_keywords=[
+                    "market-info",
+                    "account",
+                    "asset",
+                    "order",
+                ],
+                max_results=6,
+            )
+
+        def get_operation_meta(path: str, method: str) -> dict:
+            spec = self.load_openapi()
+            paths = spec.get("paths", {}) if isinstance(spec, dict) else {}
+            ops = paths.get(path, {})
+
+            if not isinstance(ops, dict):
+                return {}
+
+            return (
+                ops.get(method.lower())
+                or ops.get(method.upper())
+                or {}
+            )
+
+        def get_declared_parameter_names(path: str, method: str) -> list[str]:
+            meta = get_operation_meta(path, method)
+
+            params = meta.get("parameters", [])
+            if not isinstance(params, list):
+                return []
+
+            names = []
+
+            for p in params:
+                if not isinstance(p, dict):
+                    continue
+
+                name = p.get("name")
+                location = p.get("in", "")
+
+                # query/path 파라미터만 사용
+                if name and location in {"query", "path"}:
+                    names.append(str(name))
+
+            return names
+
+        def build_params_from_declared(names: list[str]) -> dict:
+            params = {}
+
+            for name in names:
+                n = name.lower()
+
+                if n in {
+                    "symbol",
+                    "stockcode",
+                    "stock_code",
+                    "code",
+                    "ticker",
+                    "instrumentid",
+                    "instrument_id",
+                }:
+                    params[name] = symbol
+
+                elif n in {
+                    "symbols",
+                    "stockcodes",
+                    "stock_codes",
+                    "codes",
+                    "tickers",
+                    "instrumentids",
+                    "instrument_ids",
+                }:
+                    # 단일 종목을 조회하므로 일단 문자열 1개로 보낸다.
+                    # API가 배열을 요구하면 debug body에 에러가 남는다.
+                    params[name] = symbol
+
+                elif n in {
+                    "market",
+                    "exchange",
+                    "marketcode",
+                    "market_code",
+                    "exchangecode",
+                    "exchange_code",
+                    "country",
+                    "region",
+                }:
+                    params[name] = market
+
+                elif "symbol" in n or "stock" in n or "ticker" in n or "code" in n:
+                    params[name] = symbol
+
+                elif "market" in n or "exchange" in n:
+                    params[name] = market
+
+            return params
+
+        tried = []
+        last_error = None
+
+        for op in operations:
+            declared_names = get_declared_parameter_names(op.path, op.method)
+            declared_params = build_params_from_declared(declared_names)
+
+            attempts = []
+
+            # 1순위: OpenAPI에 선언된 파라미터만 사용
+            if declared_params:
+                attempts.append(declared_params)
+
+            # 2순위: 최소 파라미터 fallback
+            attempts.extend(
+                [
+                    {"symbol": symbol},
+                    {"symbols": symbol},
+                    {"stockCode": symbol},
+                    {"stock_code": symbol},
+                    {"code": symbol},
+                    {"ticker": symbol},
+                    {"instrumentId": symbol},
+                    {"instrument_id": symbol},
+                    {"symbol": symbol, "market": market},
+                    {"symbols": symbol, "market": market},
+                ]
+            )
+
+            # 중복 제거
+            unique_attempts = []
+            seen = set()
+
+            for params in attempts:
+                key = tuple(sorted(params.items()))
+                if key in seen:
+                    continue
+                seen.add(key)
+                unique_attempts.append(params)
+
+            for params in unique_attempts:
+                tried.append(f"{op.method} {op.path} params={params}")
+
+                try:
+                    data = self.request_path(
+                        op.method,
+                        op.path,
+                        params=params,
+                        account_required=False,
+                        send_query_params=True,
+                    )
+
+                    self.add_debug(
+                        "price",
+                        f"{op.method} {op.path}",
+                        "OK",
+                        f"symbol={symbol} params={params}",
+                    )
+
+                    return data, op.path
+
+                except Exception as e:
+                    last_error = e
+                    continue
+
+        raise RuntimeError(
+            f"No Toss API endpoint succeeded for TOSSINVEST_PRICE_PATH. "
+            f"Tried: {tried}. Last error: {last_error!r}"
         )
 
     def get_order_history(self) -> tuple[Any, str]:
