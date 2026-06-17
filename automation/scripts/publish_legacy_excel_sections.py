@@ -32,7 +32,6 @@ def find_latest_xlsx() -> Path | None:
     return files[0]
 
 def _extract_percent_numbers(text):
-    # [버그 완전 박멸] 정규식 매칭 풀 슬라이싱을 3개로 차단해 분할 매매 비량(80%) 찌꺼기가 침범하는 버그 차단
     vals = re.findall(r"[\+\-]?\d+(?:\.\d+)?\s*%", clean_value(text))
     return [v.replace(' ', '') for v in vals][:3]
 
@@ -129,7 +128,6 @@ def build_outputs():
         (details_dir / 'legacy_top15.html').write_text(f"<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>TOP15 리서치</title>{html_style}</head><body><div class='container'><div class='hero-banner'><h3 style='margin:0;font-size:15px;'>💎 추천 TOP15 실전 리서치 노출</h3></div>{content}</div></body></html>", encoding='utf-8')
         shutil.copyfile(details_dir / 'legacy_top15.html', details_dir / 'recommendation_top15.html')
         shutil.copyfile(details_dir / 'legacy_top15.html', details_dir / 'legacy_full_recommendations.html')
-        shutil.copyfile(details_dir / 'legacy_top15.html', details_dir / 'recommendation_full_list.html')
     if not cont_df.empty:
         cont_content = build_continuous_cards(cont_df.to_dict('records'))
         (details_dir / 'legacy_continuous.html').write_text(f"<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>연속추천 관찰</title>{html_style}</head><body><div class='container'><div class='hero-banner' style='background:#ea580c;'><h3 style='margin:0;font-size:15px;'>🔄 연속 추천 포착 출석 타임라인</h3></div>{cont_content}</div></body></html>", encoding='utf-8')
