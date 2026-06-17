@@ -18,7 +18,10 @@ concurrency:
 
 jobs:
   build-report:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    defaults:
+      run:
+        shell: bash
     env:
       NOTEBOOK_FILE: 실전매매_통합시스템_v10_2_연속추천관찰_자동조건검색_드라이브준비.ipynb
       CANDIDATE_SOURCE_MODE: HYBRID
@@ -96,16 +99,6 @@ jobs:
           } > docs/data/latest_schedule_diagnostics.csv
           
           echo "SKIP_HEAVY_JOB=$SKIP_HEAVY_JOB" >> "$GITHUB_ENV"
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Build Toss Invest snapshots
         if: ${{ env.SKIP_HEAVY_JOB != 'true' && env.TOSSINVEST_USE_API == 'true' }}
