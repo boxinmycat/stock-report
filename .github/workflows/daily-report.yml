@@ -111,47 +111,44 @@ jobs:
         if: ${{ env.SKIP_HEAVY_JOB != 'true' && env.TOSSINVEST_USE_API == 'true' }}
         run: |
           python -c "
-          import os, sys, requests, glob, subprocess
+          import os, sys, requests, glob, subprocess, json
 
-          # 🧼 [1] 깃허브 금고에서 넘어온 키 앞뒤의 눈에 안 보이는 공백/엔터 정밀 세척
           cid = os.environ.get('TOSSINVEST_CLIENT_ID', '').strip()
           csec = os.environ.get('TOSSINVEST_CLIENT_SECRET', '').strip()
           acc = os.environ.get('TOSSINVEST_ACCOUNT', '').strip()
+          base_url = os.environ.get('TOSSINVEST_API_BASE_URL', 'https://openapi.tossinvest.com').strip()
 
-          os.environ['TOSSINVEST_CLIENT_ID'] = cid
-          os.environ['TOSSINVEST_CLIENT_SECRET'] = csec
-          os.environ['TOSSINVEST_ACCOUNT'] = acc
+          print(f'=[디버그] ID: {cid[:4]}...({len(cid)}자), SEC: {csec[:4]}...({len(csec)}자), ACC: {acc}')
 
-          print(f'=[디버그] 현재 파이썬 장착 키 -> ID: {cid[:4]}...({len(cid)}자), SEC: {csec[:4]}...({len(csec)}자), ACC: {acc}')
+          # 🔑 1단계: 토큰 발급 (대표님 로그에서 200 확인된 성공 라인)
+          res = requests.post(f'{base_url}/oauth2/token', 
+                              headers={'Content-Type': 'application/x-www-form-urlencoded'}, 
+                              data={'grant_type': 'client_credentials', 'client_id': cid, 'client_secret': csec})
+          
+          if res.status_code == 200:
+              token = res.json().get('access_token')
+              
+              # 🧪 2단계: 토스에 계좌 목록 직접 찔러보기
+              print('\n🔬 [현미경 검증 1] 토스 계좌 목록 API 호출 결과:')
+              r_acc = requests.get(f'{base_url}/api/v1/accounts', headers={'Authorization': f'Base {token}'})
+              if r_acc.status_code != 200:
+                  r_acc = requests.get(f'{base_url}/api/v1/accounts', headers={'Authorization': f'Bearer {token}'})
+              print(f'  -> 응답 코드: {r_acc.status_code}')
+              print(f'  -> 서버 메시지: {r_acc.text}')
+              
+              # 🧪 3단계: 토스에 주식 잔고 직접 찔러보기
+              print('\n🔬 [현미경 검증 2] 토스 주식 잔고 API 호출 결과:')
+              r_hold = requests.get(f'{base_url}/api/v1/holdings', headers={
+                  'Authorization': f'Bearer {token}',
+                  'X-Tossinvest-Account': acc
+              })
+              print(f'  -> 응답 코드: {r_hold.status_code}')
+              print(f'  -> 서버 메시지: {r_hold.text}')
 
-          # 🪓 [2] 셀프 호스팅 러너 전용 공간에 숨어 장난치는 옛날 .env 및 캐시파일 완전 박멸
-          cleaned_count = 0
-          for f in glob.glob('**/*', recursive=True):
-              if f.endswith('.env') or '.toss' in f or ('automation' in f and f.endswith('.json') and 'snapshot' not in f):
-                  try:
-                      os.remove(f)
-                      cleaned_count += 1
-                  except: pass
-          print(f'=[청소 완료] 주식 공장 방해 유령 파일 {cleaned_count}개 강제 삭제 완료.')
-
-          # 🧪 [3] 토스 인증 서버에 실시간 직접 문 두드려보기
-          print('=[실시간 검증] 토스 인증 서버에 다이렉트 신호 송신 중...')
-          try:
-              res = requests.post('https://openapi.tossinvest.com/oauth2/token', 
-                                  headers={'Content-Type': 'application/x-www-form-urlencoded'}, 
-                                  data={'grant_type': 'client_credentials', 'client_id': cid, 'client_secret': csec})
-              print(f'=[토스 실시간 응답] 상태 코드: {res.status_code}')
-              print(f'=[토스 실시간 메시지]: {res.text}')
-          except Exception as e:
-              print(f'=[네트워크 연결 실패] {e}')
-
-          # 🚀 [4] 완벽하게 세척된 환경에서 진짜 스크립트 실행
-          print('\n=[공장 가동] 정식 데이터 수집 스크립트 순차 가동합니다.')
+          # 🚀 4단계: 기존 정식 스크립트 연동 가동
+          print('\n=[공장 가동] 정식 데이터 수집 스크립트 순차 가동')
           for script in ['build_toss_holdings_snapshot.py', 'build_toss_trade_history.py', 'build_toss_price_snapshot.py']:
-              print(f'==> 실행 중: {script}')
-              proc = subprocess.run([sys.executable, f'automation/scripts/{script}'], env=os.environ)
-              if proc.returncode != 0:
-                  print(f'❌ {script} 단계에서 브레이크 발생 (종료 코드: {proc.returncode})')
+              subprocess.run([sys.executable, f'automation/scripts/{script}'], env=os.environ)
           "
 
       - name: Prepare runtime notebook
