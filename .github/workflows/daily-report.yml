@@ -1,10 +1,11 @@
 name: daily-stock-report
-# v12.2.35 gemini path fix + optimization pipeline
+# v12.2.36 syntax error clean + optimization pipeline
 
 on:
-  shell_command:
   schedule:
+    # 장전 리포트: KST 오전 08:00 (UTC 전날 23:00)
     - cron: '0 23 * * 0-4'
+    # 장마감 리포트: KST 오후 16:45 (UTC 당일 07:45)
     - cron: '45 7 * * 1-5'
   workflow_dispatch:
 
