@@ -105,8 +105,12 @@ jobs:
         run: |
           echo "ID 글자수 검증: ${#TOSSINVEST_CLIENT_ID} 자리"
           echo "SECRET 글자수 검증: ${#TOSSINVEST_CLIENT_SECRET} 자리"
-          echo "ACCOUNT 매칭 값: $TOSSINVEST_ACCOUNT"
+          echo "ACCOUNT 입력 여부: ${TOSSINVEST_ACCOUNT:+입력됨}"
           
+      - name: Check Toss API connection
+        if: ${{ env.SKIP_HEAVY_JOB != 'true' }}
+        run: python automation/scripts/check_toss_api_connection.py
+
       - name: Build Toss Invest snapshots
         if: ${{ env.SKIP_HEAVY_JOB != 'true' && env.TOSSINVEST_USE_API == 'true' }}
         run: |
@@ -116,36 +120,6 @@ jobs:
           python automation/scripts/build_toss_holdings_snapshot.py || true
           python automation/scripts/build_toss_trade_history.py || true
           python automation/scripts/build_toss_price_snapshot.py || true
-
-      - name: 🤖 Auto Fetch Toss Screener List
-        if: ${{ env.SKIP_HEAVY_JOB != 'true' }}
-        run: |
-          # 📝 파일 분실 오류 차단: 웹에서 직접 실시간 파이썬 스크립트 자동 빌드 후 가동
-          python -c "
-          import requests, json, re, os, pandas as pd
-          try:
-              print('🎯 토스 추천 목록(screener/4) 자동 수집 시작...')
-              res = requests.get('https://www.tossinvest.com/screener/4', headers={'User-Agent': 'Mozilla/5.0'})
-              match = re.search(r'<script id=\"__NEXT_DATA__\" type=\"application/json\">(.*?)</script>', res.text)
-              if match:
-                  queries = json.loads(match.group(1)).get('props', {}).get('pageProps', {}).get('dehydratedState', {}).get('queries', [])
-                  stock_list = []
-                  for q in queries:
-                      data = q.get('state', {}).get('data', {})
-                      if isinstance(data, dict) and 'screenerResult' in data:
-                          for item in data.get('screenerResult', {}).get('items', []):
-                              stock_list.append({'종목코드': item.get('symbol'), '종목명': item.get('name'), '현재가': item.get('closePrice', {}).get('krw'), '추천사유': '토스 추천'})
-                  if stock_list:
-                      df = pd.DataFrame(stock_list)
-                      os.makedirs('docs/data', exist_ok=True)
-                      df.to_csv('docs/data/toss_recommendation_4.csv', index=False, encoding='utf-8-sig')
-                      df.to_excel('docs/data/toss_recommendation_4.xlsx', index=False)
-                      print(f'✅ 수집 성공! 총 {len(stock_list)}개 종목 저장 완료.')
-                      print(df.to_string(index=False))
-                  else: print('⚠️ 추출된 종목이 없습니다.')
-              else: print('❌ 웹 구조 매칭 실패')
-          except Exception as e: print(f'❌ 에러: {e}')
-          " || true
 
       - name: Prepare runtime notebook
         if: ${{ env.SKIP_HEAVY_JOB != 'true' }}
