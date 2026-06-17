@@ -101,7 +101,12 @@ jobs:
           } > docs/data/latest_schedule_diagnostics.csv
           
           echo "SKIP_HEAVY_JOB=$SKIP_HEAVY_JOB" >> "$GITHUB_ENV"
-
+      - name: 🚨 금고 데이터 전달 상태 정밀 검증
+        run: |
+          echo "ID 글자수 검증: ${#TOSSINVEST_CLIENT_ID} 자리"
+          echo "SECRET 글자수 검증: ${#TOSSINVEST_CLIENT_SECRET} 자리"
+          echo "ACCOUNT 매칭 값: $TOSSINVEST_ACCOUNT"
+          
       - name: Build Toss Invest snapshots
         if: ${{ env.SKIP_HEAVY_JOB != 'true' && env.TOSSINVEST_USE_API == 'true' }}
         run: |
