@@ -50,7 +50,6 @@ jobs:
       TOSSINVEST_HOLDINGS_PATH: /api/v1/holdings
       TOSSINVEST_PRICE_PATH: /api/v1/prices
       TOSSINVEST_STOCKS_PATH: /api/v1/stocks
-      TOSSINVEST_ORDER_HISTORY_PATH: /api/v1/orders
 
     steps:
       - name: Checkout repository
