@@ -110,12 +110,15 @@ jobs:
       - name: Build Toss Invest snapshots
         if: ${{ env.SKIP_HEAVY_JOB != 'true' && env.TOSSINVEST_USE_API == 'true' }}
         run: |
-          # 🧼 깃허브 금고 키에 묻은 눈에 안 보이는 공백/줄바꿈(엔터) 정밀 세척
-          export TOSSINVEST_CLIENT_ID=$(echo -n "$TOSSINVEST_CLIENT_ID" | tr -d '\r\n ')
-          export TOSSINVEST_CLIENT_SECRET=$(echo -n "$TOSSINVEST_CLIENT_SECRET" | tr -d '\r\n ')
-          export TOSSINVEST_ACCOUNT=$(echo -n "$TOSSINVEST_ACCOUNT" | tr -d '\r\n ')
+          # 🪓 1. 아까 에러 나던 시절에 생성된 유령 캐시/토큰 파일 잔재 흔적도 없이 강제 분쇄
+          rm -f *.json *.txt *.cache automation/scripts/*.json automation/scripts/*.txt automation/scripts/*.cache 2>/dev/null || true
 
-          # 🚀 깨끗해진 키를 가지고 정식 가동
+          # 🧼 2. 깃허브 금고 키에 묻은 공백/줄바꿈/탭 문자 정밀 세척
+          export TOSSINVEST_CLIENT_ID=$(echo -n "$TOSSINVEST_CLIENT_ID" | tr -d '\r\n\t ')
+          export TOSSINVEST_CLIENT_SECRET=$(echo -n "$TOSSINVEST_CLIENT_SECRET" | tr -d '\r\n\t ')
+          export TOSSINVEST_ACCOUNT=$(echo -n "$TOSSINVEST_ACCOUNT" | tr -d '\r\n\t ')
+
+          # 🚀 3. 완전히 깨끗해진 도화지 상태로 새롭게 토큰 발급 및 정식 가동
           python automation/scripts/build_toss_holdings_snapshot.py
           python automation/scripts/build_toss_trade_history.py
           python automation/scripts/build_toss_price_snapshot.py
