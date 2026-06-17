@@ -24,7 +24,6 @@ def read_csv(path, limit=999):
 def esc(x): return html.escape(str(x or ''))
 
 def _pct_values(text):
-    # [손절 버그 소거] 정규식 매칭을 최대 3개로 잘라 분할 비중(80%) 수치가 달라붙는 버그를 종결
     vals = [v.replace(' ', '') for v in re.findall(r"[\+\-]?\d+(?:\.\d+)?\s*%", str(text or ''))]
     return vals[:3]
 
@@ -100,8 +99,6 @@ def news_section():
             </article>"""
     return f"<section class='box'><h2>📰 당일 주요 뉴스</h2><div class='vertical-grid'>{items}</div></section>"
 
-def download_section(): return "<section class='box'><h2>엑셀 다운로드</h2><p class='hint'>최신 분석 엑셀 리포트 다운로드 보관소</p><a class='biglink' href='../downloads/' style='display:block; background:white; border-radius:16px; padding:14px; text-decoration:none; color:#111827; box-shadow:0 4px 16px rgba(0,0,0,0.05); font-weight:700;'>다운로드 센터 열기</a></section>"
-
 def unified_html(stamp, ss):
     return f"""<!doctype html>
 <html lang='ko'>
@@ -140,13 +137,13 @@ body{{font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;ba
         <a href='../v11_holdings/'>보유종목 상세</a>
         <a href='../details/holding_ai_briefing.html'>🧠 AI 자산 브리핑</a>
         <a href='../details/naver_news.html'>📰 뉴스 3줄요약</a>
+        <a href='../details/trade_evaluation.html' style='background:#0284c7; color:white;'>📈 AI 매매기록 평가</a>
         <a href='../downloads/' style='grid-column: span 2; background:#1e3a8a; color:white;'>📥 전체 엑셀 센터 열기</a>
     </section>
     {top15_entry_section()}
     {holdings_section()}
     {ai_section()}
     {news_section()}
-    {download_section()}
 </main>
 </body>
 </html>"""
