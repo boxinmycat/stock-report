@@ -46,6 +46,11 @@ jobs:
       TOSSINVEST_BASE_URL: https://openapi.tossinvest.com
       TOSSINVEST_USE_API: "true"
       TOSSINVEST_PREFER_HOLDINGS: "true"
+      TOSSINVEST_ACCOUNTS_PATH: /api/v1/accounts
+      TOSSINVEST_HOLDINGS_PATH: /api/v1/holdings
+      TOSSINVEST_PRICE_PATH: /api/v1/prices
+      TOSSINVEST_STOCKS_PATH: /api/v1/stocks
+      TOSSINVEST_ORDER_HISTORY_PATH: /api/v1/orders
 
     steps:
       - name: Checkout repository
