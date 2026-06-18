@@ -9,15 +9,19 @@ def now(): return datetime.now(KST).strftime('%Y-%m-%d %H:%M:%S KST')
 
 def load_trade_logs():
     for p in [Path("docs/data/toss_trade_history.csv"), Path("trade_log_manual_input.csv"), Path("매매기록_수동입력.csv")]:
-        if p.exists():
-            df = pd.read_csv(p, dtype=str).fillna("")
-            if not df.empty: return df
+        # 🧼 [안전벨트] 파일이 존재하고, 크기가 0바이트보다 클 때만 읽도록 철저히 방어
+        if p.exists() and p.stat().st_size > 0:
+            try:
+                df = pd.read_csv(p, dtype=str).fillna("")
+                if not df.empty: return df
+            except Exception:
+                pass
     return pd.DataFrame()
 
 def call_gemini_eval(prompt_content):
     key = os.environ.get('GEMINI_API_KEY','').strip()
     if not key: return "Gemini API Key 세팅을 확인하세요."
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+    url = f"[https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent](https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent)"
     payload = {
         'contents': [{'parts': [{'text': prompt_content}]}],
         'generationConfig': {'temperature': 0.2, 'maxOutputTokens': 1500}
