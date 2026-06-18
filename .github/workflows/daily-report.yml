@@ -228,6 +228,7 @@ jobs:
           python automation/scripts/publish_legacy_excel_sections.py
           python automation/scripts/force_refresh_latest.py
           python automation/scripts/build_run_manifest.py
+          python automation/scripts/fix_profit_loss_display.py
 
       - name: Commit generated report
         if: ${{ env.SKIP_HEAVY_JOB != 'true' }}
