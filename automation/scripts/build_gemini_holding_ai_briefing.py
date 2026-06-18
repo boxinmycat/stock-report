@@ -66,7 +66,7 @@ def related(news,name,limit=3):
         title = clean(get(r,'title','제목'))
         desc = clean(get(r,'description','요약','본문'))
         link = get(r,'link','링크')
-        pub = get(r['pubDate']) if get(r,'pubDate') else (get(r,'published_at') or '')
+        pub = get(r, 'pubDate') if get(r,'pubDate') else (get(r,'published_at') or '')
         press = get(r,'publisher') or extract_publisher(link, get(r,'originallink','origin_link'))
         qscore, qreason = news_quality_score(title, desc, pub, press, link, get(r,'originallink','origin_link'))
         out.append({'title':title,'description':desc,'link':link,'pubDate':pub,'published_at':pub,'publisher':press,'news_quality_score':qscore,'news_quality_reason':qreason})
