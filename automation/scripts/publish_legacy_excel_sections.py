@@ -31,21 +31,44 @@ def find_latest_xlsx() -> Path | None:
     files.sort(key=lambda p: p.stat().st_mtime, reverse=True)
     return files[0]
 
-def _extract_percent_numbers(text):
-    # [버그 완전 박멸] 정규식 매칭 풀 슬라이싱을 3개로 차단해 분할 매매 비량(80%) 찌꺼기가 침범하는 버그 차단
-    vals = re.findall(r"[\+\-]?\d+(?:\.\d+)?\s*%", clean_value(text))
-    return [v.replace(' ', '') for v in vals][:3]
-
 def format_tp_plan(raw):
-    vals = _extract_percent_numbers(raw)
-    if len(vals) >= 3: return f"<b>{vals[0]}(60)</b> / <b>{vals[1]}(20)</b> / <b>{vals[2]}(20)</b>"
-    if len(vals) == 2: return f"<b>{vals[0]}(60)</b> / <b>{vals[1]}(40)</b>"
-    if vals: return f"<b>{vals[0]}</b>"
-    return esc(clean_value(raw))
+    text = clean_value(raw)
+    # 🧼 기호 누락 무력화: 텍스트에서 순수 숫자만 추출
+    vals = re.findall(r"\d+(?:\.\d+)?", text)
+    
+    # [익절 순서쌍 매칭] 목표가1, 비중1, 목표가2, 비중2, 목표가3, 비중3 구조 대응
+    if len(vals) >= 6:
+        return f"<b>+{vals[0]}%({vals[1]}%)</b> / <b>+{vals[2]}%({vals[3]}%)</b> / <b>+{vals[4]}%({vals[5]}%)</b>"
+    if len(vals) >= 4:
+        return f"<b>+{vals[0]}%({vals[1]}%)</b> / <b>+{vals[2]}%({vals[3]}%)</b>"
+    if len(vals) == 3:
+        return f"<b>+{vals[0]}%(60%)</b> / <b>+{vals[1]}%(20%)</b> / <b>+{vals[2]}%(20%)</b>"
+    if len(vals) == 2:
+        return f"<b>+{vals[0]}%(60%)</b> / <b>+{vals[1]}%(40%)</b>"
+    if vals:
+        return f"<b>+{vals[0]}%</b>"
+    return esc(text)
 
 def format_sl_plan(raw):
-    vals = _extract_percent_numbers(raw)
-    return ' / '.join(f"<span style='color:#dc2626; font-weight:bold;'>{v}</span>" for v in vals) if vals else esc(clean_value(raw))
+    text = clean_value(raw)
+    # 🧼 기호 누락 무력화: 텍스트에서 순수 숫자만 추출
+    vals = re.findall(r"\d+(?:\.\d+)?", text)
+    
+    # [손절 순서쌍 매칭] 손절율 3개 먼저 나오고, 뒤에 분할 비중 3개 나오는 레거시 구조 정밀 조립
+    if len(vals) >= 6:
+        return (f"<span style='color:#dc2626; font-weight:bold;'>-{vals[0]}%({vals[3]}%)</span> / "
+                f"<span style='color:#dc2626; font-weight:bold;'>-{vals[1]}%({vals[4]}%)</span> / "
+                f"<span style='color:#dc2626; font-weight:bold;'>-{vals[2]}%({vals[5]}%)</span>")
+    if len(vals) >= 4:
+        return (f"<span style='color:#dc2626; font-weight:bold;'>-{vals[0]}%({vals[2]}%)</span> / "
+                f"<span style='color:#dc2626; font-weight:bold;'>-{vals[1]}%({vals[3]}%)</span>")
+    if len(vals) == 3:
+        return (f"<span style='color:#dc2626; font-weight:bold;'>-{vals[0]}%(80%)</span> / "
+                f"<span style='color:#dc2626; font-weight:bold;'>-{vals[1]}%(10%)</span> / "
+                f"<span style='color:#dc2626; font-weight:bold;'>-{vals[2]}%(10%)</span>")
+    if vals:
+        return f"<span style='color:#dc2626; font-weight:bold;'>-{vals[0]}%</span>"
+    return esc(text)
 
 def safe_price_text(v):
     t = clean_value(v)
