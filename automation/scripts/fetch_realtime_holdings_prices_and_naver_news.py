@@ -100,7 +100,7 @@ def build_code_lookup() -> dict[str, str]:
         if nc and cc:
             for _, row in df.iterrows():
                 n, c = norm_text(row.get(nc)), normalize_holding_code(row.get(nc), row.get(cc))
-                if n navigate and c: lookup[n] = c
+                if n and c: lookup[n] = c
     return lookup
 
 def format_won(value) -> str:
