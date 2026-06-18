@@ -88,7 +88,6 @@ def fetch_naver_price(code):
     code = normalize_code(code)
     if not code: return None, "NO_CODE"
     headers = {"User-Agent":"Mozilla/5.0"}
-    # API endpoint first
     urls = [
         f"https://api.finance.naver.com/service/itemSummary.nhn?itemcode={urllib.parse.quote(code)}",
         f"https://finance.naver.com/item/main.naver?code={urllib.parse.quote(code)}",
@@ -109,7 +108,6 @@ def fetch_naver_price(code):
                 except Exception as e:
                     last_err = f"api_json:{type(e).__name__}"
             else:
-                # no_today block is the current price on Naver Finance.
                 m = re.search(r'<p class="no_today">.*?<span class="blind">([\d,]+)</span>', text, re.S)
                 if not m:
                     m = re.search(r'현재가.*?<span class="blind">([\d,]+)</span>', text, re.S)
@@ -118,6 +116,34 @@ def fetch_naver_price(code):
         except Exception as e:
             last_err = f"{type(e).__name__}:{str(e)[:80]}"
     return None, last_err or "FETCH_FAILED"
+
+def format_tp_plan(raw):
+    text = clean(raw)
+    vals = re.findall(r"\d+(?:\.\d+)?", text)
+    if len(vals) >= 6:
+        return f"+{vals[0]}%({vals[1]}%) / +{vals[2]}%({vals[3]}%) / +{vals[4]}%({vals[5]}%)"
+    if len(vals) >= 4:
+        return f"+{vals[0]}%({vals[1]}%) / +{vals[2]}%({vals[3]}%)"
+    if len(vals) == 3:
+        return f"+{vals[0]}%(60%) / +{vals[1]}%(20%) / +{vals[2]}%(20%)"
+    if len(vals) == 2:
+        return f"+{vals[0]}%(60%) / +{vals[1]}%(40%)"
+    if vals:
+        return f"+{vals[0]}%"
+    return esc(text)
+
+def format_sl_plan(raw):
+    text = clean(raw)
+    vals = re.findall(r"\d+(?:\.\d+)?", text)
+    if len(vals) >= 6:
+        return f"-{vals[0]}%({vals[3]}%) / -{vals[1]}%({vals[4]}%) / -{vals[2]}%({vals[5]}%)"
+    if len(vals) >= 4:
+        return f"-{vals[0]}%({vals[2]}%) / -{vals[1]}%({vals[3]}%)"
+    if len(vals) == 3:
+        return f"-{vals[0]}%(80%) / -{vals[1]}%(10%) / -{vals[2]}%(10%)"
+    if vals:
+        return f"-{vals[0]}%"
+    return esc(text)
 
 def validate_row(row, mismatch_threshold=0.15):
     out = dict(row)
@@ -158,7 +184,6 @@ def validate_row(row, mismatch_threshold=0.15):
             f"리포트 기준가 {report_price:,.0f}원과 실시간가 {realtime:,.0f}원의 차이가 "
             f"{diff_ratio*100:.1f}%입니다. 기존 진입/익절/손절 전략은 보류합니다."
         )
-        # Use realtime price for display, but block strategy fields derived from stale price.
         out["current_price"] = f"{realtime:.0f}"
         out["현재가"] = f"{realtime:.0f}"
         out["entry_decision"] = "가격 검증 실패: 전략 보류"
@@ -200,7 +225,7 @@ def render_top15(rows):
             strategy_html = f"""
 <p><b>공격/기준/보수 진입가:</b> {esc(get(r,'attack_entry','공격진입가'))} / {esc(get(r,'base_entry','기준진입가'))} / {esc(get(r,'conservative_entry','보수진입가'))}</p>
 <p><b>돌파 진입가:</b> {esc(get(r,'breakout_entry','돌파진입가'))}<br><b>손절 기준가:</b> {esc(get(r,'stop_price','손절기준가'))}</p>
-<p><b>익절:</b> {esc(get(r,'take_profit_plan','익절계획'))}<br><b>손절:</b> {esc(get(r,'stop_loss_plan','손절계획'))}</p>
+<p><b>익절:</b> {format_tp_plan(get(r,'take_profit_plan','익절계획'))}<br><b>손절:</b> {format_sl_plan(get(r,'stop_loss_plan','손절계획'))}</p>
 """
 
         cards.append(f"""
@@ -213,7 +238,7 @@ def render_top15(rows):
 </article>""")
 
     page = f"""<!doctype html><html lang='ko'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>추천 TOP15 + 가격 검증</title><style>
-body{{margin:0;background:#f6f7fb;color:#111827;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}}.wrap{{max-width:1080px;margin:auto;padding:20px}}.hero{{background:#172554;color:white;border-radius:22px;padding:22px;margin-bottom:16px}}.hero p{{color:#dbeafe;line-height:1.55}}.card{{background:white;border-radius:18px;padding:16px;margin-bottom:16px;box-shadow:0 4px 16px #0001;border:1px solid #e5e7eb}}.card.danger{{border-color:#fecaca;background:#fff7f7}}.card.warn{{border-color:#fde68a;background:#fffdf3}}h2{{font-size:20px;margin:0 0 8px}}h2 span{{font-size:12px;color:#6b7280}}.meta,.pricecheck{{font-size:13px;color:#6b7280;line-height:1.55;margin:6px 0}}.pricecheck{{background:#f9fafb;border-radius:10px;padding:10px}}.danger .pricecheck{{background:#fee2e2;color:#991b1b}}.warn .pricecheck{{background:#fef3c7;color:#92400e}}p{{font-size:14px;line-height:1.65;color:#374151}}.blocked{{background:#fee2e2;color:#991b1b;border-radius:10px;padding:10px}}.desc{{white-space:pre-wrap;background:#f8fafc;border-radius:12px;padding:12px;font-size:13px;line-height:1.62;color:#374151}}</style></head><body><main class='wrap'><section class='hero'><h1>추천 TOP15 + 실시간 가격 검증</h1><p>갱신: {esc(now())}<br>실시간 가격과 리포트 기준 가격 차이가 15% 이상이면 해당 종목의 진입/익절/손절 전략을 보류합니다.</p></section>{''.join(cards)}</main></body></html>"""
+body{{margin:0;background:#f6f7fb;color:#111827;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}}.wrap{{max-width:1080px;margin:auto;padding:20px}}.hero{{background:#172554;color:white;border-radius:22px;padding:22px;margin-bottom:16px}}.hero p{{color:#dbeafe;line-height:1.55}}.card{{background:white;border-radius:18px;padding:16px;margin-bottom:16px;box-shadow:0 4px 16px #0001;border:1px solid #e5e7eb}}.card.danger{{border-color:#fecaca;background:#fff7f7}}.card.warn{{border-color:#fde68a;background:#fffdf3}}h2{{font-size:20px;margin:0 0 8px}}h2 span{{font-size:12px;color:#6b7280}}.meta,.pricecheck{{font-size:13px;color:#6b7280;line-height:1.55;margin:6px 0}}.pricecheck{{background:#f9fafb;border-radius:10px;padding:10px}}.danger .pricecheck{{background:#fee2e2;color:#991b1b}}.warn .pricecheck{{background:#fef3c7;color:#92400e}}p{{font-size:14px;line-height:1.65;color:#374151}}.blocked{{background:#fee2e2;color:#991b1b;border-radius:10px;padding:10px}}.desc{{white-space:pre-wrap;background:#f8fafc;border-radius:12px;padding:12px;font-size:13px;line-height:1.62;color:#374151}}</style></head><body><main class='wrap'><section class='hero'><h1>추천 TOP15 + 실시간 가격 검증</h1><p>갱신: {esc(now())}<br>실시간 가격 and 리포트 기준 가격 차이가 15% 이상이면 해당 종목의 진입/익절/손절 전략을 보류합니다.</p></section>{''.join(cards)}</main></body></html>"""
     (DETAILS / "legacy_top15.html").write_text(page, encoding="utf-8")
     (DETAILS / "recommendation_top15.html").write_text(page, encoding="utf-8")
 
